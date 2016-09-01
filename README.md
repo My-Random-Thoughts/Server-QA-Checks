@@ -13,7 +13,7 @@ The scripts can be run on any Windows operating system as long as PowerShell ver
 - Windows Server 2012
 - Windows Server 2012 R2
 
-## Also works, but not supported
+### Also works, but not supported
 - Windows 2003 Server                         (this will fail on a couple of checks)
 - Windows Server 2016 Technical Preview 3+    (no known errors or issues so far)
 
@@ -29,3 +29,10 @@ The scripts can be run on any Windows operating system as long as PowerShell ver
      QA.ps1 [-ComputerName] (Get-Content -Path c:\path\list.txt)
 5. Wait for the script to comlplete
 6. View the report(s) in the C:\QA\Results folder
+
+─────────────────────────────────────────────────────────────────────────────
+
+# Editing for your environment
+These checks were written for my specific environment, and therefore will most likely not match your requirements.
+
+In order to get the checks tailored for you, you'll need to edit each check and change the values near the top of each one.  Once done, run COMPILE.PS1 to build the QA script.
