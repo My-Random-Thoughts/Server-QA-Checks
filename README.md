@@ -1,12 +1,12 @@
 # Server QA Checks
 
-The QA Checks (aka scripts) came about as a need to verify the build of new servers into different  environments.
+The QA Checks (aka scripts) came about as a need to verify the build of new servers into different environments.
 All servers should be built from a standard gold build image; however this image still lacks many of the additional tools and configuration settings that are needed before a server can be taken in to support.
-  
+
 The scripts are written using the Microsoft PowerShell scripting language, with a minimum version of 2.
 This is due to Windows Server 2008 R2 (the lowest supported operating system) having this version installed by default.
 
-The scripts can be run on any Windows operating system as long as PowerShell version 2 is installed, and the PowerShell command window is run with administrative privileges, the only officially supported operating systems however are listed below...
+The scripts can be run on any Windows operating system as long as PowerShell version 2 is installed, and the PowerShell command window is run with administrative privileges.  The only officially supported operating systems however are listed below...
 
 ## Supported Operating Systems
 - Windows Server 2008 R2
@@ -14,8 +14,8 @@ The scripts can be run on any Windows operating system as long as PowerShell ver
 - Windows Server 2012 R2
 
 ### Also works, but not supported
-- Windows 2003 Server                         (this will fail on a couple of checks)
-- Windows Server 2016 Technical Preview 3+    (no known errors or issues so far)
+- Windows 2003 Server
+- Windows Server 2016 Technical Preview    (no known errors or issues so far)
 
 ─────────────────────────────────────────────────────────────────────────────
 
@@ -32,7 +32,4 @@ The scripts can be run on any Windows operating system as long as PowerShell ver
 
 ─────────────────────────────────────────────────────────────────────────────
 
-# Editing for your environment
-These checks were written for my specific environment, and therefore will most likely not match your requirements.
-
-In order to get the checks tailored for you, you'll need to edit each check and change the values near the top of each one.  Once done, run COMPILE.PS1 to build the QA script.
+## Please read the documentation before starting out
