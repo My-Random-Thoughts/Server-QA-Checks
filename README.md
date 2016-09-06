@@ -24,9 +24,8 @@ The scripts can be run on any Windows operating system as long as PowerShell ver
 2. Change to the correct folder for where the scripts are held
 3. Enter "Set-ExecutionPolicy Unrestricted –Force" to enable the script to run
 4. Enter either:    
-     QA_(version).ps1 [-ComputerName] server01[, server02, server03, ...]
-   or
-     QA_(version).ps1 [-ComputerName] (Get-Content -Path c:\path\list.txt)
+   - QA_(version).ps1 [-ComputerName] server01[, server02, server03, ...]
+   - QA_(version).ps1 [-ComputerName] (Get-Content -Path c:\path\list.txt)
 5. Wait for the script to comlplete
 6. View the report(s) in the C:\QA\Results folder
 
