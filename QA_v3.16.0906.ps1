@@ -3201,7 +3201,7 @@ Function c-net-07-network-teaming
     {
         If ($check1 -eq 'NOTEAMS')
         {
-            If ((Check-VirtualMachine $serverName) -eq $true)
+            If ((Check-VMware $serverName) -eq $true)
             {
                 $result.result  = 'N/A'
                 $result.message = 'Not a phsical server'
@@ -3216,7 +3216,7 @@ Function c-net-07-network-teaming
         }
         Else
         {
-            If ((Check-VirtualMachine $serverName) -eq $true)
+            If ((Check-VMware $serverName) -eq $true)
             {
                 $result.result  = 'Fail'
                 $result.message = 'Native teaming enabled on virtual machine'
