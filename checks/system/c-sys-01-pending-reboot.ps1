@@ -30,7 +30,7 @@ Function c-sys-01-pending-reboot
 
     Try {
         $result.data = ''
-        $reg = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $machineName)
+        $reg = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
 
         Try {
             $regKey = $reg.OpenSubKey('SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing')
