@@ -36,26 +36,26 @@ Function c-net-08-management-adapter
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
-    $result.result  = 'Fail'
+    $result.result  = $script:lang['Fail']
     $result.message = 'No management network adapter'
 
     If ([string]::IsNullOrEmpty($check) -eq $false)
     {
         If ($check.Count -gt 0)
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'Management network adapter found'
         }
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'No management network adapter'
     }
 

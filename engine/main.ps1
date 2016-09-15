@@ -1,33 +1,37 @@
 ﻿Function Show-HelpScreen
 {
+$($script:lang['Help_01'])
+
     Clear-Host
-    Write-Header -Message 'Usage Information' -Width $script:screenwidth
-    Write-Host '  Quick Usage:'                                                                  -ForegroundColor Cyan
-    Write-Colr '    QA.ps1 [-ComputerName] ','server01','[, server02, server03, ...]'            -Colour Yellow, Yellow, Gray, Yellow, Gray
-    Write-Colr '    QA.ps1 [-ComputerName] ','(Get-Content -Path x:\path\list.txt)'              -Colour Yellow, Yellow, Gray, Yellow
+    Write-Header -Message $($script:lang['Help_01']) -Width $script:screenwidth
+    Write-Host ' '$($script:lang['Help_02'])                                               -ForegroundColor Cyan
+    Write-Colr '    QA.ps1 [-ComputerName] ','server01','[, server02, server03, ...]'      -Colour          Yellow, Yellow, Gray, Yellow, Gray
+    Write-Colr '    QA.ps1 [-ComputerName] ','(Get-Content -Path x:\path\list.txt)'        -Colour          Yellow, Yellow, Gray, Yellow
     Write-Host ''
     Write-Host ''
-    Write-Host '  Examples:'                                                                     -ForegroundColor Cyan
-    Write-Host '  # Local Server:'                                                               -ForegroundColor Cyan
-    Write-Colr '    # ','Use full stop (.) to indicate the localhost, or enter a servername:'    -Colour Cyan, White
-    Write-Colr '        QA.ps1 [-ComputerName] ','.'                                             -Colour Yellow, Yellow, Gray, Yellow
-    Write-Colr '        QA.ps1 [-ComputerName] ','server01'                                      -Colour Yellow, Yellow, Gray, Yellow
+    Write-Host ' '$($script:lang['Help_03'])                                               -ForegroundColor Cyan
+    Write-Host '   '$($script:lang['Help_04'])                                             -ForegroundColor Cyan
+    Write-Colr '      ', $($script:lang['Help_05'])                                        -Colour          Cyan, White
+    Write-Colr '        QA.ps1 [-ComputerName] ','.'                                       -Colour          Yellow, Yellow, Gray, Yellow
+    Write-Colr '        QA.ps1 [-ComputerName] ','server01'                                -Colour          Yellow, Yellow, Gray, Yellow
     Write-Host ''
-    Write-Host '  # Multiple Servers:'                                                           -ForegroundColor Cyan
-    Write-Colr '    # ','Using commas (,) to separate, add each server to the command line:'     -Colour Cyan, White
-    Write-Colr '        QA.ps1 [-ComputerName] ','server01, server02, server03, ...'             -Colour Yellow, Yellow, Gray, Yellow
+    Write-Host '   '$($script:lang['Help_06'])                                             -ForegroundColor Cyan
+    Write-Colr '      ', $($script:lang['Help_07'])                                        -Colour          Cyan, White
+    Write-Colr '        QA.ps1 [-ComputerName] ','server01, server02, server03, ...'       -Colour          Yellow, Yellow, Gray, Yellow
     Write-Host ''
-    Write-Colr '    # ','Using a text file, with each server on a new line:'                     -Colour Cyan, White
-    Write-Colr '        QA.ps1 [-ComputerName] ','(Get-Content -Path x:\path\list.txt)'          -Colour Yellow, Yellow, Gray, Yellow
-    Write-Host '        Make sure the brackets are included in the command line'                 -ForegroundColor White
+    Write-Colr '      ', $($script:lang['Help_08'])                                        -Colour          Cyan, White
+    Write-Colr '        QA.ps1 [-ComputerName] ','(Get-Content -Path x:\path\list.txt)'    -Colour          Yellow, Yellow, Gray, Yellow
     Write-Host ''
-    Write-Host '  Notes:'                                                                        -ForegroundColor Cyan
-    Write-Host '    The script connects using the same credentials as the powershell'            -ForegroundColor White
-    Write-Host '    window, to connect using different credentials Shift + Right-click'          -ForegroundColor White
-    Write-Host '    powershell in the start menu and select "Run as different user",'            -ForegroundColor White
-    Write-Host '    then run the script'                                                         -ForegroundColor White
+    Write-Host ' '$script:lang['Help_09']                                                  -ForegroundColor Cyan
+
+    [int]$iCnt = 10
+    Do {
+        If ([string]::IsNullOrEmpty($script:lang["Help_$iCnt"]) -eq $false) { Write-Host '   '$script:lang["Help_$iCnt"] -ForegroundColor White }
+        $iCnt++
+    } While ($iCnt -lt 20)
+
+    Write-Host (DivLine -Width $script:screenwidth)                                        -ForegroundColor Yellow
     Write-Host ''
-    Remove-Variable appN -ErrorAction SilentlyContinue
     Exit
 }
 
@@ -56,16 +60,16 @@ Function Check-CommandLine
     Remove-Variable wh, ws, gh
 
     Clear-Host
-    Write-Header -Message 'Starting QA Procedure' -Width $script:screenwidth
+    Write-Header -Message $script:lang['Header'] -Width $script:screenwidth
 
     # Check admin status
     If (-not ([Security.Principal.WindowsPrincipal] `
               [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole( `
               [Security.Principal.WindowsBuiltInRole] 'Administrator'))
     {
-        Write-Host '  You are not running this script as an administrator'       -ForegroundColor Red
-        Write-Host '  Restart PowerShell with the "Run as Administrator" option' -ForegroundColor Red
-        Write-Host ''
+        Write-Host ('  {0}' -f $script:lang['Admin-Warn_1']) -ForegroundColor Red
+        Write-Host ('  {0}' -f $script:lang['Admin-Warn_2']) -ForegroundColor Red
+        Write-Host ('')
         Break
     }
 
@@ -86,18 +90,24 @@ Function Start-QAProcess
 
     # Write job information
     [int]$count = $script:qaChecks.Count
-    Write-Host '  There are' $count 'checks to perform, with a maximum of' $script:ccTasks 'running concurrently' -ForegroundColor White
-    Write-Host '  Each has a timeout limit of' $script:checkTimeout 'seconds.  Progress bar legend:'              -ForegroundColor White
+    Write-Host ($('  {0}' -f $script:lang['Scan-Head_1']) -f $count, $script:ccTasks) -ForegroundColor White
+    Write-Host ($('  {0}' -f $script:lang['Scan-Head_2']) -f $script:checkTimeout   ) -ForegroundColor White
 
     # Progress bar legend
-    Write-Colr '    ▄▄▄         ','▄▄▄          ','▄▄▄         ','▄▄▄         ','▄▄▄      ','▄▄▄'      -Colour DarkGray, DarkGray, DarkGray, DarkGray, DarkGray, DarkGray
-    Write-Colr '     ▀ Passed   ',' ▀ Warning   ',' ▀ Failed   ',' ▀ Manual   ',' ▀ N/A   ',' ▀ Error' -Colour Green   , Yellow  , Red     , Cyan    , Gray    , Magenta
+    [string]$lP = $script:lang['Passed']; [string]$lW = $script:lang['Warning']       ; [string]$lF = $script:lang['Failed']
+    [string]$lM = $script:lang['Manual']; [string]$lN = $script:lang['Not-Applicable']; [string]$lE = $script:lang['Error']
+    Write-Host ('    ▄▄▄' + ''.PadLeft($lP.Length)) -NoNewline -ForegroundColor DarkGray; Write-Host ('    ▄▄▄' + ''.PadLeft($lW.Length)) -NoNewline -ForegroundColor DarkGray
+    Write-Host ('    ▄▄▄' + ''.PadLeft($lF.Length)) -NoNewline -ForegroundColor DarkGray; Write-Host ('    ▄▄▄' + ''.PadLeft($lM.Length)) -NoNewline -ForegroundColor DarkGray
+    Write-Host ('    ▄▄▄' + ''.PadLeft($lN.Length)) -NoNewline -ForegroundColor DarkGray; Write-Host ('    ▄▄▄' + ''.PadLeft($lE.Length))            -ForegroundColor DarkGray
+    Write-Host ('     ▀ ' + $lP)                    -NoNewline -ForegroundColor Green   ; Write-Host ('     ▀ ' + $lW)                    -NoNewline -ForegroundColor Yellow
+    Write-Host ('     ▀ ' + $lF)                    -NoNewline -ForegroundColor Red     ; Write-Host ('     ▀ ' + $lM)                    -NoNewline -ForegroundColor Cyan
+    Write-Host ('     ▀ ' + $lN)                    -NoNewline -ForegroundColor Gray    ; Write-Host ('     ▀ ' + $lE)                               -ForegroundColor Magenta
     Write-Host (DivLine -Width $script:screenwidth)                                                    -ForegroundColor Yellow
 
     If ($script:servers.Count -gt 1)
     {
-        Write-Host '  Scanning' $($script:servers.Count) 'servers'                                      -ForegroundColor White
-        Write-Host (DivLine -Width $script:screenwidth)                                                -ForegroundColor Yellow
+        Write-Host ($('  {0}' -f $script:lang['ServerCount']) -f $($script:servers.Count)) -ForegroundColor White
+        Write-Host (DivLine -Width $script:screenwidth)                                    -ForegroundColor Yellow
     }
 
     # Create required output folders
@@ -128,7 +138,7 @@ Function Start-QAProcess
             {
                 If ($PSCmdlet.MyInvocation.BoundParameters.ContainsKey('Verbose') -eq $true)
                 {
-                    Write-Host 'Verbose information:' -ForegroundColor Yellow -NoNewline
+                    Write-Host $script:lang['Verbose-Info'] -ForegroundColor Yellow -NoNewline
                 }
                 Else {
                     For ([int]$i = 0; $i -lt $count; $i++) { Write-Host '▄' -ForegroundColor DarkGray -NoNewline }
@@ -165,20 +175,20 @@ Function Start-QAProcess
                                 # provide some pretty output on the console
                                 Switch ($result.result)
                                 {
-                                    'Pass'    { Write-Host $pBlock -ForegroundColor Green  -NoNewline ; Break }
-                                    'Warning' { Write-Host $pBlock -ForegroundColor Yellow -NoNewline ; Break }
-                                    'Fail'    { Write-Host $pBlock -ForegroundColor Red    -NoNewline ; Break }
-                                    'Manual'  { Write-Host $pBlock -ForegroundColor Cyan   -NoNewline ; Break }
-                                    'N/A'     { Write-Host $pBlock -ForegroundColor Gray   -NoNewline ; Break }
-                                    'Error'   { If ($result.data -like '*Access is denied*') {
-                                                    If ($workComplete -eq $false) {
-                                                        $result.message = 'ACCESS DENIED'
-                                                        $script:failurecount++
-                                                        Write-Host '■ ACCESS DENIED - Skipping all scripts for server' -ForegroundColor Magenta -NoNewline
-                                                        $workComplete = $true } }
-                                                Else { If ($workComplete -eq $false) { Write-Host '█' -ForegroundColor Magenta -NoNewline } }
-                                              }
-                                    Default   { Write-Host '█' -ForegroundColor DarkGray -NoNewline; Break }
+                                    $script:lang['Pass']           { Write-Host $pBlock -ForegroundColor Green  -NoNewline ; Break }
+                                    $script:lang['Warning']        { Write-Host $pBlock -ForegroundColor Yellow -NoNewline ; Break }
+                                    $script:lang['Fail']           { Write-Host $pBlock -ForegroundColor Red    -NoNewline ; Break }
+                                    $script:lang['Manual']         { Write-Host $pBlock -ForegroundColor Cyan   -NoNewline ; Break }
+                                    $script:lang['Not-Applicable'] { Write-Host $pBlock -ForegroundColor Gray   -NoNewline ; Break }
+                                    $script:lang['Error']          { If ($result.data -like '*Access is denied*') {
+                                                                         If ($workComplete -eq $false) {
+                                                                             $result.message = $script:lang['AD-Message']    # ACCESS DENIED
+                                                                             $script:failurecount++
+                                                                             Write-Host ('■ ' + $script:lang['AD-Write-Host']) -ForegroundColor Magenta -NoNewline
+                                                                             $workComplete = $true } }
+                                                                     Else { If ($workComplete -eq $false) { Write-Host '█' -ForegroundColor Magenta -NoNewline } }
+                                                                   }
+                                    Default                        { Write-Host '█' -ForegroundColor DarkGray -NoNewline; Break }
                                 }
                             }
                             Else
@@ -186,10 +196,10 @@ Function Start-QAProcess
                                 # Job returned no data
                                 $result          = newResult
                                 $result.server   = $server
-                                $result.name     = 'NO DATA'
+                                $result.name     = $script:lang['ND-Name']    # NO DATA
                                 $result.check    = $workItems[$key].name
                                 $result.result   = 'Error'
-                                $result.message  = 'Error while running, job returned no data'
+                                $result.message  = $script:lang['ND-Message']
                                 $script:results += $result
                                 $serverresults  += $result
                                 Write-Host '■' -ForegroundColor Magenta -NoNewline
@@ -205,10 +215,10 @@ Function Start-QAProcess
                             $result.name     = $workItems[$key].State.ToUpper()
                             $result.check    = $workItems[$key].name
                             $result.result   = 'Error'
-                            $result.message  = 'Job failed to run or the remote server was disconnected'
+                            $result.message  = $script:lang['FD-Message']    # FAILED / DISCONNECTED
                             $script:results += $result
                             $serverresults  += $result
-                            Write-Host '■ JOB FAILED/DISCONNECTED - Skipping all scripts for server' -ForegroundColor Magenta -NoNewline
+                            Write-Host ('■ ' + $script:lang['FD-Write-Host']) -ForegroundColor Magenta -NoNewline
                             $workItems.Remove($key)
                             $script:failurecount++
                             $workComplete = $true
@@ -221,10 +231,10 @@ Function Start-QAProcess
                             {
                                 $result          = newResult
                                 $result.server   = $server
-                                $result.name     = 'TIMEOUT'
+                                $result.name     = $script:lang['TO-Name']    # TIMEOUT
                                 $result.check    = $workItems[$key].name
                                 $result.result   = 'Error'
-                                $result.message  = 'Job failed to finish within the timeout period, job cancelled'
+                                $result.message  = $script:lang['TO-Message']
                                 $script:results += $result
                                 $serverresults  += $result
                                 Try { Stop-Job -Job $workItems[$key]; Remove-Job -Job $workItems[$key] } Catch { }
@@ -273,11 +283,11 @@ Function Start-QAProcess
                 $result.name     = 'X'
                 $result.check    = 'X'
                 $result.result   = 'Error'
-                $result.message  = 'RPC FAILURE while communicating with the server, check the firewall ports are opened correctly'
+                $result.message  = $script:lang['RPC-Message']    # RPC FAILURE
                 $script:results += $result
                 $serverresults  += $result
                 $script:failurecount++
-                Write-Host '■ RPC FAILURE - Skipping all scripts for server' -ForegroundColor Magenta -NoNewline
+                Write-Host ('■ ' + $script:lang['RPC-Write-Host']) -ForegroundColor Magenta -NoNewline
             }
         }
         Else
@@ -288,11 +298,11 @@ Function Start-QAProcess
             $result.name     = 'X'
             $result.check    = 'X'
             $result.result   = 'Error'
-            $result.message  = 'CONNECTION FAILURE while contacting the server, check that the server switched on and working'
+            $result.message  = $script:lang['CF-Message']    # CONNECTION FAILURE
             $script:results += $result
             $serverresults  += $result
             $script:failurecount++
-            Write-Host '■ CONNECTION FAILURE - Skipping all scripts for server' -ForegroundColor Magenta -NoNewline
+            Write-Host ('■ ' + $script:lang['CF-Write-Host']) -ForegroundColor Magenta -NoNewline
         }
 
         Write-Host ''
@@ -315,12 +325,12 @@ Function Start-QAProcess
 Function Get-ResultsSplit
 {
     Param ( [string]$serverName )
-    [string]$p = @($script:results | Where-Object  { $_.result -eq 'Pass'    -and $_.server -like $serverName }).Count.ToString()
-    [string]$w = @($script:results | Where-Object  { $_.result -eq 'Warning' -and $_.server -like $serverName }).Count.ToString()
-    [string]$f = @($script:results | Where-Object  { $_.result -eq 'Fail'    -and $_.server -like $serverName }).Count.ToString()
-    [string]$m = @($script:results | Where-Object  { $_.result -eq 'Manual'  -and $_.server -like $serverName }).Count.ToString()
-    [string]$n = @($script:results | Where-Object  { $_.result -eq 'N/A'     -and $_.server -like $serverName }).Count.ToString()
-    [string]$e = @($script:results | Where-Object  { $_.result -eq 'Error'   -and $_.server -like $serverName }).Count.ToString()
+    [string]$p = @($script:results | Where-Object  { $_.result -eq $script:lang['Pass']           -and $_.server -like $serverName }).Count.ToString()
+    [string]$w = @($script:results | Where-Object  { $_.result -eq $script:lang['Warning']        -and $_.server -like $serverName }).Count.ToString()
+    [string]$f = @($script:results | Where-Object  { $_.result -eq $script:lang['Fail']           -and $_.server -like $serverName }).Count.ToString()
+    [string]$m = @($script:results | Where-Object  { $_.result -eq $script:lang['Manual']         -and $_.server -like $serverName }).Count.ToString()
+    [string]$n = @($script:results | Where-Object  { $_.result -eq $script:lang['Not-Applicable'] -and $_.server -like $serverName }).Count.ToString()
+    [string]$e = @($script:results | Where-Object  { $_.result -eq $script:lang['Error']          -and $_.server -like $serverName }).Count.ToString()
 
     [PSObject]$resultsplit = New-Object -TypeName PSObject -Property @{ 'p'=$p; 'w'=$w; 'f'=$f; 'm'=$m; 'n'=$n; 'e'=$e; }
     Return $resultsplit
@@ -331,17 +341,28 @@ Function Show-Results
     [string]$y = $script:failurecount
     [string]$x = (@($script:servers).Count - $y)
     $resultsplit = Get-ResultsSplit -serverName '*'
-    [int]$w = $script:screenwidth - 4
+    [int]$w = $script:screenwidth - 2
     Write-Host ''
-    Write-Host (DivLine -Width $script:screenwidth)                                                            -ForegroundColor Yellow
-    Write-Colr '  Total Server Counts',      'Total Script Counts'.PadLeft($w-18)                              -Colour White  ,          White
-    Write-Colr '    Checked: ', $x.PadLeft(3),         ' Passed: '.PadLeft($w-17), ($resultsplit.p).PadLeft(4) -Colour Green  , Green  , Green  , Green
-    Write-Colr '    Skipped: ', $y.PadLeft(3),         'Warning: '.PadLeft($w-17), ($resultsplit.w).PadLeft(4) -Colour Magenta, Magenta, Yellow , Yellow
-    Write-Colr                                         ' Failed: '.PadLeft($w- 1), ($resultsplit.f).PadLeft(4) -Colour                   Red    , Red
-    Write-Colr                                         ' Manual: '.PadLeft($w- 1), ($resultsplit.m).PadLeft(4) -Colour                   Cyan   , Cyan
-    Write-Colr                                         '    N/A: '.PadLeft($w- 1), ($resultsplit.n).PadLeft(4) -Colour                   Gray   , Gray
-    Write-Colr                                         '  Error: '.PadLeft($w- 1), ($resultsplit.e).PadLeft(4) -Colour                   Magenta, Magenta
-    Write-Host (DivLine -Width $script:screenwidth)                                                            -ForegroundColor Yellow
+    Write-Host (DivLine -Width $script:screenwidth) -ForegroundColor Yellow
+
+    [int]$rightPad = (($script:lang['Passed']).Length)
+    If ((($script:lang['Warning']       ).Length) -gt $rightPad) { $rightPad = (($script:lang['Warning']       ).Length) }
+    If ((($script:lang['Failed']        ).Length) -gt $rightPad) { $rightPad = (($script:lang['Failed']        ).Length) }
+    If ((($script:lang['Manual']        ).Length) -gt $rightPad) { $rightPad = (($script:lang['Manual']        ).Length) }
+    If ((($script:lang['Not-Applicable']).Length) -gt $rightPad) { $rightPad = (($script:lang['Not-Applicable']).Length) }
+    If ((($script:lang['Error']         ).Length) -gt $rightPad) { $rightPad = (($script:lang['Error']         ).Length) }
+
+    If ((($script:lang['Checked']).Length) -gt (($script:lang['Skipped']).Length)) { [int]$leftPad = (($script:lang['Checked']).Length) } Else { [int]$leftPad = (($script:lang['Skipped']).Length) }
+
+    Write-Host ('  {0}{1}' -f ($script:lang['TotalCount_1']), (($script:lang['TotalCount_2']).PadLeft($w - (($script:lang['TotalCount_2']).Length)))) -ForegroundColor White
+    Write-Host ('    {0}: {1}{2}:{3}' -f ($script:lang['Checked']).PadLeft($leftPad), $x.PadLeft(3), ($script:lang['Passed']        ).PadLeft($w - $rightPad - $leftPad - 7), ($resultsplit.p).PadLeft(4)) -ForegroundColor Green
+    Write-Host ('    {0}: {1}{2}:{3}' -f ($script:lang['Skipped']).PadLeft($leftPad), $y.PadLeft(3), ($script:lang['Warning']       ).PadLeft($w - $rightPad - $leftPad - 7), ($resultsplit.w).PadLeft(4)) -ForegroundColor Yellow
+    Write-Host (        '    {0}:{1}' -f                                                             ($script:lang['Failed']        ).PadLeft($w - $rightPad            - 2), ($resultsplit.f).PadLeft(4)) -ForegroundColor Red
+    Write-Host (        '    {0}:{1}' -f                                                             ($script:lang['Manual']        ).PadLeft($w - $rightPad            - 2), ($resultsplit.m).PadLeft(4)) -ForegroundColor Cyan
+    Write-Host (        '    {0}:{1}' -f                                                             ($script:lang['Not-Applicable']).PadLeft($w - $rightPad            - 2), ($resultsplit.n).PadLeft(4)) -ForegroundColor Gray
+    Write-Host (        '    {0}:{1}' -f                                                             ($script:lang['Error']         ).PadLeft($w - $rightPad            - 2), ($resultsplit.e).PadLeft(4)) -ForegroundColor Magenta
+
+    Write-Host (DivLine -Width $script:screenwidth) -ForegroundColor Yellow
     Remove-Variable x, y, w, resultsplit -ErrorAction SilentlyContinue
 }
 
@@ -381,7 +402,7 @@ Function Export-Results
     .note:hover div.help { background: #ffffdd; border: #000000 3px solid; display: block; left: 10px; margin: 10px; padding: 15px; position: fixed; text-align: left; text-decoration: none; top: 10px; width: 600px; z-index: 100; }
     .note li        { display: table-row-group; list-style: none; }
     .note li span   { display: table-cell; vertical-align: top; padding: 3px 0; }
-    .note li span:first-child { text-align: right; min-width: 90px; font-weight: bold; padding-right: 7px; }
+    .note li span:first-child { text-align: right; min-width: 120px; max-width: 120px; font-weight: bold; padding-right: 7px; }
     .note li span:last-child  { padding-left: 7px; border-left: 1px solid #000000; }
 
     .sectionRow     { background: #0066a1; color: #ffffff; font-size: 13px; padding: 1px 15px!important; font-weight: bold; height: 25px!important; }
@@ -409,9 +430,9 @@ Function Export-Results
 <div id="header">
     <div id="headerTop">
         <div class="logo1">$logoName</div>
-        <div class="logo2">QA Results</div>
-        <div class="logo3">Script Version: <b>$version</b> ($settingsFile)
-                      <br/>Generated by <b>$un</b> on <b>$dt1</b></div>
+        <div class="logo2">$($script:lang['QA-Results'])</div>
+        <div class="logo3">$($script:lang['Script-Version']) <b>$version</b> ($settingsFile)
+                      <br/>$($script:lang['Generated-By']) <b>$un</b> $($script:lang['On']) <b>$dt1</b></div>
         <div style="clear:both;"></div>
     </div>
     <div style="clear:both;"></div>
@@ -419,12 +440,12 @@ Function Export-Results
 <div class="headerRow1"></div>
 <div class="serverRow">$server</div>
 <div class="summary">
-    <div class="summaryName p"><b>Passed </b><br><span class="summaryCount">$($resultsplit.p)</span></div>
-    <div class="summaryName w"><b>Warning</b><br><span class="summaryCount">$($resultsplit.w)</span></div>
-    <div class="summaryName f"><b>Failed </b><br><span class="summaryCount">$($resultsplit.f)</span></div>
-    <div class="summaryName m"><b>Manual </b><br><span class="summaryCount">$($resultsplit.m)</span></div>
-    <div class="summaryName n"><b>N/A    </b><br><span class="summaryCount">$($resultsplit.n)</span></div>
-    <div class="summaryName x"><b>Error  </b><br><span class="summaryCount">$($resultsplit.e)</span></div>
+    <div class="summaryName p"><b>$($script:lang['Passed']        )</b><br><span class="summaryCount">$($resultsplit.p)</span></div>
+    <div class="summaryName w"><b>$($script:lang['Warning']       )</b><br><span class="summaryCount">$($resultsplit.w)</span></div>
+    <div class="summaryName f"><b>$($script:lang['Failed']        )</b><br><span class="summaryCount">$($resultsplit.f)</span></div>
+    <div class="summaryName m"><b>$($script:lang['Manual']        )</b><br><span class="summaryCount">$($resultsplit.m)</span></div>
+    <div class="summaryName n"><b>$($script:lang['Not-Applicable'])</b><br><span class="summaryCount">$($resultsplit.n)</span></div>
+    <div class="summaryName x"><b>$($script:lang['Error']         )</b><br><span class="summaryCount">$($resultsplit.e)</span></div>
 </div>
 <div style="clear:both;"></div>
 <div class="headerRow2"></div>
@@ -440,15 +461,13 @@ Function Export-Results
     $core    = $core | Sort-Object check; $cust = $cust | Sort-Object check
     $outHTML = $core + $cust | ConvertTo-HTML -Head $Head -Title 'QA Results' -Body $Body
 
-    $outHTML = Set-CellColour -Filter 'result -eq "Pass"'    -InputObject $outHTML
-    $outHTML = Set-CellColour -Filter 'result -eq "Warning"' -InputObject $outHTML
-    $outHTML = Set-CellColour -Filter 'result -eq "Fail"'    -InputObject $outHTML
-    $outHTML = Set-CellColour -Filter 'result -eq "Manual"'  -InputObject $outHTML
-    $outHTML = Set-CellColour -Filter 'result -eq "N/A"'     -InputObject $outHTML
-    $outHTML = Set-CellColour -Filter 'result -eq "Error"'   -InputObject $outHTML -Row
-    $outHTML = Set-CellColour -Filter 'result -eq "Skipped"' -InputObject $outHTML -Row
-    $outHTML = Rename-CheckColumn -InputObject $outHTML
-    $outHTML = Set-SectionHeaders -InputObject $outHTML
+    $outHTML = Set-CellColour -Filter ('result -eq "' + $($script:lang['Pass'])           + '"') -InputObject $outHTML
+    $outHTML = Set-CellColour -Filter ('result -eq "' + $($script:lang['Warning'])        + '"') -InputObject $outHTML
+    $outHTML = Set-CellColour -Filter ('result -eq "' + $($script:lang['Fail'])           + '"') -InputObject $outHTML
+    $outHTML = Set-CellColour -Filter ('result -eq "' + $($script:lang['Manual'])         + '"') -InputObject $outHTML
+    $outHTML = Set-CellColour -Filter ('result -eq "' + $($script:lang['Not-Applicable']) + '"') -InputObject $outHTML
+    $outHTML = Set-CellColour -Filter ('result -eq "' + $($script:lang['Error'])          + '"') -InputObject $outHTML -Row
+    $outHTML = Format-HTMLOutput -InputObject $outHTML
     $outHTML | Out-File $path -Force -Encoding utf8
 
     # CSV Output
@@ -466,7 +485,7 @@ Function Export-Results
 
 ###################################################################################################
 
-Function Set-SectionHeaders
+Function Format-HTMLOutput
 {
     Param ( [Object[]]$InputObject )
     Begin { }
@@ -489,54 +508,16 @@ Function Set-SectionHeaders
                     $count++
                 }
                 If ($func -eq $search.Matches.Count) { Break }
+
+                # Rename headers to language specific values
+                $line = $line.Replace('<th>name</th>',    "<th>$($script:lang['HTML_Name']   )</th>")
+                $line = $line.Replace('<th>check</th>',   "<th>$($script:lang['HTML_Check']  )</th>")
+                $line = $line.Replace('<th>result</th>',  "<th>$($script:lang['HTML_Result'] )</th>")
+                $line = $line.Replace('<th>message</th>', "<th>$($script:lang['HTML_Message'])</th>")
+                $line = $line.Replace('<th>data</th>',    "<th>$($script:lang['HTML_Data']   )</th>")
             }
 
             [string]$sectionRow = ''
-            If ($line.StartsWith('<tr><td') -eq $true)
-            {
-                $search = $line | Select-String -Pattern '<td(.*?)>(.*?)</td>' -AllMatches
-                If ($search.Matches.Count -ne 0)
-                {
-                    Try { $sectionNew = ($search.Matches[$func].Groups[2].Value).Substring(2, 3).Replace('-', '') } Catch { $sectionNew = '' }
-                    If ($sectionNew -ne $sectionOld)
-                    {
-                        $sectionOld = $sectionNew
-                        [string]$selctionName = $script:sections[$sectionNew]
-                        If ($selctionName -eq '') { $selctionName = '{0} Customer Specific' -f $sectionNew.ToUpper() }
-                        $sectionRow = '<tr><td class="sectionRow" colspan="5">{0}</td></tr>' -f $selctionName
-                    }
-                    Else { $sectionRow = '' } 
-                }
-            }
-            ElseIf ($line.StartsWith('</table>') -eq $true) { $sectionRow = '<tr><td class="sectionRow" colspan="5">&nbsp;</td>' }
-            Write-Output $sectionRow$line
-         }
-    }
-    End { }
-}
-
-Function Rename-CheckColumn
-{
-    Param ( [Object[]]$InputObject )
-    Begin { }
-    Process
-    {
-        ForEach ($input In $InputObject)
-        {
-            [string]$line = $input
-            If ($line.IndexOf('<tr><th') -ge 0)
-            {
-                [int]$count = 0
-                [int]$func  = 0
-                $search = $line | Select-String -Pattern '<th>(.*?)</th>' -AllMatches
-                ForEach ($match in $search.Matches)
-                {
-                    If ($match.Groups[1].Value -eq 'check'  ) { $func  = $count }
-                    $count++
-                }
-                If ($func -eq $search.Matches.Count) { Break }
-            }
-
             If ($line -match '<tr><td')
             {
                 $search = $line | Select-String -Pattern '<td(.*?)>(.*?)</td>' -AllMatches
@@ -544,6 +525,7 @@ Function Rename-CheckColumn
                 {
                     Try
                     {
+                        # Rename "check" names
                         [string]$old = $search.Matches[$func].Groups[2].Value
                         If (($old.StartsWith('c-') -eq $true) -or ($old.StartsWith('f-') -eq $true))
                         {
@@ -551,13 +533,25 @@ Function Rename-CheckColumn
                             $line = $line.Replace($old, $new)
                         }
 
-                        # Add line breaks for long lines in results - Needs check support.
+                        # Add line breaks for long lines in results - If the check supports it.
                         $line = $line.Replace(',#', ',<br/>')
+
+                        # Add section headers
+                        Try { $sectionNew = ($search.Matches[$func].Groups[2].Value).Substring(2, 3).Replace('-', '') } Catch { $sectionNew = '' }
+                        If ($sectionNew -ne $sectionOld)
+                        {
+                            $sectionOld = $sectionNew
+                            [string]$selctionName = $script:sections[$sectionNew]
+                            $sectionRow = '<tr><td class="sectionRow" colspan="5">{0}</td></tr>' -f $selctionName
+                        }
+                        Else { $sectionRow = '' }
                     }
                     Catch { }
                 }
             }
-            Write-Output $line
+            ElseIf ($line.StartsWith('</table>') -eq $true) { $sectionRow = '<tr><td class="sectionRow" colspan="5">&nbsp;</td>' }
+
+            Write-Output $sectionRow$line
          }
     }
     End { }
@@ -608,10 +602,7 @@ Function Set-CellColour
                     If ($value -eq $null) { $value = $search.Matches[$index].Groups[1].Value }
                     If (Invoke-Command $Filter)
                     {
-                        If ($Row -eq $true)
-                        {
-                            If ($line -like '*<td>Skipped</td>*') { $line = $line.Replace('<td>', '<td class="s">') } Else { $line = $line.Replace('<td>', '<td class="e">') }
-                        }
+                        If ($Row -eq $true) { $line = $line.Replace('<td>', '<td class="e">') }    # There was an error with this server
                         Else
                         {
                             # Insert HTML hover help
@@ -641,18 +632,18 @@ Function Add-HoverHelp
 {
     Param ([string]$inputLine, [string]$check)
     [string]$help = ''
-    If ($script:qaNotes[$check])
+    If ($script:qahelp[$check])
     {
         Try
         {
-            [xml]$xml  = $script:qaNotes[$check]
+            [xml]$xml  = $script:qahelp[$check]
                  $help = '<li><span>{0}<br/>{1}</span><span>{2}</span></li><br/>' -f $script:sections[$check.Substring(0,3)], $check.Substring(3, 2), $xml.xml.description
-            If ($xml.xml.ChildNodes.ToString() -like '*pass*'   ) { $help +=    '<li><span>Pass</span><span>{0}</span></li>' -f $xml.xml.pass    }
-            If ($xml.xml.ChildNodes.ToString() -like '*warning*') { $help += '<li><span>Warning</span><span>{0}</span></li>' -f $xml.xml.warning }
-            If ($xml.xml.ChildNodes.ToString() -like '*fail*'   ) { $help +=    '<li><span>Fail</span><span>{0}</span></li>' -f $xml.xml.fail    }
-            If ($xml.xml.ChildNodes.ToString() -like '*manual*' ) { $help +=  '<li><span>Manual</span><span>{0}</span></li>' -f $xml.xml.manual  }
-            If ($xml.xml.ChildNodes.ToString() -like '*na*'     ) { $help +=      '<li><span>NA</span><span>{0}</span></li>' -f $xml.xml.na      }
-            $help += '<br/><li><span>Applies to</span><span>{0}</span></li>' -f ($xml.xml.applies).Replace(', ','<br/>')
+            If ($xml.xml.ChildNodes.ToString() -like '*pass*'   ) { $help += '<li><span>{0}</span><span>{1}</span></li>' -f $script:lang['Pass'],           ($xml.xml.pass)    }
+            If ($xml.xml.ChildNodes.ToString() -like '*warning*') { $help += '<li><span>{0}</span><span>{1}</span></li>' -f $script:lang['Warning'],        ($xml.xml.warning) }
+            If ($xml.xml.ChildNodes.ToString() -like '*fail*'   ) { $help += '<li><span>{0}</span><span>{1}</span></li>' -f $script:lang['Fail'],           ($xml.xml.fail)    }
+            If ($xml.xml.ChildNodes.ToString() -like '*manual*' ) { $help += '<li><span>{0}</span><span>{1}</span></li>' -f $script:lang['Manual'],         ($xml.xml.manual)  }
+            If ($xml.xml.ChildNodes.ToString() -like '*na*'     ) { $help += '<li><span>{0}</span><span>{1}</span></li>' -f $script:lang['Not-Applicable'], ($xml.xml.na)      }
+            $help += '<br/><li><span>{0}</span><span>{1}</span></li>' -f $script:lang['Applies-To'], ($xml.xml.applies).Replace(', ','<br/>')
         }
         Catch { $help = '' } # No help if XML is invalid
     }
@@ -719,14 +710,25 @@ Function DivLine
 [array]    $script:results        = @()
 [array]    $script:servers        = @()
 [hashtable]$script:appSettings    = @{}
+[hashtable]$script:sections       = @{'acc' = $script:lang['Accounts'];       #
+                                      'com' = $script:lang['Compliance'];      # 
+                                      'drv' = $script:lang['Drives'];          # List of sections, matched
+                                      'hvh' = $script:lang['HyperV-Host'];     # with the check short name
+                                      'net' = $script:lang['Network'];         # 
+                                      'reg' = $script:lang['Regional'];        #
+                                      'sec' = $script:lang['Security'];        # These are displayed in
+                                      'sys' = $script:lang['System'];          # the HTML report file
+                                      'vhv' = $script:lang['VMs-HyperV'];      #
+                                      'vmw' = $script:lang['VMs-VMware'];     #
+                                     }
 $tt = [System.Diagnostics.StopWatch]::StartNew()
 Check-CommandLine
 Start-QAProcess
 Show-Results
 
 $tt.Stop()
-Write-Host '  Approx Time Taken :' $tt.Elapsed.Minutes 'min,' $tt.Elapsed.Seconds 'sec' -ForegroundColor White
-Write-Host '  Reports Located In:' $script:qaOutput                                     -ForegroundColor White
-Write-Host (DivLine -Width $script:screenwidth)                                         -ForegroundColor Yellow
+Write-Host '  '$script:lang['TimeTaken'] $tt.Elapsed.Minutes 'min,' $tt.Elapsed.Seconds 'sec' -ForegroundColor White
+Write-Host '  '$script:lang['ReportsLocated'] $script:qaOutput                                -ForegroundColor White
+Write-Host (DivLine -Width $script:screenwidth)                                               -ForegroundColor Yellow
 Write-Host ''
 Write-Host ''

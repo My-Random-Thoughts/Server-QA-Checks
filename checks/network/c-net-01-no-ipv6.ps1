@@ -40,20 +40,20 @@ Function c-net-01-no-ipv6
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If ($keyval -eq 0xFFFFFFFF)    # All Disabled
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'IPv6 disabled globally'
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'IPv6 enabled globally'
 
         # Second, check each adapter
@@ -68,8 +68,8 @@ Function c-net-01-no-ipv6
         }
         Catch
         {
-            $result.pass     = 'Error'
-            $result.message += 'SCRIPT ERROR'
+            $result.pass     = $script:lang['Error']
+            $result.message += $script:lang['Script-Error']
             $result.data     = $_.Exception.Message
             Return $result
         }
@@ -89,8 +89,8 @@ Function c-net-01-no-ipv6
                 }
                 Catch
                 {
-                    $result.result  = 'Error'
-                    $result.message = 'SCRIPT ERROR'
+                    $result.result  = $script:lang['Error']
+                    $result.message = $script:lang['Script-Error']
                     $result.data    = $_.Exception.Message
                     Return $result
                 }
@@ -104,19 +104,19 @@ Function c-net-01-no-ipv6
 
             If ($ipv6Adapters.Count -gt 0)
             {
-                $result.result   = 'Fail'
+                $result.result   = $script:lang['Fail']
                 $result.message += ' and NIC(s) found with IPv6 enabled'
             }
             Else
             {
-                $result.result   = 'Pass'
+                $result.result   = $script:lang['Pass']
                 $result.message += ', but disabled on all NICs'
                 $result.data     = ''
             }
         }
         Else
         {
-            $result.result   = 'Pass'
+            $result.result   = $script:lang['Pass']
             $result.message += ', but disabled on all NICs'
             $result.data     = ''
         }

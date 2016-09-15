@@ -23,7 +23,7 @@ Function c-acc-01-local-users
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Local Users'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-acc-01-local-users'
 
     #... CHECK STARTS HERE ...#
@@ -39,8 +39,8 @@ Function c-acc-01-local-users
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -49,20 +49,20 @@ Function c-acc-01-local-users
     {
         If ($check.Count -gt 0)
         {
-            $result.result  = 'Fail'
-            $result.message = 'One or more local accounts exist'
+            $result.result  = $script:lang['Fail']
+            $result.message = $script:lang['A']
             $check | ForEach { $result.data += '{0},#' -f $_ }
         }
         Else
         {
-            $result.result  = 'Pass'
-            $result.message = 'No additional local accounts'
+            $result.result  = $script:lang['Pass']
+            $result.message = $script:lang['B']
         }
     }
     Else
     {
-        $result.result  = 'Warning'
-        $result.message = 'This is a workgroup server, is this correct.?'
+        $result.result  = $script:lang['Warning']
+        $result.message = $script:lang['C']
     }
 
     Return $result

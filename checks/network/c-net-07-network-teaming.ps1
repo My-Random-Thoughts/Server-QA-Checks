@@ -64,8 +64,8 @@ Function c-net-07-network-teaming
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -77,19 +77,19 @@ Function c-net-07-network-teaming
         {
             If ($check1.Count -gt 0)
             {
-                $result.result  = 'Manual'
+                $result.result  = $script:lang['Manual']
                 $result.message = 'Teamed network adpater(s) found, check they are configured correctly'
                 $check1 | ForEach { $result.data += '{0},#' -f $_ }
             }
             Else
             {
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = 'No teamed network adapter(s) found'
             }
         }
         Else
         {
-            $result.result  = 'N/A'
+            $result.result  = $script:lang['Not-Applicable']
             $result.message = 'Not a physical server'
         }
     }
@@ -97,24 +97,24 @@ Function c-net-07-network-teaming
     {
         If ($check1 -eq 'NOTEAMS')
         {
-            If ((Check-VirtualMachine $serverName) -eq $true)
+            If ((Check-VMware $serverName) -eq $true)
             {
-                $result.result  = 'N/A'
+                $result.result  = $script:lang['Not-Applicable']
                 $result.message = 'Not a phsical server'
                 $result.data    = ''
             }
             Else
             {
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = 'There are no network teams configured on this server'
                 $result.data    = 'All phyiscal servers should have teamed network adapters'
             }
         }
         Else
         {
-            If ((Check-VirtualMachine $serverName) -eq $true)
+            If ((Check-VMware $serverName) -eq $true)
             {
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = 'Native teaming enabled on virtual machine'
                 $result.data    = 'Virtual machines should not be using network teaming'
             }
@@ -176,17 +176,17 @@ Function c-net-07-network-teaming
 
                     If ($pass -eq $true)
                     {
-                        $result.result  = 'Pass'
+                        $result.result  = $script:lang['Pass']
                     }
                     Else
                     {
-                        $result.result  = 'Fail';
+                        $result.result  = $script:lang['Fail'];
                         $result.message += ', Team configuration is not set correctly'
                     }
                 }
                 Else
                 {
-                    $result.result  = 'Fail'
+                    $result.result  = $script:lang['Fail']
                     $result.message = 'There are no network teams configured on this server'
                     $result.data    = 'All phyiscal servers should have teamed network adapters'
                 }
@@ -195,7 +195,7 @@ Function c-net-07-network-teaming
     }
     Else
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Operating system not supported'
         $result.data    = '{0}' -f $check
     }

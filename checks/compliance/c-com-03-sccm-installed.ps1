@@ -23,7 +23,7 @@ Function c-com-03-sccm-installed
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'SCCM Installed'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-com-03-sccm-installed'
 
     #... CHECK STARTS HERE ...#
@@ -35,8 +35,8 @@ Function c-com-03-sccm-installed
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -54,8 +54,8 @@ Function c-com-03-sccm-installed
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -67,24 +67,24 @@ Function c-com-03-sccm-installed
             [boolean]$portTest = (Test-Port -serverName $valName -Port $valPort)
             If ($portTest -eq $true)
             {
-                $result.result  = 'Pass'
+                $result.result  = $script:lang['Pass']
                 $result.message = 'SCCM agent found,#Port {0} open to {1}' -f $valPort, $valName
             }
             Else
             {
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = 'SCCM agent found,#Port {0} not open to {1}' -f $valPort, $valName
             }
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'SCCM agent found,#Agent not configured with port and/or servername'
         }
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'SCCM agent not found, install required'
     }
 

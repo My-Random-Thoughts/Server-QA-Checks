@@ -23,7 +23,7 @@ Function c-com-02-scom-monitoring-installed
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Monitoring Installed'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-com-02-scom-monitoring-installed'
 
     #... CHECK STARTS HERE ...#
@@ -43,8 +43,8 @@ Function c-com-02-scom-monitoring-installed
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -69,8 +69,8 @@ Function c-com-02-scom-monitoring-installed
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -82,27 +82,27 @@ Function c-com-02-scom-monitoring-installed
             [boolean]$portTest = (Test-Port -serverName $valName -Port $valPort)
             If ($portTest -eq $true)
             {
-                $result.result  = 'Pass'
+                $result.result  = $script:lang['Pass']
                 $result.message = '{0} found,#Port {1} open to {2}' -f $prodName, $valPort, $valName
                 $result.data    = 'Version {0}' -f $prodVer
             }
             Else
             {
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = '{0} found,#Port {1} not open to {2}' -f $prodName, $valPort, $valName
                 $result.data    = 'Version {0}' -f $prodVer
             }
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = '{0} found,#Agent not configured with port and/or servername' -f $prodName
             $result.data    = 'Version {0}' -f $prodVer
         }
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Monitoring software not found, install required'
     }
 

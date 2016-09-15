@@ -52,32 +52,32 @@ Function c-vmw-01-tools-version
 
         If ($check -like 'VMware Tools are up-to-date*')
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'VMware tools are up to date'
             $result.data    = 'Current Version: {0}' -f $versi
         }
         ElseIf ($check -like 'A new version of VMware Tools is available*')
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'VMware tools can be upgraded'
             $result.data    = 'Current Version: {0}' -f $versi
         }
         ElseIf ($check.StartsWith('Usage:') -eq $true)    # 'UPGRADE' option not available
         {                                                 # Older versions and some OSes.
-            $result.result  = 'Manual'
+            $result.result  = $script:lang['Manual']
             $result.message = 'Unable to check the VMware Tools upgrade status'
             $result.data    = 'Current version: {0}.  Open vSphere client, locate "{1}", check to see if the VMware tools can be upgraded, and do so if needed' -f $versi, $serverName
         }
         Else
         {
-            $result.result  = 'Manual'
+            $result.result  = $script:lang['Manual']
             $result.message = 'Unable to check the VMware Tools version or upgrade status'
             $result.data    = 'Open vSphere client, locate "{0}", check to see if the VMware tools can be upgraded, and do so if needed' -f $serverName
         }
     }
     Else
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Not a virtual machine'
     }
 

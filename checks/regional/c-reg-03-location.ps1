@@ -38,8 +38,8 @@ Function c-reg-03-location
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -48,19 +48,19 @@ Function c-reg-03-location
     {
         If ($keyVal -eq $script:appSettings['DefaultLocation'])
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'Regional location set correctly'
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Regional location incorrectly set to {0}' -f $keyVal
             $result.data    = $keyVal.toString()
         }
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Registry setting not found'
         $result.data    = ''
     }

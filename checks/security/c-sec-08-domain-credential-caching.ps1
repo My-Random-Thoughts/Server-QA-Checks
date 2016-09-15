@@ -6,7 +6,7 @@
 
     PASS:    Domain credential caching is disabled
     WARNING:
-    FAIL:    Domain credential caching is enabled / Registry setting not found
+    FAIL:    Domain credential cahing is enabled / Registry setting not found
     MANUAL:
     NA:
 
@@ -38,8 +38,8 @@ Function c-sec-08-domain-credential-caching
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -48,18 +48,18 @@ Function c-sec-08-domain-credential-caching
     {
         If ($keyVal -eq $script:appSettings['EnableDomainCredentialCaching'])
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'Domain credential caching is disabled'
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Domain credential caching is enabled'
         }
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Registry setting not found'
         $result.data    = ''
     }

@@ -39,8 +39,8 @@ Function c-net-04-binding-order
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -55,7 +55,7 @@ Function c-net-04-binding-order
                 [string]$deviceid = ($bind -split '\\')[2]
                 If ($deviceid -notlike '{*}')
                 {
-                    $result.result  = 'Fail'
+                    $result.result  = $script:lang['Fail']
                     $result.message = 'No network adapters found'
                     $result.data    = ''
                     Return $result
@@ -66,8 +66,8 @@ Function c-net-04-binding-order
             }
             Catch
             {
-                $result.result  = 'Error'
-                $result.message = 'SCRIPT ERROR'
+                $result.result  = $script:lang['Error']
+                $result.message = $script:lang['Script-Error']
                 $result.data    = $_.Exception.Message
                 Return $result
             }
@@ -81,7 +81,7 @@ Function c-net-04-binding-order
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Registry setting not found'
         $result.data    = ''
         Return $result
@@ -92,7 +92,7 @@ Function c-net-04-binding-order
 
     If ($bindingorder -eq $null)
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = '{0} or {1} adapters not listed' -f $script:appSettings['ProductionAdapterNames'][0], $script:appSettings['ManagementAdapterNames'][0]
         $result.data    = ''
         Return $result
@@ -105,14 +105,14 @@ Function c-net-04-binding-order
         If ($bindingorder[0] -like '{0}*' -f $p )
         {
             $prodExists     = $true
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'Binding order correctly set'
             Break
         }
         ElseIf ($bindingorder -like '*{0}*' -f $p)
         {
             $prodExists     = $true
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Binding order incorrect, {0} should be first' -f $script:appSettings['ProductionAdapterNames'][0]
             Break
         }
@@ -131,14 +131,14 @@ Function c-net-04-binding-order
             If ($bindingorder[0] -like '{0}*' -f $m)
             {
                 $mgmtExists     = $true
-                $result.result  = 'Pass'
+                $result.result  = $script:lang['Pass']
                 $result.message = 'Binding order correctly set'
                 Break
             }
             ElseIf ($bindingorder -like '*{0}*' -f $m)
             {
                 $mgmtExists     = $true
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = 'Binding order incorrect, {0} should be first' -f $script:appSettings['ManagementAdapterNames'][0]
                 Break
             }
@@ -151,7 +151,7 @@ Function c-net-04-binding-order
 
     If (($prodExists -eq $false) -and ($mgmtExists -eq $false))
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = '{0} or {1} adapters not listed' -f $script:appSettings['ProductionAdapterNames'][0], $script:appSettings['ManagementAdapterNames'][0]
     }
     

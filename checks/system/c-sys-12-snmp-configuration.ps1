@@ -35,8 +35,8 @@ Function c-sys-12-snmp-configuration
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -53,15 +53,15 @@ Function c-sys-12-snmp-configuration
         }
         Catch
         {
-            $result.result  = 'Error'
-            $result.message = 'SCRIPT ERROR'
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
             $result.data    = $_.Exception.Message
             Return $result
         }
 
         If (($regKey) -and ($keyVal.Count -gt 0))
         {
-            $result.result  = 'Manual'
+            $result.result  = $script:lang['Manual']
             $result.message = 'SNMP Service installed, communities listed'
 
             ForEach ($key In $keyVal)
@@ -75,19 +75,19 @@ Function c-sys-12-snmp-configuration
         {
             If ($check.StartMode -eq 'Disabled')
             {
-                $result.result  = 'Pass'
+                $result.result  = $script:lang['Pass']
                 $result.message = 'SNMP Service installed, but disabled'
             }
             Else
             {
-                $result.result  = 'Warning'
+                $result.result  = $script:lang['Warning']
                 $result.message = 'SNMP Service installed, no communities configured'
             }
         }
     }
     Else
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'SNMP Service not installed'
     }
 

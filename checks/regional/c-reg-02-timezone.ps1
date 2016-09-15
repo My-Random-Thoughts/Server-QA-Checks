@@ -35,20 +35,20 @@ Function c-reg-02-timezone
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If ($script:appSettings['TimeZoneNames'] -contains $check )
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'Server timezone set correctly'
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Server timezone is incorrect and should be set to {0}' -f $script:appSettings['TimeZoneNames']
         $result.data    = $check
     }

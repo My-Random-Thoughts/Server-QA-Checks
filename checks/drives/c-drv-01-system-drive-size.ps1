@@ -45,8 +45,8 @@ Function c-drv-01-system-drive-size
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -55,20 +55,20 @@ Function c-drv-01-system-drive-size
     {
         If ($sizeGB -ge $script:appSettings['MinimumSystemDriveSize'])
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'System drive ({0}) meets minimum required size' -f $check1
             $result.data    = 'Size: {0}gb' -f $sizeGB
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'System drive ({0}) is too small, should be {1}gb' -f $check1, $script:appSettings['MinimumSystemDriveSize']
             $result.data    = 'Size: {0}gb' -f $sizeGB
         }
     }
     Else
     {
-        $result.result  = 'Manual'
+        $result.result  = $script:lang['Manual']
         $result.message = 'Unable to get drive size, please check manually'
         $result.data    = 'System drive needs to be {0}gb or larger' -f $script:appSettings['MinimumSystemDriveSize']
     }

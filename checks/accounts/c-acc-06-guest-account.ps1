@@ -23,7 +23,7 @@ Function c-acc-06-guest-account
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Guest Account'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-acc-06-guest-account'
 
     #... CHECK STARTS HERE ...#
@@ -35,27 +35,27 @@ Function c-acc-06-guest-account
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If ([string]::IsNullOrEmpty($guest) -eq $true)
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Guest account does not exist'
     }
     Else
     {
         If ($guest.Disabled -eq $true)
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'Guest account is disabled'
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Guest account has not been disabled'
             $result.data    = $guest.Name
         }

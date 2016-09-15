@@ -23,7 +23,7 @@ Function c-com-07-sentinel-agent-installed
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Sentinel Agent Installed'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-com-07-sentinel-agent-installed'
 
     #... CHECK STARTS HERE ...#
@@ -31,7 +31,7 @@ Function c-com-07-sentinel-agent-installed
     [string]$verCheck = Win32_Product -serverName $serverName -displayName 'NetIQ Sentinel Agent'
     If ([string]::IsNullOrEmpty($verCheck) -eq $false)
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'Sentinel agent found,#'
         $result.data    = 'Version {0}' -f $verCheck
 
@@ -52,8 +52,8 @@ Function c-com-07-sentinel-agent-installed
         }
         Catch
         {
-            $result.result  = 'Error'
-            $result.message = 'SCRIPT ERROR'
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
             $result.data    = $_.Exception.Message
             Return $result
         }
@@ -68,11 +68,11 @@ Function c-com-07-sentinel-agent-installed
         }
 
         If ([string]::IsNullOrEmpty($connected) -eq $false) { $result.message += ('Port {0} open to {1}'     -f $($connected.Split('|')[1]), $($connected.Split('|')[0]))          }
-        Else                                                { $result.message += ('Port {0} not open to {1}' -f $($valCons.port[0]), $($valCons.host[0])); $result.result = 'Fail' }
+        Else                                                { $result.message += ('Port {0} not open to {1}' -f $($valCons.port[0]), $($valCons.host[0])); $result.result = $script:lang['Fail'] }
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Sentinel agent not found, install required'
     }
 

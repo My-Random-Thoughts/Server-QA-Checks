@@ -38,33 +38,33 @@ Function c-vmw-04-lsi-sas-controller
         }
         Catch
         {
-            $result.result  = 'Error'
-            $result.message = 'SCRIPT ERROR'
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
             $result.data    = $_.Exception.Message
             Return $result
         }
 
         If ($check.Count -gt 0)
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'Disk controller set correctly'
 
             $check | ForEach { If ($_ -ne $script:appSettings['DiskControllerDeviceType']) { $result.data += '{0},#' -f $_ } }
             If ([string]::IsNullOrEmpty($result.data) -eq $false)
             {
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = 'Disk controller not set correctly'
             }
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'No SCSI controllers found'
         }
     }
     Else
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Not a virtual machine'
     }
 

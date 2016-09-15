@@ -43,8 +43,8 @@ Function c-sys-05-system-event-log
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -55,13 +55,13 @@ Function c-sys-05-system-event-log
         [string]$outFile = '{0}EventLogs\{1}-Error-Events-System.csv' -f $resultPath, $serverName.ToUpper()
         $check | Export-Csv $outFile -NoTypeInformation
 
-        $result.result  = 'Warning'
+        $result.result  = $script:lang['Warning']
         $result.message = 'Errors were found in the system event log'
         $result.data    = (Split-Path -Path $outFile -Leaf)
     }
     Else
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'No errors found in system event log'
     }
     

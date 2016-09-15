@@ -38,8 +38,8 @@ Function c-sec-15-firewall-state
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -51,12 +51,12 @@ Function c-sec-15-firewall-state
 
     If ($result.data -eq '')
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'Windows firewall is set correctly'
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Windows firewall is not set correctly'
         $result.data    = ($result.data).Replace('0', 'disabled').Replace('1', 'enabled')
     }

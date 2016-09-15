@@ -36,18 +36,18 @@ Function c-net-03-network-adapter-labels
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
-    $result.result  = 'Pass'
+    $result.result  = $script:lang['Pass']
     $result.message = 'All adapters renamed from default'
 
     If ($check.Count -gt 0)
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'An adapter was found with the default name'
         $check | ForEach { $result.data += '{0},#' -f $_ }
     }

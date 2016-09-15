@@ -37,8 +37,8 @@ Function c-vmw-07-cd-dvd-floppy-mounted
         }
         Catch
         {
-            $result.result  = 'Error'
-            $result.message = 'SCRIPT ERROR'
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
             $result.data    = $_.Exception.Message
             Return $result
         }
@@ -47,19 +47,19 @@ Function c-vmw-07-cd-dvd-floppy-mounted
 
         If ([string]::IsNullOrEmpty($result.data) -eq $false)
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'One or more CD/ROM or floppy drives are mounted'
         }
         Else
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'No CD/ROM or floppy drives are mounted'
             $result.data    = ''
         }
     }
     Else
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Not a virtual machine'
     }
 

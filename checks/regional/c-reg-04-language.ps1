@@ -38,8 +38,8 @@ Function c-reg-04-language
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -48,19 +48,19 @@ Function c-reg-04-language
     {
         If ($keyVal -eq $script:appSettings['DefaultLanguage'])
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'Keyboard layout is set correctly'
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Keyboard layout is not set correctly'
             $result.data    =  $keyVal
         }
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Registry setting not found'
         $result.data    = ''
     }

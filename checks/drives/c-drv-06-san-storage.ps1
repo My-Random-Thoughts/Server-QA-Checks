@@ -45,27 +45,27 @@ Function c-drv-06-san-storage
         }
         Catch
         {
-            $result.result  = 'Error'
-            $result.message = 'SCRIPT ERROR'
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
             $result.data    = $_.Exception.Message
             Return $result
         }        
 
         If ($found -eq $true)
         {
-            $result.result  = 'Manual'
+            $result.result  = $script:lang['Manual']
             $result.message = '{0} found'   -f $prodName
             $result.data    = 'Version {0}' -f $prodVer
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'SAN storage software not found, install required'
         }
     }
     Else
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Not a physical machine'
     }
 

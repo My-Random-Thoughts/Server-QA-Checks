@@ -38,8 +38,8 @@ Function c-sec-10-anonymous-pipe-share-access
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -48,18 +48,18 @@ Function c-sec-10-anonymous-pipe-share-access
     {
         If ($keyVal -eq $script:appSettings['RejectAnnonymousShareAccess'])
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'Restrict annonymous pipe/share access is enabled'
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Restrict annonymous pipe/share access is disabled'
         }
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Registry setting not found'
         $result.data    = ''
     }

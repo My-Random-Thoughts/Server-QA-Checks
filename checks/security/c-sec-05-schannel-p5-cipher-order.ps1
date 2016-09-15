@@ -39,8 +39,8 @@ Function c-sec-05-schannel-p5-cipher-order
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -49,18 +49,18 @@ Function c-sec-05-schannel-p5-cipher-order
     {
         If ($keyVal -eq $script:appSettings['CipherSuiteOrder'])
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'Cipher suite order set correctly'
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Cipher suite order not set correctly'
         }
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Cipher suite order set to the default value'
     }
 

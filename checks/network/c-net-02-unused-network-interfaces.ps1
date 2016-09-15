@@ -35,15 +35,15 @@ Function c-net-02-unused-network-interfaces
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If ($check.Count -gt 0)
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'DHCP enabled adapters found'
         $check | ForEach {
             $nicName = $_.GetRelated('Win32_NetworkAdapter') | Select-Object -ExpandProperty NetConnectionID
@@ -52,7 +52,7 @@ Function c-net-02-unused-network-interfaces
     }
     Else
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'No DHCP enabled adapters found'
     }
 

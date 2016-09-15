@@ -37,26 +37,26 @@ Function c-hvh-01-server-core
 
             If ([string]::IsNullOrEmpty($check) -eq $true)
             {
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = 'Hyper-V is not using Windows Server Core'
             }
             Else
             {
-                $result.result  = 'Pass'
+                $result.result  = $script:lang['Pass']
                 $result.message = 'Hyper-V is using Windows Server Core'
             }
         }
         Catch
         {
-            $result.result  = 'Error'
-            $result.message = 'SCRIPT ERROR'
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
             $result.data    = $_.Exception.Message
             Return $result
         }
     }
     Else
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Not a Hyper-V server'
     }
 

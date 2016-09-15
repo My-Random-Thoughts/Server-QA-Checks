@@ -36,21 +36,21 @@ Function c-sys-03-services-not-started
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If ($check.Count -gt 0)
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'An auto-start service was found not running'
         $check | ForEach { $result.data += '{0},#' -f $_ }
     }
     Else
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'All auto-start services are running'
     }
     

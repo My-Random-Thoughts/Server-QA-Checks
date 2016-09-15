@@ -36,8 +36,8 @@ Function c-sys-04-services-not-stopped
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -54,18 +54,18 @@ Function c-sys-04-services-not-stopped
 
         If ($result.data.Length -gt 1)
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'One or more services are configured incorrectly'
         }
         Else
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'All services are configured correctly'
         }
     }
     Else
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'All services are configured correctly'
     }
     

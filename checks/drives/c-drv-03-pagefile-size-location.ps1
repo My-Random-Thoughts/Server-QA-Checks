@@ -50,22 +50,22 @@ Function c-drv-03-pagefile-size-location
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If ($check3 -eq $true)
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Pagefile is system managed, it should be set to a custom size of {0}mb' -f $script:appSettings['FixedPageFileSize']
     }
     Else
     {
         If (($check2 -eq $null) -and ($check3 -eq $false))
         {
-            $result.result  = 'Manual'
+            $result.result  = $script:lang['Manual']
             $result.message = 'Unable to get page file information, please check manually'
             $result.data    = 'Pagefile should be set to Custom,#with Initial and Maximum sizes set to ' + $script:appSettings['FixedPageFileSize'] + 'mb'
         }
@@ -73,24 +73,24 @@ Function c-drv-03-pagefile-size-location
         {
             If ($check2.MaximumSize -eq 0) 
             {
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = 'Pagefile is system managed, it should be set to a custom size of {0}mb' -f $script:appSettings['FixedPageFileSize']
             }
             ElseIf (($check2.MaximumSize -eq $script:appSettings['FixedPageFileSize']) -and ($check2.InitialSize -eq $script:appSettings['FixedPageFileSize'])) 
             {
-                $result.result  = 'Pass'
+                $result.result  = $script:lang['Pass']
                 $result.message = 'Pagefile is set correctly'
             }
             Else
             {
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = 'Pagefile should be set on the system drive, to Custom, with Initial and Maximum sizes set to ' + $script:appSettings['FixedPageFileSize'] + 'mb'
                 $result.data    = 'Location: {0},#Initial Size: {1}mb,#Maximum Size: {2}mb' -f $check2.Name, $check2.InitialSize, $check2.MaximumSize
             }
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Pagefile does not exist on {0} drive' -f $check1
             $result.data    = ''
         }

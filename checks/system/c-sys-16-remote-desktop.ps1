@@ -41,27 +41,27 @@ Function c-sys-16-remote-desktop
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If (($check1 -eq '1') -and ($check2 -eq '1'))
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'Secure remote desktop enabled'
     }
     Else
     {
         If ($check1 -eq '0')
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Secure remote desktop disabled'
         }
         Else
         {
-            $result.result  = 'Warning'
+            $result.result  = $script:lang['Warning']
             $result.message = 'Secure remote desktop enabled'
             $result.data    = 'Network Level Authentication is not set'
         }

@@ -37,8 +37,8 @@ Function c-vmw-06-total-vm-size
         }
         Catch
         {
-            $result.result  = 'Error'
-            $result.message = 'SCRIPT ERROR'
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
             $result.data    = $_.Exception.Message
             Return $result
         }
@@ -47,20 +47,20 @@ Function c-vmw-06-total-vm-size
         $check | ForEach { $size += ($_ / 1GB) }
         If ($size -gt '1023')
         {
-            $result.result  = 'Warning'
+            $result.result  = $script:lang['Warning']
             $result.message = 'VM is larger than 1TB.  Make sure there is an engineering exception in place for this'
             $result.data    = $size.ToString() + ' GB'
         }
         Else
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'VM is smaller than 1TB'
             $result.data    = $size.ToString() + ' GB'
         }
     }
     Else
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Not a virtual machine'
     }
 

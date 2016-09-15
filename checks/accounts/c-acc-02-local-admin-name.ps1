@@ -23,7 +23,7 @@ Function c-acc-02-local-admin-name
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Local Admin Name'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-acc-02-local-admin-name'
 
     #... CHECK STARTS HERE ...#
@@ -35,8 +35,8 @@ Function c-acc-02-local-admin-name
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -55,12 +55,12 @@ Function c-acc-02-local-admin-name
 
     If ($accsFound -gt 0)
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'A local admin account was found that needs to be renamed'
     }
     Else
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'Local admin account has been renamed'
     }
     

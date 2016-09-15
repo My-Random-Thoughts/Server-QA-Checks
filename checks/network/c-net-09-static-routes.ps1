@@ -35,8 +35,8 @@ Function c-net-09-static-routes
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -50,14 +50,14 @@ Function c-net-09-static-routes
     
     If ($RoutesToCheck -eq $false)
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'No static routes to check'
         Return $result
     }
 
     If ([string]::IsNullOrEmpty($check) -eq $true)
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'No static routes present'
     }
     Else
@@ -80,12 +80,12 @@ Function c-net-09-static-routes
 
         If ($result.data -eq '')
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'All static routes are present'
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'One or more static routes are missing or incorrect'
         }
     }

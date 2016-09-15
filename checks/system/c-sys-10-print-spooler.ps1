@@ -44,15 +44,15 @@ Function c-sys-10-print-spooler
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If ($check -eq 'STOPPED')
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Print Spooler service is not running'
     }
     ElseIf (($check -ne $null) -and ($check.Count -gt 0))
@@ -69,27 +69,27 @@ Function c-sys-10-print-spooler
         {
             If ($keyVal -eq $("$env:SystemDrive\Windows\system32\spool\PRINTERS"))
             {
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = 'Spool directory is set to the default path and needs to be changed'
                 $result.data    = 'Location: {0},#{1}' -f $keyVal, $result.data
             }
             Else 
             {
-                $result.result  = 'Pass'
+                $result.result  = $script:lang['Pass']
                 $result.message = 'Printers found, and spool directory is not set to default path'
                 $result.data    = 'Location: {0},#{1}' -f $keyVal, $result.data
             }
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Registry setting not found'
             $result.data    = ''
         }
     }
     Else
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'No printers found'
     }
 

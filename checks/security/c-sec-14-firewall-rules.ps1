@@ -59,8 +59,8 @@ Function c-sec-14-firewall-rules
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -79,7 +79,7 @@ Function c-sec-14-firewall-rules
 
         If ($check2.count -gt 0)
         {
-            $result.result  = 'Warning'
+            $result.result  = $script:lang['Warning']
             $result.message = 'One or more additional firewall rules exist, check they are required'
             $check2 | ForEach-Object {
                 If ($_.Active -eq 'False') {$act=' (Disabled)'} Else {$act=''}
@@ -87,13 +87,13 @@ Function c-sec-14-firewall-rules
         }
         Else
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'No additional firewall rules exist'
         }
     }
     Else
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'No additional firewall rules exist'
     }
 

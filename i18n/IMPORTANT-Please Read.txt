@@ -2,11 +2,9 @@
   IMPORTANT
   ^^^^^^^^^
 
-  The EN-GB.ps1 file is recreated every time the COMPLILE.PS1 scirpt is run.
+  The EN-GB_HELP.ps1 file is recreated every time the COMPLILE.PS1 scirpt is run.
   This makes sure that the data in this file is fully up to date.
   The data for this file is taken from the headers of every QA check script.
 
- 
- 
   If you want to make your own language file, rename it someting different,
   and edit the LANGUAGE setting in the SETTINGS folder

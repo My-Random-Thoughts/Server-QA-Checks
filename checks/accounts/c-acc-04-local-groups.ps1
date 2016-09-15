@@ -23,7 +23,7 @@ Function c-acc-04-local-groups
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Local Groups'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-acc-04-local-groups'
 
     #... CHECK STARTS HERE ...#
@@ -43,8 +43,8 @@ Function c-acc-04-local-groups
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -53,19 +53,19 @@ Function c-acc-04-local-groups
     {
         If ($check[0] -eq '!!DCignore')
         {
-            $result.result  = 'N/A'
+            $result.result  = $script:lang['Not-Applicable']
             $result.message = 'Server is a domain controller'
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'One or more local groups exist'
             $check | ForEach { $result.data += '{0},#' -f $_ }
         }
     }
     Else
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'No additional local accounts'
     }
     Return $result

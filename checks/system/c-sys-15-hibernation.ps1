@@ -41,21 +41,21 @@ Function c-sys-15-hibernation
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If ($check2 -like '*hiberfil.sys')
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Hibernation is currently enabled'
         $result.data    = $check2
     }
     Else
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'Hibernation is currently disabled'
         $result.data    = $check2
     }

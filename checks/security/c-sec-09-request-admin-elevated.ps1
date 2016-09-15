@@ -38,8 +38,8 @@ Function c-sec-09-request-admin-elevated
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -48,7 +48,7 @@ Function c-sec-09-request-admin-elevated
     {
         If ($script:appSettings['ElevatePromptForAdminCredentials'] -contains $keyVal)
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'Prompt for credentials is enabled'
             $result.data    = ''
         }
@@ -65,13 +65,13 @@ Function c-sec-09-request-admin-elevated
                 5 { $result.data += 'Prompt for consent for non-Windows binaries'  }
             }
         
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'System is not set to "Prompt for credentials" when launching an application with elevated privileges'
         }
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Registry setting not found'
         $result.data    = ''
     }

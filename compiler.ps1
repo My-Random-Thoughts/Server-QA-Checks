@@ -42,6 +42,21 @@ Function DivLine
 Function Load-IniFile
 {
     Param ([string]$InputFile)
+
+    If ((Test-Path -Path $InputFile) -eq $false)
+    {
+        Switch (Split-Path -Path (Split-Path -Path $InputFile -Parent) -Leaf)
+        {
+            'i18n'     { [string]$errMessage = '  ERROR: Language ' }
+            'settings' { [string]$errMessage = '  ERROR: Settings ' }
+            Default    { [string]$errMessage = (Split-Path -Path (Split-Path -Path $InputFile -Parent) -Leaf) }
+        }
+        Write-Host ($errMessage + 'file "{0}" not found.' -f (Split-Path -Path $InputFile -Leaf)) -ForegroundColor Red
+        Write-Host  '  ERROR:'$InputFile                                                          -ForegroundColor Red
+        Write-Host ''
+        Break
+    }
+
     [string]   $comment = ";"
     [string]   $header  = "^\s*(?!$($comment))\s*\[\s*(.*[^\s*])\s*]\s*$"
     [string]   $item    = "^\s*(?!$($comment))\s*([^=]*)\s*=\s*(.*)\s*$"
@@ -59,7 +74,8 @@ Clear-Host
 Write-Header -Message 'QA Script Engine Check Compiler' -Width $ws
 
 # Load settings file
-[hashtable]$iniSettings = (Load-IniFile -InputFile ("$path\settings\$Settings"))
+[hashtable]$iniSettings = (Load-IniFile -InputFile ("$path\settings\$Settings" ))
+[hashtable]$iniStrings  = (Load-IniFile -InputFile ("$path\i18n\{0}_text.ps1" -f ($iniSettings['settings']['language'])))
 [string]$shared = "Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }"
 
 [string]$scriptHeader = @"
@@ -156,19 +172,42 @@ $qaChecks | ForEach-Object {
     Out-File -FilePath $outPath -InputObject "`$c$($_.Name.Substring(2, 6).Replace('-','')) = {"            -Encoding utf8 -Append
     Out-File -FilePath $outPath -InputObject ($shared)                                                      -Encoding utf8 -Append
     
-    # Add each checks settings
+    Out-File -FilePath $outPath -InputObject '$script:lang        = @{}'                                    -Encoding utf8 -Append
     Out-File -FilePath $outPath -InputObject '$script:appSettings = @{}'                                    -Encoding utf8 -Append
-    [string]$iniSection = ($_.Name).Substring(1, 8).Replace('-','')
+    [string]$checkName = ($_.Name).Substring(1, 8).Replace('-','')
+
+    # Add each checks settings
     Try
     {
-        $iniSettings[$iniSection].Keys | ForEach {
-            [string]$value = $iniSettings[$iniSection][$_]
+        $iniSettings[$checkName].Keys | Sort-Object | ForEach {
+            [string]$value = $iniSettings[$checkName][$_]
             If ($value -eq '') { $value = "''" }
             [string]$appSetting = ('$script:appSettings[' + "'{0}'] = {1}" -f $_, $value)
             Out-File -FilePath $outPath -InputObject $appSetting                                            -Encoding utf8 -Append
         }
     }
     Catch { }
+
+    # Add language specific strings to each check
+    Try
+    {
+        $iniStrings['common'].Keys | Sort-Object | ForEach {
+            [string]$value = $iniStrings['common'][$_]
+            If ($value -eq '') { $value = "''" }
+            [string]$lang = ('$script:lang[' + "'{0}'] = {1}" -f $_, $value)
+            Out-File -FilePath $outPath -InputObject $lang                                                  -Encoding utf8 -Append
+        }
+
+        $iniStrings[$checkName].Keys | Sort-Object | ForEach {
+            [string]$value = $iniStrings[$checkName][$_]
+            If ($value -eq '') { $value = "''" }
+            [string]$lang = ('$script:lang[' + "'{0}'] = {1}" -f $_, $value)
+            Out-File -FilePath $outPath -InputObject $lang                                                  -Encoding utf8 -Append
+        }
+    }
+    Catch { }
+    
+
 
     # Add the check itself
     Out-File -FilePath $outPath -InputObject (Get-Content -Path ($_.FullName))                              -Encoding utf8 -Append
@@ -199,7 +238,7 @@ $qaChecks | ForEach-Object {
         }
     }
     $xmlHelp  += "</xml>"
-    $qaHelp.AppendLine('$script:qaNotes[' + "'$iniSection']='$xmlHelp'") | Out-Null
+    $qaHelp.AppendLine('$script:qahelp[' + "'$checkName']='$xmlHelp'") | Out-Null
 
     # Complete this check
     Out-File -FilePath $outPath -InputObject '}'                                                            -Encoding utf8 -Append
@@ -213,6 +252,17 @@ Out-File -FilePath "$path\i18n\en-gb_help.ps1" -InputObject ($qaHelp.ToString())
 [string]$language = ($iniSettings['settings']['language'])
 If (($language -eq '') -or ((Test-Path -Path "$path\i18n\$language.ps1") -eq $false)) { $language = 'en-gb' }
 Out-File -FilePath $outPath -InputObject (Get-Content ("$path\i18n\$language" + "_help.ps1"))               -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
+Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                             -Encoding utf8 -Append
+Try
+{
+    $iniStrings['engine'].Keys | Sort-Object | ForEach {
+        [string]$value = $iniStrings['engine'][$_]
+        If ($value -eq '') { $value = "''" }
+        [string]$lang = ('$script:lang[' + "'{0}'] = {1}" -f $_, $value)
+        Out-File -FilePath $outPath -InputObject $lang                                                      -Encoding utf8 -Append
+    }
+}
+Catch { }
 Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                             -Encoding utf8 -Append
 Out-File -FilePath $outPath -InputObject (Get-Content ($path + '\engine\main.ps1'))                         -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
 Write-Host ''

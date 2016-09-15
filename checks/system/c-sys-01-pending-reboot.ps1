@@ -30,7 +30,7 @@ Function c-sys-01-pending-reboot
 
     Try {
         $result.data = ''
-        $reg = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $machineName)
+        $reg = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
 
         Try {
             $regKey = $reg.OpenSubKey('SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing')
@@ -65,20 +65,20 @@ Function c-sys-01-pending-reboot
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If ($result.data -eq '')
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'Server is not waiting for a reboot'
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Server is waiting for a reboot'
     }
 

@@ -23,7 +23,7 @@ Function c-com-04-netbackup-agent-installed
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'NetBackup Agent Installed'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-com-04-netbackup-agent-installed'
     
     #... CHECK STARTS HERE ...#
@@ -31,7 +31,7 @@ Function c-com-04-netbackup-agent-installed
     [string]$verCheck = Win32_Product -serverName $serverName -displayName $script:appSettings['ProductName']
     If ([string]::IsNullOrEmpty($verCheck) -eq $false)
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = '{0} found,#' -f $script:appSettings['ProductName']
         $result.data    = 'Version {0}' -f $verCheck
 
@@ -45,8 +45,8 @@ Function c-com-04-netbackup-agent-installed
         }
         Catch
         {
-            $result.result  = 'Error'
-            $result.message = 'SCRIPT ERROR'
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
             $result.data    = $_.Exception.Message
             Return $result
         }
@@ -55,7 +55,7 @@ Function c-com-04-netbackup-agent-installed
         {
             [boolean]$portTest = (Test-Port -serverName $server -Port 1556)
             If   ($portTest -eq $true) {     $result.message += ('Port 1556 open to {0},#'     -f $server) }
-            Else { $result.result = 'Fail';  $result.message += ('Port 1556 not open to {0},#' -f $server) }
+            Else { $result.result = $script:lang['Fail'];  $result.message += ('Port 1556 not open to {0},#' -f $server) }
         }
     }
     Else
@@ -68,7 +68,7 @@ Function c-com-04-netbackup-agent-installed
                 [string]$verExist = Win32_Product -serverName $serverName -displayName $_
                 If ([string]::IsNullOrEmpty($verCheck) -eq $false)
                 {
-                    $result.result  = 'Fail'
+                    $result.result  = $script:lang['Fail']
                     $result.message = '{0} not found' -f $script:appSettings['ProductName']
                     $result.data    = 'Backup agent software not found, but this server has {0} installed which requires it' -f $_
                     $found          = $true
@@ -77,7 +77,7 @@ Function c-com-04-netbackup-agent-installed
 
             If ((Check-DomainController $serverName) -eq $true)
             {
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = '{0} not found' -f $script:appSettings['ProductName']
                 $result.data    = 'Backup agent software not found, but this server is a domain controller which requires it'
                 $found          = $true
@@ -85,7 +85,7 @@ Function c-com-04-netbackup-agent-installed
 
             If ($found -eq $false)
             {
-                $result.result  = 'Manual'
+                $result.result  = $script:lang['Manual']
                 $result.message = '{0} not found, VADP backup.?' -f $script:appSettings['ProductName']
                 $result.data    = 'Is this server backed up via VADP.?  Manually check vCenter annotations, and look for "NetBackup.VADP: 1"'
             }
@@ -93,7 +93,7 @@ Function c-com-04-netbackup-agent-installed
         Else
         {
             # Physical server
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = '{0} not found' -f $script:appSettings['ProductName']
             $result.data    = ''
         }

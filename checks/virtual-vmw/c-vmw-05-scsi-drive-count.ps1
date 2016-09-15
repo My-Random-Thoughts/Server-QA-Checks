@@ -37,8 +37,8 @@ Function c-vmw-05-scsi-drive-count
         }
         Catch
         {
-            $result.result  = 'Error'
-            $result.message = 'SCRIPT ERROR'
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
             $result.data    = $_.Exception.Message
             Return $result
         }
@@ -51,25 +51,25 @@ Function c-vmw-05-scsi-drive-count
 
             If ($found -eq $true)
             {
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = 'More than 7 drives exist on one SCSI adapter'
             }
             Else
             {
-                $result.result  = 'Pass'
+                $result.result  = $script:lang['Pass']
                 $result.message = 'More than 7 drives exist, but on different SCSI adapters'
             }
         }
         Else
         {
-            $result.result  = 'N/A'
+            $result.result  = $script:lang['Not-Applicable']
             $result.message = 'There are less than 8 drives attached to server'
             $result.data    = 'Count: ' + $check.Count
         }
     }
     Else
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Not a virtual machine'
     }
 

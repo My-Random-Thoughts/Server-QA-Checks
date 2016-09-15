@@ -36,8 +36,8 @@ Function c-drv-02-min-drive-freespace
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -59,18 +59,18 @@ Function c-drv-02-min-drive-freespace
     
         If ($countFailed -ne 0)
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'One or more drives were found with less than ' + $script:appSettings['MinimumDrivePercentFree'] + '% free space'
         }
         Else
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'All drives have the required minimum free space of ' + $script:appSettings['MinimumDrivePercentFree'] + '%'
         }
     }
     Else
     {
-        $result.result  = 'Manual'
+        $result.result  = $script:lang['Manual']
         $result.message = 'Unable to get drive information, please check manually'
         $result.data    = 'All drives need to have ' + $script:appSettings['MinimumDrivePercentFree'] + '% or more free'
     }

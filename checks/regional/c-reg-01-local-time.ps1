@@ -47,32 +47,32 @@ Function c-reg-01-local-time
         }
         Catch
         {
-            $result.result  = 'Error'
-            $result.message = 'SCRIPT ERROR'
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
             $result.data    = $_.Exception.Message
             Return $result
         }
         
         If ([string]::IsNullOrEmpty($source) -eq $true)
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Time source is not set'
         }
         ElseIf (($source -eq 'Local CMOS Clock') -or ($source -eq 'Free-running System Clock'))
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Time source is not set correctly'
             $result.data    = '{0},#Time is {1}' -f $source, $rdt
         }
         ElseIf ($source -like '*The following error*')
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Error getting required information'
             $result.data    = '{0},#Time is {1}' -f $source, $rdt
         }
         ElseIf ($source -like '*The command /query is unknown*')    # Windows 2003 server
         {
-            $result.result  = 'Manual'
+            $result.result  = $script:lang['Manual']
             $result.message = 'Not a supported operating system for this check'
             $result.data    = 'Time is {0}' -f $rdt
         }
@@ -81,13 +81,13 @@ Function c-reg-01-local-time
             $offSet = (Get-NtpTime -NTPServer $source.Trim() -InputDateTime $rdt)
             If ($offSet -lt 10)
             {
-                $result.result   = 'Pass'
+                $result.result   = $script:lang['Pass']
                 $result.message += 'Time source is set to a remote server, and is syncronsized correctly'
                 $result.data    += 'Source: {0},#Time is about {1} seconds adrift' -f $source.Trim(), $offSet
             }
             Else
             {
-                $result.result   = 'Fail'
+                $result.result   = $script:lang['Fail']
                 $result.message += 'Time source is set to a remote server, and is not syncronsized correctly'
                 $result.data    += 'Source: {0},#Time is about {1} seconds adrift' -f $source.Trim(), $offSet
             }
@@ -95,8 +95,8 @@ Function c-reg-01-local-time
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }

@@ -23,7 +23,7 @@ Function c-com-05-last-patch-date
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Patching Compliant'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-com-05-last-patch-date'
 
     #... CHECK STARTS HERE ...#
@@ -42,7 +42,7 @@ Function c-com-05-last-patch-date
         }
         Else
         {
-            $result.result  = 'Warning'
+            $result.result  = $script:lang['Warning']
             $result.message = 'Operating system not supported by check'
             $result.data    = ''
             Return $result
@@ -50,8 +50,8 @@ Function c-com-05-last-patch-date
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -62,27 +62,27 @@ Function c-com-05-last-patch-date
         If ($days -gt ($script:appSettings['MaximumLastPatchAgeAllowed'] * 2))
         {
             # 2 months (using default setting)
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Server not patched within the last {0} days' -f ($script:appSettings['MaximumLastPatchAgeAllowed'] * 2)
             $result.data    = 'Last patched: {0} ({1} days ago)' -f $check, $days
         }
         ElseIf ($days -gt $script:appSettings['MaximumLastPatchAgeAllowed'])
         {
             # 1 month (using default setting)
-            $result.result  = 'Warning'
+            $result.result  = $script:lang['Warning']
             $result.message = 'Server not patched within the last {0} days' -f $script:appSettings['MaximumLastPatchAgeAllowed']
             $result.data    = 'Last patched: {0} ({1} days ago)' -f $check, $days
         }
         Else
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'Windows patches applied'
             $result.data    = 'Last patched: {0} ({1} days ago)' -f $check, $days
         }
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'No last patch date - server has never been updated'
     }
 

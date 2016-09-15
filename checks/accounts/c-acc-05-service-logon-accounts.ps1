@@ -23,7 +23,7 @@ Function c-acc-05-service-logon-accounts
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Service Logon Accounts'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-acc-05-service-logon-accounts'
 
     #... CHECK STARTS HERE ...#
@@ -36,21 +36,21 @@ Function c-acc-05-service-logon-accounts
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If ($check.Count -gt 0)
     {
-        $result.result  = 'Warning'
+        $result.result  = $script:lang['Warning']
         $result.message = 'One or more services was found to be running under local accounts'
         $check | ForEach { $result.data += '{0} ({1}),#' -f $_.DisplayName, $_.StartName }
     }
     Else
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'No services found running under a local accounts'
     }
     

@@ -23,7 +23,7 @@ Function c-com-01-mcafee-antivirus-installed
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'McAfee AV Installed'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-com-01-mcafee-antivirus-installed'
 
     #... CHECK STARTS HERE ...#
@@ -36,13 +36,13 @@ Function c-com-01-mcafee-antivirus-installed
         # Check AV Version
         If ($verCheck -ge $verNeed)
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'McAfee product  found, '
             $result.data    = 'Version {0}, ' -f $verCheck
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'McAfee product found, but wrong version, '
             $result.data    = 'Version {0} found. Expected version: {1}, ' -f $verCheck, $script:appSettings['ProductVersion']
         }
@@ -59,8 +59,8 @@ Function c-com-01-mcafee-antivirus-installed
         }
         Catch
         {
-            $result.result  = 'Error'
-            $result.message = 'SCRIPT ERROR'
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
             $result.data    = $_.Exception.Message
             Return $result
         }
@@ -70,26 +70,26 @@ Function c-com-01-mcafee-antivirus-installed
             $days = ((Get-Date) - $dtVal).Days
             If ($days -le $script:appSettings['MaximumDATAgeAllowed'])
             {
-                $result.result   = 'Pass'
+                $result.result   = $script:lang['Pass']
                 $result.message += 'DATs are OK'
                 $result.data    += 'DATs {0} day(s) old' -f $days.ToString()
             }
             Else
             {
-                $result.result   = 'Fail'
+                $result.result   = $script:lang['Fail']
                 $result.message += 'DATs are not up-to-date'
                 $result.data    += 'DATs {0} day(s) old' -f $days.ToString()
             }
         }
         Else
         {
-            $result.result   = 'Fail'
+            $result.result   = $script:lang['Fail']
             $result.message += 'No DAT version found'
         }
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = '{0} not found, install required' -f $script:appSettings['ProductName']
     }
 

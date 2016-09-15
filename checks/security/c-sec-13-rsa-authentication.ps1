@@ -10,7 +10,7 @@
     MANUAL:
     NA:      Not a domain controller or terminal services server
 
-    APPLIES: All
+    APPLIES: Domain Controllers
 
     REQUIRED-FUNCTIONS: Win32_Product, Check-DomainController, Check-TerminalServer
 #>
@@ -45,27 +45,27 @@ Function c-sec-13-rsa-authentication
         }
         Catch
         {
-            $result.result  = 'Error'
-            $result.message = 'SCRIPT ERROR'
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
             $result.data    = $_.Exception.Message
             Return $result
         }
 
         If ($found -eq $true)
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'RSA software found'
             $result.data    = '{0}, Version {0}' -f $script:appSettings['ProductNames'], $verCheck
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'RSA software not found'
         }
     }
     Else
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Not a domain controller or terminal services server'
     }
 

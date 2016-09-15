@@ -37,33 +37,33 @@ Function c-vmw-03-nic-type
         }
         Catch
         {
-            $result.result  = 'Error'
-            $result.message = 'SCRIPT ERROR'
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
             $result.data    = $_.Exception.Message
             Return $result
         }
 
         If ([string]::IsNullOrEmpty($check) -eq $true)
         {
-            $result.result  = 'Warning'
+            $result.result  = $script:lang['Warning']
             $result.message = 'No network adapters found'
         }
         Else
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'All active NICS configured correctly'
             $check | ForEach { If ($_ -notlike ('*VMXNET3*')) { $result.data += '{0},#' -f $_ } }
         
             If ([string]::IsNullOrEmpty($result.data) -eq $false)
             {
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = 'One or more active NICs were found not to be VMXNET3'
             }
         }
     }
     Else
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Not a virtual machine'
     }
 

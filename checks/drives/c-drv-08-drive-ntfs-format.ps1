@@ -35,8 +35,8 @@ Function c-drv-08-drive-ntfs-format
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -56,18 +56,18 @@ Function c-drv-08-drive-ntfs-format
     
         If ($countFailed -ne 0)
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'One or more drives were found not formatted as NTFS'
         }
         Else
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'All drives are formatted as NTFS'
         }
     }
     Else
     {
-        $result.result  = 'Manual'
+        $result.result  = $script:lang['Manual']
         $result.message = 'Unable to get drive information, please check manually'
         $result.data    = 'All drives need to be formatted as NTFS'
     }

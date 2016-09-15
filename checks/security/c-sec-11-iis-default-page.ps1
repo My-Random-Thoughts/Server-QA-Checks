@@ -51,7 +51,7 @@ Function c-sec-11-iis-default-page
     }
     Catch
     {
-        $result.result  = 'Error'
+        $result.result  = $script:lang['Error']
         $result.message = 'SCRIPT ERROR 1'
         $result.data    = $_.Exception.Message
         Return $result
@@ -59,7 +59,7 @@ Function c-sec-11-iis-default-page
 
     If ([string]::IsNullOrEmpty($check) -eq $true)
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'IIS not Installed'
         $result.data    = ''
     }
@@ -68,13 +68,13 @@ Function c-sec-11-iis-default-page
         $result.message = 'IIS Installed, '
         If ($check -like '*iisstart.htm*')
         {
-            $result.result   = 'Fail'
+            $result.result   = $script:lang['Fail']
             $result.message += 'default document "iisstart.htm" configured'
             $result.data     = '' + $check
         }
         Else
         {
-            $result.result   = 'Pass'
+            $result.result   = $script:lang['Pass']
             $result.message += '"iisstart.htm" not listed in default documents'
             $result.data     = '' + $check
         }

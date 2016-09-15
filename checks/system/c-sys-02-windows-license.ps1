@@ -44,8 +44,8 @@ Function c-sys-02-windows-license
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -78,18 +78,18 @@ Function c-sys-02-windows-license
         [boolean]$portTest = Test-Port -serverName $kms -Port 1688
         If ($portTest -eq $true)
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = (',#Port 1688 open to KMS Server {0}' -f $kms)
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = (',#Port 1688 not open to KMS Server {0}' -f $kms)
         }
     }
     Else
     {
-        $result.result  = 'Warning'
+        $result.result  = $script:lang['Warning']
         $result.message = ',#Not using a KMS server'
     }
 
@@ -100,13 +100,13 @@ Function c-sys-02-windows-license
     }
     ElseIf ($status -eq '')
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = ('Windows licence check failed' + $result.message)
         $result.data    = ''
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = ('Windows not licenced' + $result.message)
         $result.data    = 'Status: {0}' -f $status
     }

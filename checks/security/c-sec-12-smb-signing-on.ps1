@@ -42,8 +42,8 @@ Function c-sec-12-smb-signing-on
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -56,19 +56,19 @@ Function c-sec-12-smb-signing-on
 
         If ($missing -eq '')
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'SMB Signing configured correctly'
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'SMB Signing not configured correctly'
             $result.data    = 'The following sections are not configured correctly: {0}' -f $missing
         }
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'Registry setting not found'
         $result.data    = ''
     }

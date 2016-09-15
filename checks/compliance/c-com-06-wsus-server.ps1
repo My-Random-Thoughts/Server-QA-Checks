@@ -23,7 +23,7 @@ Function c-com-06-wsus-server
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'WSUS Server Setting'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-com-06-wsus-server'
 
     #... CHECK STARTS HERE ...#
@@ -38,15 +38,15 @@ Function c-com-06-wsus-server
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If ([string]::IsNullOrEmpty($keyVal) -eq $false)
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'WSUS server configured'
         $result.data    = $keyVal
 
@@ -56,11 +56,11 @@ Function c-com-06-wsus-server
 
         [boolean]$portTest = (Test-Port -serverName $name -Port $port)
         If   ($portTest -eq $true) {     $result.data += (',#Port {0} open to {1}'     -f $port, $name) }
-        Else { $result.result = 'Fail';  $result.data += (',#Port {0} not open to {1}' -f $port, $name) }
+        Else { $result.result = $script:lang['Fail'];  $result.data += (',#Port {0} not open to {1}' -f $port, $name) }
     }
     Else
     {
-        $result.result  = 'Fail'
+        $result.result  = $script:lang['Fail']
         $result.message = 'WSUS server has not been configured'
     }
 

@@ -35,15 +35,15 @@ Function c-net-05-network-speed-duplex
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If ($check.Count -gt 0)
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'All network adapters configured correctly'
 
         ForEach ($connection In $check)
@@ -59,8 +59,8 @@ Function c-net-05-network-speed-duplex
             }
             Catch
             {
-                $result.result  = 'Error'
-                $result.message = 'SCRIPT ERROR'
+                $result.result  = $script:lang['Error']
+                $result.message = $script:lang['Script-Error']
                 $result.data    = $_.Exception.Message
                 Return $result
             }
@@ -77,7 +77,7 @@ Function c-net-05-network-speed-duplex
                 $nicSpeed = [math]::Round($nic.Speed/1000000)
                 If (($nicSpeed -lt 1000) -or ($duplex -notlike '*auto*'))
                 {
-                    $result.result  = 'Warning'
+                    $result.result  = $script:lang['Warning']
                     $result.message = 'One or more network adapters configured incorrectly'
                 }
                 $result.data += '{0}: {1}mb ({2}),#' -f $nic.NetConnectionID, $nicSpeed, $duplex
@@ -89,7 +89,7 @@ Function c-net-05-network-speed-duplex
     }
     Else
     {
-       $result.result  = 'Fail'
+       $result.result  = $script:lang['Fail']
        $result.message = 'No network adapters found or enabled'
        $result.data    = ''
     }

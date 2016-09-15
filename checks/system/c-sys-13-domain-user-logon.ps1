@@ -37,8 +37,8 @@ Function c-sys-13-domain-user-logon
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -47,20 +47,20 @@ Function c-sys-13-domain-user-logon
     {
         If ($usrdom -eq $domain)
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'Currently logged on with domain user account'
             $result.data    = $check.Domain
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Not currently logged on with current domain user account'
             $result.data    = 'User: {0}, Server: {1}' -f $usrdom, $check.Domain
         }
     }
     Else
     {
-        $result.result  = 'Warning'
+        $result.result  = $script:lang['Warning']
         $result.message = 'This is a workgroup server, is this correct.?'
         $result.data    = 'Workgroup: {0}' -f $domain
     }

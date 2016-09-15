@@ -45,24 +45,24 @@ Function c-vmw-02-time-sync
 
         If ($check -eq 'Disabled')
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'VMware tools time sync is disabled'
         }
         ElseIf ($check -eq 'Enabled')
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'VMware tools time sync is enabled'
         }
         Else
         {
-            $result.result  = 'Manual'
+            $result.result  = $script:lang['Manual']
             $result.message = 'Unable to check the VMware time sync status'
             $result.data    = 'Open vSphere client, locatate "{0}", select Edit Settings, Options tab, Select VMware Tools, make sure "Synchronize guest time with host" is not enabled' -f $serverName
         }
     }
     Else
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Not a virtual machine'
     }
 

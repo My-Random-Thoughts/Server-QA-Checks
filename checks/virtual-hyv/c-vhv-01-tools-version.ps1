@@ -32,20 +32,20 @@ Function c-vhv-01-tools-version
     {
         Try
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'Dummy Check'
             $result.data    = 'Dummy Check'
         }
         Catch
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'Dummy Check'
             $result.data    = 'Dummy Check'
         }
     }
     Else
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Not a virtual machine'
     }
 

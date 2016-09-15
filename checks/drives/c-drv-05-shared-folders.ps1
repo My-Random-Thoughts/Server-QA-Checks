@@ -42,21 +42,21 @@ Function c-drv-05-shared-folders
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If ($check.Count -gt 0)
     {
-        $result.result  = 'Warning'
+        $result.result  = $script:lang['Warning']
         $result.message = 'Shared folders found, check against documentation'
         $check | ForEach { $result.data += '{0},#' -f $_ }
     }
     Else
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'No additional shares found'
     }
     

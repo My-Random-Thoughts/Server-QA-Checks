@@ -23,7 +23,7 @@ Function c-acc-03-local-admins
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Local Admins'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-acc-03-local-admins'
 
     #... CHECK STARTS HERE ...#
@@ -42,8 +42,8 @@ Function c-acc-03-local-admins
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -60,19 +60,19 @@ Function c-acc-03-local-admins
 
         If ($check2.count -gt 0)
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'One or more local administrator accounts exist'
             $check2 | ForEach { $result.data += '{0},#' -f $_ }
         }
         Else
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'No local administrators found'
         }
     }
     Else
     {
-        $result.result  = 'Warning'
+        $result.result  = $script:lang['Warning']
         $result.message = 'This is a workgroup server, is this correct.?'
     }
 

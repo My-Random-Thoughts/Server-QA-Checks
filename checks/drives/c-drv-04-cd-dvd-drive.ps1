@@ -35,15 +35,15 @@ Function c-drv-04-cd-dvd-drive
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
 
     If ($check.Count -eq 0 )
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'No CD/DVD drives found'
     }
     Else
@@ -56,12 +56,12 @@ Function c-drv-04-cd-dvd-drive
 
         If ($found -eq $true)
         {
-            $result.result  = 'Pass'
+            $result.result  = $script:lang['Pass']
             $result.message = 'CD/DVD drive set correctly'
         }
         Else
         {
-            $result.result  = 'Fail'
+            $result.result  = $script:lang['Fail']
             $result.message = 'CD/DVD drive found, but not configured as {0}' -f $script:appSettings['DVDDriveLetter']
         }
     }

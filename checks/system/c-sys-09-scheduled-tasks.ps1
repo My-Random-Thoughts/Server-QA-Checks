@@ -42,7 +42,7 @@ Function c-sys-09-scheduled-tasks
         Else
         {
             # Windows 2003 Servers
-            $result.result  = 'Warning'
+            $result.result  = $script:lang['Warning']
             $result.message = 'Operating system not supported by check'
             $result.data    = ''
             Return $result
@@ -50,8 +50,8 @@ Function c-sys-09-scheduled-tasks
     }
     Catch
     {
-        $result.result  = 'Error'
-        $result.message = 'SCRIPT ERROR'
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
         $result.data    = $_.Exception.Message
         Return $result
     }
@@ -68,12 +68,12 @@ Function c-sys-09-scheduled-tasks
 
     If ($tasksOut -eq '')
     {
-        $result.result  = 'Pass'
+        $result.result  = $script:lang['Pass']
         $result.message = 'No additional scheduled tasks found'
     }
     Else
     {
-        $result.result  = 'Warning'
+        $result.result  = $script:lang['Warning']
         $result.message = 'Additional scheduled tasks found - make sure these are documented'
         $result.data    = $tasksOut
     }

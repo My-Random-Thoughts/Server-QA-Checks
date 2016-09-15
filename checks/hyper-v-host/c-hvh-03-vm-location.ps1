@@ -39,8 +39,8 @@ Function c-hvh-03-vm-location
         }
         Catch
         {
-            $result.result  = 'Error'
-            $result.message = 'SCRIPT ERROR'
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
             $result.data    = $_.Exception.Message
             Return $result
         }
@@ -71,24 +71,24 @@ Function c-hvh-03-vm-location
 
             If ($result.data -ne '')
             {
-                $result.result  = 'Fail'
+                $result.result  = $script:lang['Fail']
                 $result.message = 'One or more virtual machines are using the system drive'
             }
             Else
             {
-                $result.result  = 'Pass'
+                $result.result  = $script:lang['Pass']
                 $result.message = 'No virtual machines are using the system drive'
             }
         }
         Else
         {
-            $result.result  = 'N/A'
+            $result.result  = $script:lang['Not-Applicable']
             $result.message = 'No virtual machines exist on this host'
         }
     }
     Else
     {
-        $result.result  = 'N/A'
+        $result.result  = $script:lang['Not-Applicable']
         $result.message = 'Not a Hyper-V server'
     }
 
