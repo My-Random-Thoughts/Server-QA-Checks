@@ -55,17 +55,17 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['IgnoreTheseUsers'] = ('Guest', 'ASPNET', '___VMware')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
-$script:lang['A'] = 'LANGUAGE-One or more local accounts exist'
-$script:lang['B'] = 'LANGUAGE-No additional local accounts'
-$script:lang['C'] = 'LANGUAGE-This is a workgroup server, is this correct.?'
-$script:lang['Name'] = 'LANGUAGE-Local Users'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
+$script:lang['A'] = 'One or more local accounts exist'
+$script:lang['B'] = 'No additional local accounts'
+$script:lang['C'] = 'This is a workgroup server, is this correct.?'
+$script:lang['Name'] = 'Local Users'
 <#
     DESCRIPTION: 
         Check all local users to ensure that no non-standard accounts exist.  Unless the server is not in a domain, there should be no additional user accounts.
@@ -142,13 +142,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['InvalidAdminNames'] = ('Administrator', 'Admin', 'Guest', 'Guest1')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Checks to see if the local default accounts have been renamed.
@@ -224,13 +224,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['IgnoreTheseUsers'] = ('Domain Admins', 'Enterprise Admins')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check the local administrators group to ensure no non-standard accounts exist.  If there is a specific application requirement
@@ -318,13 +318,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['IgnoreTheseUsers'] = ('Allowed RODC Password Replication Group', 'Cert Publishers', 'ConfigMgr Remote Control Users', 'Denied RODC Password Replication Group', 'DHCP', 'DnsAdmins', 'HelpServicesGroup', 'IIS_WPG', 'Offer Remote Assistance Helpers', 'Pre-Windows 2000 Compatible Access', 'RAS and IAS Servers', 'TelnetClients', 'WinRMRemoteWMIUsers__', 'SQLServer', 'RSABypass')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check all local groups and ensure no additional groups exist. If there is a specific application requirement for local groups then
@@ -414,13 +414,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['IgnoreTheseUsers'] = ('NT AUTHORITY\\NetworkService', 'NT AUTHORITY\\LocalService', 'LocalSystem')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Checks all services to ensure no user accounts are assigned. If specific application service accounts are required then they should be domain 
@@ -485,13 +485,13 @@ $cacc06 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Checks to make sure that the guest user account has been disabled.
@@ -566,13 +566,13 @@ $script:appSettings = @{}
 $script:appSettings['MaximumDATAgeAllowed'] = '7'
 $script:appSettings['ProductName'] = 'McAfee VirusScan Enterprise'
 $script:appSettings['ProductVersion'] = '8.8'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check McAfee anti virus is installed and updating automatically.
@@ -710,13 +710,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['ProductNames'] = ('Microsoft Monitoring Agent', 'System Center Operations Manager', 'Operations Manager Agent')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check relevant monitoring tool agent is installed and that the correct port is open to the management server
@@ -885,13 +885,13 @@ $ccom03 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check relevant SCCM agent is installed, and that the correct port is open to the management server
@@ -1011,13 +1011,13 @@ $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['ProductName'] = 'Symantec NetBackup'
 $script:appSettings['RequiredServerRoles'] = ('Exchange', 'SQL')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check NetBackup agent is installed
@@ -1196,13 +1196,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['MaximumLastPatchAgeAllowed'] = '35'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check server is compliant with patch policy (must be patched to latest released patch level for this customer)
@@ -1299,13 +1299,13 @@ $ccom06 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check that a WSUS server has been specified
@@ -1399,13 +1399,13 @@ $ccom07 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check sentinel monitoring agent is installed, and that the correct port is open to the management server
@@ -1545,13 +1545,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['MinimumSystemDriveSize'] = '49'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check the system drive is a minimum of 50gb for Windows 2008+ servers (some are reporting 49gb)
@@ -1637,13 +1637,13 @@ $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['IgnoreTheseDrives'] = ('A', 'B')
 $script:appSettings['MinimumDrivePercentFree'] = '17'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Ensure all drives have a minimum % of free space.  The default value is 17%
@@ -1729,13 +1729,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['FixedPageFileSize'] = '4096'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check the page file is located on the system root drive and fixed size.  The default setting is 4096MB (4GB)
@@ -1843,13 +1843,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['DVDDriveLetter'] = 'R:'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         If a CD/DVD drive is present on the server confirm it is configured as "R:"
@@ -1927,13 +1927,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['IgnoreTheseShares'] = ('', '')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check Shared Folders to ensure no additional shares are present
@@ -2005,13 +2005,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['ProductNames'] = ('HDLM GUI', 'SANsurfer', 'Emulex FC')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Where SAN storage is used, ensure multipathing software is installed and Dual Paths are present and functioning.
@@ -2131,13 +2131,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['ProductNames'] = ('HP Array Configuration Utility', 'Dell OpenManage Server Administrator', 'Broadcom Drivers And Management Applications')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check local disk array management agent is installed on the server.
@@ -2256,13 +2256,13 @@ $cdrv08 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Ensure all drives are formatted as NTFS
@@ -2344,13 +2344,13 @@ $chvh01 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check Hyper-V is installed on server core
@@ -2429,13 +2429,13 @@ $chvh02 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check Hyper-V is the only one installed
@@ -2526,13 +2526,13 @@ $chvh03 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check all VMs are running from a non-system drive
@@ -2643,13 +2643,13 @@ $cnet01 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check IPv6 has been unbound on all active NICs, or globally
@@ -2782,13 +2782,13 @@ $cnet02 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check there are no unused Network interfaces on the server. We define "not in use" by showing any ENABLED NICs set to DHCP
@@ -2855,13 +2855,13 @@ $cnet03 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check network interfaces are labelled so their purpose is easily identifiable.
@@ -2926,13 +2926,13 @@ $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['ManagementAdapterNames'] = ('Management', 'MGMT', 'MGT')
 $script:appSettings['ProductionAdapterNames'] = ('Production', 'PROD', 'PRD')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check binding order is set correctly for "Production" as the primary network adapter then as applicable for other interfaces
@@ -3098,13 +3098,13 @@ $cnet05 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check the network adapter speed and duplex settings.
@@ -3210,13 +3210,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['ProductNames'] = ('HP Network Config Utility', 'Broadcom Advanced Control Suite')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION:
         Check local network management agent is installed on the server.
@@ -3336,13 +3336,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['NetworkTeamNames'] = ('HP Network Teaming', 'BASP Virtual Adapter')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check network interfaces for known teaming names, manually check they are configured correctly.
@@ -3559,13 +3559,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['ManagementAdapterNames'] = ('Management', 'MGMT', 'MGT')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check that a management network adapter exists.
@@ -3640,13 +3640,13 @@ $script:appSettings['StaticRoute02'] = ('192.168.2.10', '255.255.255.0', '192.16
 $script:appSettings['StaticRoute03'] = ''
 $script:appSettings['StaticRoute04'] = ''
 $script:appSettings['StaticRoute99'] = ''
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION:
         Checks to make sure the specified static routes have been added
@@ -3747,13 +3747,13 @@ $creg01 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check that the server time is correct.  If a valid source is used, the time is also checked against that source.
@@ -3889,13 +3889,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['TimeZoneNames'] = ('(UTC) Dublin, Edinburgh, Lisbon, London', '(GMT) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check that the server timezone is correct.  Default setting is "(GMT) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London"
@@ -3960,13 +3960,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['DefaultLocation'] = 'United Kingdom'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Ensure the Region and Language > Location is set correctly.
@@ -4043,13 +4043,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['DefaultLanguage'] = '00000809'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Ensure the Region and Language > keyboard and Languages is set correctly
@@ -4127,13 +4127,13 @@ $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['DisabledCiphers'] = ('DES 56/56', 'NULL', 'RC2 128/128', 'RC2 40/128', 'RC2 56/128', 'RC2 56/56', 'RC4 128/128', 'RC4 40/128', 'RC4 56/128', 'RC4 64/128')
 $script:appSettings['EnabledCiphers'] = ('AES 128/128', 'AES 256/256', 'Triple DES 168/168')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Ensure security ciphers are set correctly.  Settings taken from https://www.nartac.com/Products/IISCrypto/Default.aspx using "Best Practices/FIPS 140-2" settings
@@ -4229,13 +4229,13 @@ $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['DisabledHashes'] = ('MD5')
 $script:appSettings['EnabledHashes'] = ('SHA', 'SHA256', 'SHA384', 'SHA512')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Ensure hashes are set correctly.   Settings taken from https://www.nartac.com/Products/IISCrypto/Default.aspx using "Best Practices/FIPS 140-2" settings
@@ -4330,13 +4330,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['KeyExchangeAlgorithms'] = ('Diffie-Hellman', 'ECDH', 'PKCS')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION:
         Ensure key exchange algorithms are set correctly.  Settings taken from https://www.nartac.com/Products/IISCrypto/Default.aspx using "Best Practices/FIPS 140-2" settings
@@ -4424,13 +4424,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['DisabledProtocols'] = ('Multi-Protocol Unified Hello', 'PCT 1.0', 'SSL 2.0', 'SSL 3.0' , 'TLS 1.0')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Ensure protocols are set correctly.  Settings taken from https://www.nartac.com/Products/IISCrypto/Default.aspx using "Best Practices/FIPS 140-2" settings
@@ -4524,13 +4524,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['CipherSuiteOrder'] = 'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P521,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P521,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P384,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P521,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P521,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_3DES_EDE_CBC_SHA'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Ensure the security cipher order is set correctly.  Settings taken from https://www.nartac.com/Products/IISCrypto/Default.aspx using "Best Practices/FIPS 140-2" settings
@@ -4606,13 +4606,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['RejectAnnonymousAccountEnumeration'] = '1'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Ensure the system is set to reject attempts to enumerate accounts in the SAM by anonymous users.
@@ -4688,13 +4688,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['RejectAnnonymousShareEnumeration'] = '1'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Ensure the system is set to reject attempts to enumerate shares in the SAM by anonymous users. 
@@ -4770,13 +4770,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['EnableDomainCredentialCaching'] = '0'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check system is not caching domain credentials
@@ -4852,13 +4852,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['ElevatePromptForAdminCredentials'] = ('1', '3')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Ensure the system is set to request administrative credentials before granting an application elevated privileges. 
@@ -4946,13 +4946,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['RejectAnnonymousShareAccess'] = '1'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Ensure the system is set to restrict anonymous access to named pipes
@@ -5027,13 +5027,13 @@ $csec11 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Checks to see if the default webpage is present in IIS
@@ -5133,13 +5133,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['RequireSMBSigning'] = '1'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Ensure SMB signing is turned on. 
@@ -5224,13 +5224,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['ProductNames'] = ('RSA Authentication Manager', 'RSA Authentication Agent')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         If server is Domain Controller or a Terminal Server ensure RSA authentication manager is installed and PIN is required to access server.
@@ -5377,13 +5377,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['IgnoreTheseFirewallAppRules'] = ('McAfee', 'macmnsvc', 'System Center', 'nbwin')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Checks to see if there are any addional firewall rules, and warns if there are any.
@@ -5494,13 +5494,13 @@ $script:appSettings = @{}
 $script:appSettings['DomainProfile'] = '0'
 $script:appSettings['PublicProfile'] = '0'
 $script:appSettings['StandardProfile'] = '0'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check if Windows firewall is enabled or disabled
@@ -5572,13 +5572,13 @@ $csys01 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check for a pending reboot
@@ -5671,13 +5671,13 @@ $csys02 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check windows is licensed.
@@ -5819,13 +5819,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['IgnoreTheseServices'] = ('NetBackup Bare Metal Restore Boot Server', 'NetBackup SAN Client Fibre Transport Service', 'Microsoft .NET Framework NGEN', 'Software Protection', 'Volume Shadow Copy')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check services and ensure all services set to start automatically are running (NetBackup Bare Metal Restore Boot Server, 
@@ -5891,13 +5891,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['CheckTheseServices'] = ('HP System Management Homepage')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check services and ensure all listed services are set to disabled and are stopped
@@ -5979,13 +5979,13 @@ $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['GetLatestEntriesAge'] = '14'
 $script:appSettings['GetLatestEntriesCount'] = '15'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check System Event Log and ensure no errors or warnings are present in the last 14 days.  If found, will return the latest 15 entries
@@ -6063,13 +6063,13 @@ $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['GetLatestEntriesAge'] = '14'
 $script:appSettings['GetLatestEntriesCount'] = '15'
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check Application Event Log and ensure no errors or warnings are present in the last 14 days.  If found, will return the latest 15 entries
@@ -6146,13 +6146,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['IgnoreTheseDeviceNames'] = ('abc', 'xyz')    # Examples Only
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Checks Device Manager to ensure there are no unknown devices, conflicts or errors.
@@ -6219,13 +6219,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['IgnoreTheseScheduledTasks'] = ('SQM data sender', 'SystemSoundsService', 'StartComponentCleanup', 'Automatic-Workplace-Join', 'ReplaceOMCert', 'Optimize Start Menu Cache Files')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check to see if any non standard scheduled tasks exist on  the server (Any application specific scheduled tasks 
@@ -6327,13 +6327,13 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['IgnoreThesePrinterNames'] = ('Send To OneNote', 'PDFCreator', 'Microsoft XPS Document Writer', 'Fax', 'WebEx Document Loader', 'Microsoft Print To PDF')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check to see if any printers exist on the server. If printers exist, ensure the spooler directory is not stored on the system drive.
@@ -6437,13 +6437,13 @@ $csys11 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Ensure autorun is disabled.
@@ -6517,13 +6517,13 @@ $csys12 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check if SNMP role is install on the server.  If so, ensure the SNMP community strings follow the secure password policy.
@@ -6625,13 +6625,13 @@ $csys13 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Checks that the currently logged on user is a member of the domain
@@ -6707,13 +6707,13 @@ $csys14 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check power plan is set to High Performance.
@@ -6790,13 +6790,13 @@ $csys15 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check hibernation is turned off
@@ -6867,13 +6867,13 @@ $csys16 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check that remote desktop is enabled and that Network Level Authentication (NLA) is set
@@ -6959,13 +6959,13 @@ $csys17 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         If server is a Terminal Services Server ensure it has a licence server set.
@@ -7063,13 +7063,13 @@ $cvhv01 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check that the latest HyperV tools are installed
@@ -7136,13 +7136,13 @@ $cvmw01 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check that the latest vmware tools are installed
@@ -7240,13 +7240,13 @@ $cvmw02 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check that VMware Host Time Sync is disabled
@@ -7329,13 +7329,13 @@ $cvmw03 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check all virtual servers have network cards that are configured as VMXNET3
@@ -7421,13 +7421,13 @@ $script:lang        = @{}
 $script:appSettings = @{}
 $script:appSettings['DiskControllerDeviceType'] = 'LSI_SAS'
 $script:appSettings['IgnoreTheseControllerTypes'] = ('spaceport', 'vhdmp')
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Check Windows disk controller is set correctly.
@@ -7512,13 +7512,13 @@ $cvmw05 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Checks to see if there are are more than 8 drives attached
@@ -7608,13 +7608,13 @@ $cvmw06 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Checks to see if the total VM size is less than 1tb
@@ -7695,13 +7695,13 @@ $cvmw07 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:lang['Error'] = 'LANGUAGE-Error'
-$script:lang['Fail'] = 'LANGUAGE-Fail'
-$script:lang['Manual'] = 'LANGUAGE-Manual'
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'
-$script:lang['Pass'] = 'LANGUAGE-Pass'
-$script:lang['Script-Error'] = 'LANGUAGE-SCRIPT ERROR'
-$script:lang['Warning'] = 'LANGUAGE-Warning'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
 <#
     DESCRIPTION: 
         Checks for any mounted CD/DVD or floppy drives
@@ -7856,80 +7856,80 @@ $script:qahelp['vmw06']='<xml><description>Checks to see if the total VM size is
 $script:qahelp['vmw07']='<xml><description>Checks for any mounted CD/DVD or floppy drives</description><pass>No CD/ROM or floppy drives are mounted</pass><fail>One or more CD/ROM or floppy drives are mounted</fail><na>Not a virtual machine</na><applies>Virtuals</applies></xml>'
 
 ##############################################################################################################################################################################################
-$script:lang['Accounts'] = 'LANGUAGE-Accounts'                 # User and group accounts
-$script:lang['AD-Message'] = 'LANGUAGE-ACCESS DENIED'
-$script:lang['Admin-Warn_1'] = 'LANGUAGE-You are not running this script as an administrator'
-$script:lang['Admin-Warn_2'] = 'LANGUAGE-Restart PowerShell with the "Run as Administrator" option'
-$script:lang['AD-Write-Host'] = 'LANGUAGE-ACCESS DENIED - Skipping all scripts for server'
-$script:lang['Applies-To'] = 'LANGUAGE-Applies To'              # Part of the HTML hover help.
-$script:lang['CF-Message'] = 'LANGUAGE-CONNECTION FAILURE while contacting the server, check that the server switched on and working'
-$script:lang['CF-Write-Host'] = 'LANGUAGE-CONNECTION FAILURE - Skipping all scripts for server'
-$script:lang['Checked'] = 'LANGUAGE-Checked'                 #
-$script:lang['Compliance'] = 'LANGUAGE-Compliance'               # Tooling agent checks (AV, SCOM, SCCM, etc)
-$script:lang['Drives'] = 'LANGUAGE-Drives'                   # Local disk drive information
-$script:lang['Error'] = 'LANGUAGE-Error'                   #
-$script:lang['Fail'] = 'LANGUAGE-Fail'                    #
-$script:lang['Failed'] = 'LANGUAGE-Failed'                  #
-$script:lang['FD-Message'] = 'LANGUAGE-Job failed to run or the remote server was disconnected'
-$script:lang['FD-Write-Host'] = 'LANGUAGE-JOB FAILED/DISCONNECTED - Skipping all scripts for server'
-$script:lang['Generated-By'] = 'LANGUAGE-Generated by'            # Generated By (username) on (date)
-$script:lang['Header'] = 'LANGUAGE-Starting QA Procedure'
-$script:lang['Help_01'] = 'LANGUAGE-Usage Information'
-$script:lang['Help_02'] = 'LANGUAGE-Quick Usage:'
-$script:lang['Help_03'] = 'LANGUAGE-Examples:'
-$script:lang['Help_04'] = 'LANGUAGE-Local Server Only:'
-$script:lang['Help_05'] = 'LANGUAGE-Use a period (.) to indicate the localhost, or use the servername:'
-$script:lang['Help_06'] = 'LANGUAGE-Multiple Servers:'
-$script:lang['Help_07'] = 'LANGUAGE-Using commas (,) to separate, add each server to the command line:'
-$script:lang['Help_08'] = 'LANGUAGE-Using a text file, with each server on a separate line:'
-$script:lang['Help_09'] = 'LANGUAGE-Please Note:'
-$script:lang['Help_10'] = 'LANGUAGE-The script connects using the same credentials as the powershell window.'
-$script:lang['Help_11'] = 'LANGUAGE-To connect using different credentials, Shift + Right-click the PowerShell'
-$script:lang['Help_12'] = 'LANGUAGE-icon in the Start Menu and select "Run as different user".  Enter the user'
-$script:lang['Help_13'] = 'LANGUAGE-details required and then re-run the script.'
-$script:lang['Help_14'] = 'LANGUAGE-'
+$script:lang['Accounts'] = 'Accounts'                 # User and group accounts
+$script:lang['AD-Message'] = 'ACCESS DENIED'
+$script:lang['Admin-Warn_1'] = 'You are not running this script as an administrator'
+$script:lang['Admin-Warn_2'] = 'Restart PowerShell with the "Run as Administrator" option'
+$script:lang['AD-Write-Host'] = 'ACCESS DENIED - Skipping all scripts for server'
+$script:lang['Applies-To'] = 'Applies To'              # Part of the HTML hover help.
+$script:lang['CF-Message'] = 'CONNECTION FAILURE while contacting the server, check that the server switched on and working'
+$script:lang['CF-Write-Host'] = 'CONNECTION FAILURE - Skipping all scripts for server'
+$script:lang['Checked'] = 'Checked'                 #
+$script:lang['Compliance'] = 'Compliance'               # Tooling agent checks (AV, SCOM, SCCM, etc)
+$script:lang['Drives'] = 'Drives'                   # Local disk drive information
+$script:lang['Error'] = 'Error'                   #
+$script:lang['Fail'] = 'Fail'                    #
+$script:lang['Failed'] = 'Failed'                  #
+$script:lang['FD-Message'] = 'Job failed to run or the remote server was disconnected'
+$script:lang['FD-Write-Host'] = 'JOB FAILED/DISCONNECTED - Skipping all scripts for server'
+$script:lang['Generated-By'] = 'Generated by'            # Generated By (username) on (date)
+$script:lang['Header'] = 'Starting QA Procedure'
+$script:lang['Help_01'] = 'Usage Information'
+$script:lang['Help_02'] = 'Quick Usage:'
+$script:lang['Help_03'] = 'Examples:'
+$script:lang['Help_04'] = 'Local Server Only:'
+$script:lang['Help_05'] = 'Use a period (.) to indicate the localhost, or use the servername:'
+$script:lang['Help_06'] = 'Multiple Servers:'
+$script:lang['Help_07'] = 'Using commas (,) to separate, add each server to the command line:'
+$script:lang['Help_08'] = 'Using a text file, with each server on a separate line:'
+$script:lang['Help_09'] = 'Please Note:'
+$script:lang['Help_10'] = 'The script connects using the same credentials as the powershell window.'
+$script:lang['Help_11'] = 'To connect using different credentials, Shift + Right-click the PowerShell'
+$script:lang['Help_12'] = 'icon in the Start Menu and select "Run as different user".  Enter the user'
+$script:lang['Help_13'] = 'details required and then re-run the script.'
+$script:lang['Help_14'] = ''
 $script:lang['Help_15'] = ''
 $script:lang['Help_16'] = ''
 $script:lang['Help_17'] = ''
 $script:lang['Help_18'] = ''
 $script:lang['Help_19'] = ''
 $script:lang['Help_20'] = ''
-$script:lang['HTML_Check'] = 'LANGUAGE-Check'                   # The check code (ACC-01)
-$script:lang['HTML_Data'] = 'LANGUAGE-Data'                    # The informational data returned
-$script:lang['HTML_Message'] = 'LANGUAGE-Message'                 # The message retuned to the user
-$script:lang['HTML_Name'] = 'LANGUAGE-Name'                    # The short name of the check
-$script:lang['HTML_Result'] = 'LANGUAGE-Result'                  # The check result (Pass, Fail, ...)
-$script:lang['HyperV-Host'] = 'LANGUAGE-HyperV Host'              # Microsoft Hyper-V host systems (not guests)
-$script:lang['Manual'] = 'LANGUAGE-Manual'                  #
-$script:lang['ND-Message'] = 'LANGUAGE-Error while running, job returned no data'
-$script:lang['ND-Name'] = 'LANGUAGE-NO DATA'
-$script:lang['Network'] = 'LANGUAGE-Network'                  # Local area networking information
-$script:lang['Not-Applicable'] = 'LANGUAGE-N/A'                     #
-$script:lang['On'] = 'LANGUAGE-on'                      #
-$script:lang['Pass'] = 'LANGUAGE-Pass'                    #
-$script:lang['Passed'] = 'LANGUAGE-Passed'                  #
-$script:lang['QA-Results'] = 'LANGUAGE-QA Results'              # Page header
-$script:lang['Regional'] = 'LANGUAGE-Regional'                 # Localised keyboard/language settings
-$script:lang['ReportsLocated'] = 'LANGUAGE-Reports Located In:'     #
-$script:lang['RPC-Message'] = 'LANGUAGE-RPC FAILURE while communicating with the server, check the firewall ports are opened correctly'
-$script:lang['RPC-Write-Host'] = 'LANGUAGE-RPC FAILURE - Skipping all scripts for server'
-$script:lang['Scan-Head_1'] = 'LANGUAGE-There are {0} checks to perform, with a maximum of {1} running concurrently'
-$script:lang['Scan-Head_2'] = 'LANGUAGE-Each has a timeout limit of {0} seconds.  Progress bar legend:'
-$script:lang['Script-Version'] = 'LANGUAGE-Script Version:'         # Script Version: (version)
-$script:lang['Security'] = 'LANGUAGE-Security'                 # Security and firewall checks
-$script:lang['ServerCount'] = 'LANGUAGE-Scanning {0} servers'    #
-$script:lang['Servers'] = 'LANGUAGE-servers'
-$script:lang['Skipped'] = 'LANGUAGE-Skipped'                 #
-$script:lang['System'] = 'LANGUAGE-System'                   # Local computer system checks
-$script:lang['TimeTaken'] = 'LANGUAGE-Approx Time Taken :'     #
-$script:lang['TO-Message'] = 'LANGUAGE-Job failed to finish within the timeout period, job cancelled'
-$script:lang['TO-Name'] = 'LANGUAGE-TIMEOUT'
-$script:lang['TotalCount_1'] = 'LANGUAGE-Total Server Counts'     # Total count of the number of servers scanned
-$script:lang['TotalCount_2'] = 'LANGUAGE-Total Script Results'    # Total count of the script results (Passed, Failed, ...)
-$script:lang['Verbose-Info'] = 'LANGUAGE-Verbose information:'
-$script:lang['VMs-HyperV'] = 'LANGUAGE-VMs: HyperV'              # Computers that are Hyper-V guests (not hosts)
-$script:lang['VMs-VMware'] = 'LANGUAGE-VMs: VMware'              # Computers that are VMware ESX guests (not hosts)
-$script:lang['Warning'] = 'LANGUAGE-Warning'                 #
+$script:lang['HTML_Check'] = 'Check'                   # The check code (ACC-01)
+$script:lang['HTML_Data'] = 'Data'                    # The informational data returned
+$script:lang['HTML_Message'] = 'Message'                 # The message retuned to the user
+$script:lang['HTML_Name'] = 'Name'                    # The short name of the check
+$script:lang['HTML_Result'] = 'Result'                  # The check result (Pass, Fail, ...)
+$script:lang['HyperV-Host'] = 'HyperV Host'              # Microsoft Hyper-V host systems (not guests)
+$script:lang['Manual'] = 'Manual'                  #
+$script:lang['ND-Message'] = 'Error while running, job returned no data'
+$script:lang['ND-Name'] = 'NO DATA'
+$script:lang['Network'] = 'Network'                  # Local area networking information
+$script:lang['Not-Applicable'] = 'N/A'                     #
+$script:lang['On'] = 'on'                      #
+$script:lang['Pass'] = 'Pass'                    #
+$script:lang['Passed'] = 'Passed'                  #
+$script:lang['QA-Results'] = 'QA Results'              # Page header
+$script:lang['Regional'] = 'Regional'                 # Localised keyboard/language settings
+$script:lang['ReportsLocated'] = 'Reports Located In:'     #
+$script:lang['RPC-Message'] = 'RPC FAILURE while communicating with the server, check the firewall ports are opened correctly'
+$script:lang['RPC-Write-Host'] = 'RPC FAILURE - Skipping all scripts for server'
+$script:lang['Scan-Head_1'] = 'There are {0} checks to perform, with a maximum of {1} running concurrently'
+$script:lang['Scan-Head_2'] = 'Each has a timeout limit of {0} seconds.  Progress bar legend:'
+$script:lang['Script-Version'] = 'Script Version:'         # Script Version: (version)
+$script:lang['Security'] = 'Security'                 # Security and firewall checks
+$script:lang['ServerCount'] = 'Scanning {0} servers'    #
+$script:lang['Servers'] = 'servers'
+$script:lang['Skipped'] = 'Skipped'                 #
+$script:lang['System'] = 'System'                   # Local computer system checks
+$script:lang['TimeTaken'] = 'Approx Time Taken :'     #
+$script:lang['TO-Message'] = 'Job failed to finish within the timeout period, job cancelled'
+$script:lang['TO-Name'] = 'TIMEOUT'
+$script:lang['TotalCount_1'] = 'Total Server Counts'     # Total count of the number of servers scanned
+$script:lang['TotalCount_2'] = 'Total Script Results'    # Total count of the script results (Passed, Failed, ...)
+$script:lang['Verbose-Info'] = 'Verbose information:'
+$script:lang['VMs-HyperV'] = 'VMs: HyperV'              # Computers that are Hyper-V guests (not hosts)
+$script:lang['VMs-VMware'] = 'VMs: VMware'              # Computers that are VMware ESX guests (not hosts)
+$script:lang['Warning'] = 'Warning'                 #
 ##############################################################################################################################################################################################
 Function Show-HelpScreen
 {
