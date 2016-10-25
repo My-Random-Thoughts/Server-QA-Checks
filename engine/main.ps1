@@ -111,7 +111,7 @@ Function Start-QAProcess
     }
 
     # Create required output folders
-    New-Item -ItemType Directory -Force -Path ($script:qaOutput + '\EventLogs') | Out-Null  
+    New-Item -ItemType Directory -Force -Path ($script:qaOutput) | Out-Null
     If ($PSCmdlet.MyInvocation.BoundParameters.ContainsKey('Verbose') -eq $true) { $pBlock = '■' } Else { $pBlock = '▀' }
     If ($GenerateCSV -eq $true)
         { If (Test-Path -Path ($script:qaOutput + 'QA_Results.csv')) {
