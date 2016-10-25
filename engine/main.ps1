@@ -1,7 +1,5 @@
-﻿Function Show-HelpScreen
+Function Show-HelpScreen
 {
-$($script:lang['Help_01'])
-
     Clear-Host
     Write-Header -Message $($script:lang['Help_01']) -Width $script:screenwidth
     Write-Host ' '$($script:lang['Help_02'])                                               -ForegroundColor Cyan
