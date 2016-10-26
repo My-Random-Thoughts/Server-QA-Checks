@@ -6,7 +6,7 @@
     THIS FILE IS AUTO-COMPILED FROM SEVERAL SOURCE FILES
 
     VERSION : v3.16.1026
-    COMPILED: 2016/10/26 12:12
+    COMPILED: 2016/10/26 12:24
 #> 
 
 [CmdletBinding(DefaultParameterSetName = 'HLP')]
@@ -39,13 +39,14 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
                            'c-drv-08-drive-ntfs-format','c-hvh-01-server-core','c-hvh-02-no-other-server-roles','c-hvh-03-vm-location','c-net-01-no-ipv6','c-net-02-unused-network-interfaces',
                            'c-net-03-network-adapter-labels','c-net-04-binding-order','c-net-05-network-speed-duplex','c-net-06-network-agent','c-net-07-network-teaming',
                            'c-net-08-management-adapter','c-net-09-static-routes','c-reg-01-local-time','c-reg-02-timezone','c-reg-03-location','c-reg-04-language',
-                           'c-sec-06-reject-enumerate-accounts','c-sec-07-reject-enumerate-shares','c-sec-08-domain-credential-caching','c-sec-09-request-admin-elevated',
-                           'c-sec-10-anonymous-pipe-share-access','c-sec-11-iis-default-page','c-sec-12-smb-signing-on','c-sec-13-rsa-authentication','c-sec-14-firewall-rules',
-                           'c-sec-15-firewall-state','c-sys-01-pending-reboot','c-sys-02-windows-license','c-sys-03-services-not-started','c-sys-04-services-not-stopped',
-                           'c-sys-05-system-event-log','c-sys-06-application-event-log','c-sys-07-devices-status','c-sys-09-scheduled-tasks','c-sys-10-print-spooler',
-                           'c-sys-11-autorun-disabled','c-sys-12-snmp-configuration','c-sys-13-domain-user-logon','c-sys-14-power-plan','c-sys-15-hibernation',
-                           'c-sys-16-remote-desktop','c-sys-17-terminal-services-licenced','c-vhv-01-tools-version','c-vmw-01-tools-version','c-vmw-02-time-sync',
-                           'c-vmw-03-nic-type','c-vmw-04-lsi-sas-controller','c-vmw-05-scsi-drive-count','c-vmw-06-total-vm-size','c-vmw-07-cd-dvd-floppy-mounted')
+                           'c-sec-01-schannel-p1-ciphers','c-sec-02-schannel-p2-hashes','c-sec-03-schannel-p3-keyexchangealgorithms','c-sec-04-schannel-p4-protocols',
+                           'c-sec-05-schannel-p5-cipher-order','c-sec-06-reject-enumerate-accounts','c-sec-07-reject-enumerate-shares','c-sec-08-domain-credential-caching',
+                           'c-sec-09-request-admin-elevated','c-sec-10-anonymous-pipe-share-access','c-sec-11-iis-default-page','c-sec-12-smb-signing-on','c-sec-13-rsa-authentication',
+                           'c-sec-14-firewall-rules','c-sec-15-firewall-state','c-sys-01-pending-reboot','c-sys-02-windows-license','c-sys-03-services-not-started',
+                           'c-sys-04-services-not-stopped','c-sys-05-system-event-log','c-sys-06-application-event-log','c-sys-07-devices-status','c-sys-09-scheduled-tasks',
+                           'c-sys-10-print-spooler','c-sys-11-autorun-disabled','c-sys-12-snmp-configuration','c-sys-13-domain-user-logon','c-sys-14-power-plan',
+                           'c-sys-15-hibernation','c-sys-16-remote-desktop','c-sys-17-terminal-services-licenced','c-vhv-01-tools-version','c-vmw-01-tools-version',
+                           'c-vmw-02-time-sync','c-vmw-03-nic-type','c-vmw-04-lsi-sas-controller','c-vmw-05-scsi-drive-count','c-vmw-06-total-vm-size','c-vmw-07-cd-dvd-floppy-mounted')
 
 ##############################################################################################################################################################################################
 # QA Check Script Blocks
@@ -4136,6 +4137,8 @@ $csec01 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
+$script:appSettings['DisabledCiphers'] = ('DES 56/56', 'NULL', 'RC2 128/128', 'RC2 40/128', 'RC2 56/128', 'RC2 56/56', 'RC4 128/128', 'RC4 40/128', 'RC4 56/128', 'RC4 64/128')
+$script:appSettings['EnabledCiphers'] = ('AES 128/128', 'AES 256/256', 'Triple DES 168/168')
 $script:lang['Error'] = 'Error'
 $script:lang['Fail'] = 'Fail'
 $script:lang['Manual'] = 'Manual'
@@ -4236,6 +4239,8 @@ $csec02 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
+$script:appSettings['DisabledHashes'] = ('MD5')
+$script:appSettings['EnabledHashes'] = ('SHA', 'SHA256', 'SHA384', 'SHA512')
 $script:lang['Error'] = 'Error'
 $script:lang['Fail'] = 'Fail'
 $script:lang['Manual'] = 'Manual'
@@ -4336,6 +4341,7 @@ $csec03 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
+$script:appSettings['KeyExchangeAlgorithms'] = ('Diffie-Hellman', 'ECDH', 'PKCS')
 $script:lang['Error'] = 'Error'
 $script:lang['Fail'] = 'Fail'
 $script:lang['Manual'] = 'Manual'
@@ -4429,6 +4435,7 @@ $csec04 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
+$script:appSettings['DisabledProtocols'] = ('Multi-Protocol Unified Hello', 'PCT 1.0', 'SSL 2.0', 'SSL 3.0' , 'TLS 1.0')
 $script:lang['Error'] = 'Error'
 $script:lang['Fail'] = 'Fail'
 $script:lang['Manual'] = 'Manual'
@@ -4528,6 +4535,7 @@ $csec05 = {
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
+$script:appSettings['CipherSuiteOrder'] = 'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P521,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P521,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P384,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P521,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P521,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_3DES_EDE_CBC_SHA'
 $script:lang['Error'] = 'Error'
 $script:lang['Fail'] = 'Fail'
 $script:lang['Manual'] = 'Manual'
