@@ -33,7 +33,7 @@ Function c-net-01-no-ipv6
         # First check if IPv6 is disabled globally
         $reg = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
         $regKey = $reg.OpenSubKey('SYSTEM\CurrentControlSet\Services\TCPIP6\Parameters')
-        If ($regKey) { $keyVal = $regKey.GetValue('DisabledComponents') }
+        If ($regKey) { [string]$keyVal = $regKey.GetValue('DisabledComponents') }
         Try { $regKey.Close() } Catch { }
         $reg.Close()
 
@@ -46,7 +46,7 @@ Function c-net-01-no-ipv6
         Return $result
     }
 
-    If ($keyval -eq 0xFFFFFFFF)    # All Disabled
+    If ($keyval -eq '-1')    # All Disabled
     {
         $result.result  = $script:lang['Pass']
         $result.message = 'IPv6 disabled globally'
