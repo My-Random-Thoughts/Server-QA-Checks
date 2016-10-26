@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check windows is licensed.
 
@@ -79,36 +79,34 @@ Function c-sys-02-windows-license
         If ($portTest -eq $true)
         {
             $result.result  = $script:lang['Pass']
-            $result.message = (',#Port 1688 open to KMS Server {0}' -f $kms)
+            $result.data    = ('Port 1688 open to KMS Server {0}' -f $kms)
         }
         Else
         {
             $result.result  = $script:lang['Fail']
-            $result.message = (',#Port 1688 not open to KMS Server {0}' -f $kms)
+            $result.data    = ('Port 1688 not open to KMS Server {0}' -f $kms)
         }
     }
     Else
     {
         $result.result  = $script:lang['Warning']
-        $result.message = ',#Not using a KMS server'
+        $result.data    = 'Not using a KMS server'
     }
 
     If ($status -eq 'Licensed')
     {
-        $result.message = ('Windows is licenced' + $result.message)
-        $result.data    = ''
+        $result.message = 'Windows is licenced'
     }
     ElseIf ($status -eq '')
     {
         $result.result  = $script:lang['Fail']
-        $result.message = ('Windows licence check failed' + $result.message)
-        $result.data    = ''
+        $result.message = 'Windows licence check failed'
     }
     Else
     {
         $result.result  = $script:lang['Fail']
-        $result.message = ('Windows not licenced' + $result.message)
-        $result.data    = 'Status: {0}' -f $status
+        $result.message = 'Windows not licenced'
+        $result.data    = ('Status: {0},#{1}' -f $status, $result.data)
     }
 
     Return $result
