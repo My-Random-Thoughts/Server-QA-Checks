@@ -55,7 +55,7 @@ Function c-sec-13-rsa-authentication
         {
             $result.result  = $script:lang['Pass']
             $result.message = 'RSA software found'
-            $result.data    = '{0}, Version {0}' -f $script:appSettings['ProductNames'], $verCheck
+            $result.data    = '{0}, Version {1}' -f $prodName, $prodVer
         }
         Else
         {
