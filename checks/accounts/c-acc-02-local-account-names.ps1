@@ -1,12 +1,12 @@
-﻿<#
+<#
     DESCRIPTION: 
         Checks to see if the local default accounts have been renamed.
         The "Administrator" and "Guest" accounts should be.
 
 
-    PASS:    Local admin account has been renamed
+    PASS:    All local accounts have been renamed
     WARNING:
-    FAIL:    A local admin account was found that needs to be renamed
+    FAIL:    A local account was found that needs to be renamed
     MANUAL:
     NA:
 
@@ -15,7 +15,7 @@
     REQUIRED-FUNCTIONS:
 #>
 
-Function c-acc-02-local-admin-name
+Function c-acc-02-local-account-names
 {
     Param ( [string]$serverName, [string]$resultPath )
 
@@ -24,7 +24,7 @@ Function c-acc-02-local-admin-name
     $result        = newResult
     $result.server = $serverName
     $result.name   = $script:lang['Name']
-    $result.check  = 'c-acc-02-local-admin-name'
+    $result.check  = 'c-acc-02-local-account-names'
 
     #... CHECK STARTS HERE ...#
 
@@ -56,12 +56,12 @@ Function c-acc-02-local-admin-name
     If ($accsFound -gt 0)
     {
         $result.result  = $script:lang['Fail']
-        $result.message = 'A local admin account was found that needs to be renamed'
+        $result.message = 'A local account was found that needs to be renamed'
     }
     Else
     {
         $result.result  = $script:lang['Pass']
-        $result.message = 'Local admin account has been renamed'
+        $result.message = 'Local accounts have been renamed'
     }
     
     Return $result
