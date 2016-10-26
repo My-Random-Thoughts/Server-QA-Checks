@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check relevant monitoring tool agent is installed and that the correct port is open to the management server
 
@@ -83,21 +83,21 @@ Function c-com-02-scom-monitoring-installed
             If ($portTest -eq $true)
             {
                 $result.result  = $script:lang['Pass']
-                $result.message = '{0} found,#Port {1} open to {2}' -f $prodName, $valPort, $valName
-                $result.data    = 'Version {0}' -f $prodVer
+                $result.message = '{0} found' -f $prodName
+                $result.data    = 'Version {0},#Port {1} open to {2}' -f $prodVer, $valPort, $valName
             }
             Else
             {
                 $result.result  = $script:lang['Fail']
-                $result.message = '{0} found,#Port {1} not open to {2}' -f $prodName, $valPort, $valName
-                $result.data    = 'Version {0}' -f $prodVer
+                $result.message = '{0} found' -f $prodName
+                $result.data    = 'Version {0},#Port {1} not open to {2}' -f $prodVer, $valPort, $valName
             }
         }
         Else
         {
             $result.result  = $script:lang['Fail']
-            $result.message = '{0} found,#Agent not configured with port and/or servername' -f $prodName
-            $result.data    = 'Version {0}' -f $prodVer
+            $result.message = '{0} found' -f $prodName
+            $result.data    = 'Version {0},#Agent not configured with port and/or servername' -f $prodVer
         }
     }
     Else
