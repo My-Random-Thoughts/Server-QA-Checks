@@ -131,7 +131,7 @@ B    = 'No additional local accounts'
 C    = 'This is a workgroup server, is this correct.?'
 
 [acc02]
-Name = 'Local Admin Name'
+Name = 'Local Account Names'
 
 [acc03]
 Name = 'Local Admins'
