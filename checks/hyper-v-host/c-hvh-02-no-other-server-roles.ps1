@@ -12,7 +12,7 @@
 
     APPLIES: Hyper-V Hosts
 
-    REQUIRED-FUNCTIONS: Check-NameSpace
+    REQUIRED-FUNCTIONS: Check-NameSpace, Check-HyperV
 #>
 
 Function c-hvh-02-no-other-server-roles
