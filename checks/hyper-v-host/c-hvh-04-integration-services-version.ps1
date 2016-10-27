@@ -1,0 +1,68 @@
+<#
+    DESCRIPTION: 
+        Check the version of the Integration Services
+
+
+
+    PASS:    
+    WARNING:
+    FAIL:    Registry setting not found
+    MANUAL:  Integration services found
+    NA:      Not a Hyper-V server
+
+    APPLIES: Hyper-V Hosts
+
+    REQUIRED-FUNCTIONS: Check-NameSpace
+#>
+
+Function c-hvh-04-integration-services
+{
+    Param ( [string]$serverName, [string]$resultPath )
+
+    $serverName    = $serverName.Replace('[0]', '')
+    $resultPath    = $resultPath.Replace('[0]', '')
+    $result        = newResult
+    $result.server = $serverName
+    $result.name   = 'Integration Services'
+    $result.check  = 'c-hvh-04-integration-services'
+ 
+    #... CHECK STARTS HERE ...#
+
+    If ((Check-HyperV $serverName) -eq $true)
+    {
+        Try
+        {
+            $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
+            $regKey = $reg.OpenSubKey('SOFTWARE\Microsoft\Windows NT\CurrentVersion\Virtualization\GuestInstaller\Version')
+            If ($regKey) { [string]$keyVal = $regKey.GetValue('Microsoft-Hyper-V-Guest-Installer') }
+            Try { $regKey.Close() } Catch { }
+            $reg.Close()
+        }
+        Catch
+        {
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
+            $result.data    = $_.Exception.Message
+            Return $result
+        }
+
+        If ([string]::IsNullOrEmpty($keyVal) -eq $false)
+        {
+            $result.result  = $script:lang['Manual']
+            $result.message = 'Integration services found'
+            $result.data    = ('Version: {0}' -f $keyVal)
+        }
+        Else
+        {
+            $result.result  = $script:lang['fail']
+            $result.message = 'Registry setting not found'
+        }
+    }
+    Else
+    {
+        $result.result  = $script:lang['Not-Applicable']
+        $result.message = 'Not a Hyper-V server'
+    }
+
+    Return $result
+}
