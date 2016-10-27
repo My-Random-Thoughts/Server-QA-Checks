@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check all VMs are running from a non-system drive
 
@@ -19,7 +19,6 @@ Function c-hvh-03-vm-location
 {
     Param ( [string]$serverName, [string]$resultPath )
 
-    # Default Result Object
     $serverName    = $serverName.Replace('[0]', '')
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
@@ -27,8 +26,9 @@ Function c-hvh-03-vm-location
     $result.name   = 'VM Location'
     $result.check  = 'c-hvh-03-vm-location'
  
-    # ...
-    If ((Check-NameSpace -serverName $serverName -namespace 'virtualization') -and (Check-NameSpace -serverName $serverName -namespace 'virtualization\v2') -eq $true)
+    #... CHECK STARTS HERE ...#
+
+    If ((Check-HyperV $serverName) -eq $true)
     {
         Try
         {
