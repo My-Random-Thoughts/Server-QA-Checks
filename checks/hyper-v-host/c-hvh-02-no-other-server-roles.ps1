@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check Hyper-V is the only one installed
 
@@ -19,7 +19,6 @@ Function c-hvh-02-no-other-server-roles
 {
     Param ( [string]$serverName, [string]$resultPath )
 
-    # Default Result Object
     $serverName    = $serverName.Replace('[0]', '')
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
@@ -27,8 +26,9 @@ Function c-hvh-02-no-other-server-roles
     $result.name   = 'No Other Server Roles'
     $result.check  = 'c-hvh-02-no-other-server-roles'
  
-    # ...
-    If ((Check-NameSpace -serverName $serverName -namespace 'virtualization') -and (Check-NameSpace -serverName $serverName -namespace 'virtualization\v2') -eq $true)
+    #... CHECK STARTS HERE ...#
+
+    If ((Check-HyperV $serverName) -eq $true)
     {
         Try
         {
