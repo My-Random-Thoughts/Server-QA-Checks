@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check Hyper-V is installed on server core
 
@@ -19,7 +19,6 @@ Function c-hvh-01-server-core
 {
     Param ( [string]$serverName, [string]$resultPath )
 
-    # Default Result Object
     $serverName    = $serverName.Replace('[0]', '')
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
@@ -27,8 +26,9 @@ Function c-hvh-01-server-core
     $result.name   = 'Server Core'
     $result.check  = 'c-hvh-01-server-core'
  
-    # ...
-    If ((Check-NameSpace -serverName $serverName -namespace 'virtualization') -and (Check-NameSpace -serverName $serverName -namespace 'virtualization\v2') -eq $true)
+    #... CHECK STARTS HERE ...#
+
+    If ((Check-HyperV $serverName) -eq $true)
     {
         Try
         {
