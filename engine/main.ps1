@@ -427,7 +427,7 @@ Function Export-Results
     [string]$body = @"
 <div id="header">
     <div id="headerTop">
-        <div class="logo1">$logoName</div>
+        <div class="logo1">$reportCompanyName</div>
         <div class="logo2">$($script:lang['QA-Results'])</div>
         <div class="logo3">$($script:lang['Script-Version']) <b>$version</b> ($settingsFile)
                       <br/>$($script:lang['Generated-By']) <b>$un</b> $($script:lang['On']) <b>$dt1</b></div>
@@ -703,11 +703,13 @@ Function DivLine
 
 ###################################################################################################
 
-[int]      $script:screenwidth    = 120
-[int]      $script:failurecount   =   0
-[array]    $script:results        = @()
-[array]    $script:servers        = @()
-[hashtable]$script:appSettings    = @{}
+[int]      $script:ccTasks        =   5    # Number of concurrent tasks to perform (the higher the number the more resources you need)
+[int]      $script:waitTime       = 100    # Time to wait between starting new tasks (milliseconds)
+[int]      $script:checkTimeout   =  60    # Time to wait for each task to complete (seconds)
+[int]      $script:screenwidth    = 120    #
+[int]      $script:failurecount   =   0    #
+[array]    $script:results        = @()    #
+[array]    $script:servers        = @()    #
 [hashtable]$script:sections       = @{'acc' = $script:lang['Accounts'];       #
                                       'com' = $script:lang['Compliance'];      # 
                                       'drv' = $script:lang['Drives'];          # List of sections, matched
