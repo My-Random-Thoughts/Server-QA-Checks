@@ -1,4 +1,4 @@
-﻿<#
+<#
     Compiles all the needed powershell files for QA checks into one master script.
 #>
 
@@ -134,14 +134,15 @@ Write-Host '   ' -NoNewline
 
 # Start building the QA file
 Out-File -FilePath $outPath -InputObject $scriptHeader                                                      -Encoding utf8
-Out-File -FilePath $outPath -InputObject (Get-Content ($path + '\engine\variables.ps1'))                    -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
 Out-File -FilePath $outPath -InputObject ('[string]   $version               = "' + $version   + '"')       -Encoding utf8 -Append
 Out-File -FilePath $outPath -InputObject ('[string]   $settingsFile          = "' + $Settings  + '"')       -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('[hashtable]$script:lang           = @{}'                 )       -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('[hashtable]$script:qahelp         = @{}'                 )       -Encoding utf8 -Append
 Out-File -FilePath $outPath -InputObject ('')                                                               -Encoding utf8 -Append
 
 # Add the shared variables code
 Out-File -FilePath $outPath -InputObject ($shared)                                                          -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('')                                                               -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('')                                                               -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
 
 # Get a list of all the checks, adding them into an array
 [string]$cList = '[array]$script:qaChecks = ('
@@ -264,6 +265,8 @@ Try
 }
 Catch { }
 Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                             -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('[string]$reportCompanyName = "' + ($iniSettings['settings']['reportCompanyName']) + '"') -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('[string]$script:qaOutput   = "' + ($iniSettings['settings']['outputLocation'])    + '"') -Encoding utf8 -Append
 Out-File -FilePath $outPath -InputObject (Get-Content ($path + '\engine\main.ps1'))                         -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
 Write-Host ''
 
