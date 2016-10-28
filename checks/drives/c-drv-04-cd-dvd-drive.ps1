@@ -41,7 +41,7 @@ Function c-drv-04-cd-dvd-drive
         Return $result
     }
 
-    If ($check.Count -eq 0 )
+    If (($check.Count -eq 0 ) -or ([string]::IsNullOrEmpty($check) -eq $true))
     {
         $result.result  = $script:lang['Not-Applicable']
         $result.message = 'No CD/DVD drives found'
