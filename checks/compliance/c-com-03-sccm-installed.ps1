@@ -46,8 +46,8 @@ Function c-com-03-sccm-installed
         $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
         $regKey = $reg.OpenSubKey('Software\Microsoft\CCM')
         If ($regKey) {
-            [string]$valName = $regKey.GetValue('NetworkName')
-            [string]$valPort = $regKey.GetValue('Port')
+            [string]$valName = $regKey.GetValue('NetworkName'); If ($valName -eq '') { $valName = $regKey.GetValue('SMSSLP')    }
+            [string]$valPort = $regKey.GetValue('Port')       ; If ($valPort -eq '') { $valPort = $regKey.GetValue('HttpsPort') }
         }
         Try {$regKey.Close() } Catch {}
         $reg.Close()
