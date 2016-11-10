@@ -58,17 +58,25 @@ Function c-com-07-sentinel-agent-installed
             Return $result
         }
 
-        ForEach ($key In (0..9))
+        If ($valCons.Count -gt 0)
         {
-            If ([string]::IsNullOrEmpty($($valCons.host[$key])) -eq $false)
+            ForEach ($key In (0..9))
             {
-                $portTest = Test-Port -serverName $($valCons.host[$key]) -Port $($valCons.port[$key])
-                If ($portTest -eq $true) { [string]$connected = ('{0}|{1}' -f $($valCons.host[$key]), $($valCons.port[$key])) }
+                If ([string]::IsNullOrEmpty($($valCons.host[$key])) -eq $false)
+                {
+                    $portTest = Test-Port -serverName $($valCons.host[$key]) -Port $($valCons.port[$key])
+                    If ($portTest -eq $true) { [string]$connected = ('{0}|{1}' -f $($valCons.host[$key]), $($valCons.port[$key])) }
+                }
             }
-        }
 
-        If ([string]::IsNullOrEmpty($connected) -eq $false) { $result.message += ('Port {0} open to {1}'     -f $($connected.Split('|')[1]), $($connected.Split('|')[0]))          }
-        Else                                                { $result.message += ('Port {0} not open to {1}' -f $($valCons.port[0]), $($valCons.host[0])); $result.result = $script:lang['Fail'] }
+            If ([string]::IsNullOrEmpty($connected) -eq $false) { $result.message += ('Port {0} open to {1}'     -f $($connected.Split('|')[1]), $($connected.Split('|')[0]))          }
+            Else                                                { $result.message += ('Port {0} not open to {1}' -f $($valCons.port[0]), $($valCons.host[0])); $result.result = $script:lang['Fail'] }
+        }
+        Else
+        {
+            $result.result  = $script:lang['Fail']
+            $result.message = 'Sentinel agent not found, install required'
+        }
     }
     Else
     {
