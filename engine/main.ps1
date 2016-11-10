@@ -115,6 +115,10 @@ Function Start-QAProcess
         { If (Test-Path -Path ($script:qaOutput + 'QA_Results.csv')) {
             Try { Remove-Item ($script:qaOutput + 'QA_Results.csv') -Force } Catch {}
     } }
+    If ($GenerateXML -eq $true)
+        { If (Test-Path -Path ($script:qaOutput + 'QA_Results.xml')) {
+            Try { Remove-Item ($script:qaOutput + 'QA_Results.xml') -Force } Catch {}
+    } }
 
     # Master job loop
     [int]$CurrentServerNumber = 0
@@ -478,7 +482,16 @@ Function Export-Results
         $outCSV | Out-File -FilePath $path -Encoding utf8 -Force
     }
     
-    Remove-Variable resultsplit, Head, Body, serversOut, server, serverResults, outHTML, outCSV, cnvCSV, path -ErrorAction SilentlyContinue
+    If ($GenerateXML -eq $true)
+    {
+        [string]$path   =  $script:qaOutput + 'QA_Results.xml'
+        [array] $outXML =  @()
+        [array] $cnvXML = (($results_input | Select-Object server, name, check, datetime, result, message, data | Sort-Object check, server | ConvertTo-Xml -NoTypeInformation).OuterXml -as [string])
+        $cnvXML | ForEach-Object { $outXML += $_.Replace(',#',', ') }
+        $outXML | Out-File -FilePath $path -Encoding utf8 -Force
+    }
+
+    Remove-Variable resultsplit, Head, Body, serversOut, server, serverResults, outHTML, outCSV, cnvCSV, outXML, cnvXML, path -ErrorAction SilentlyContinue
 }
 
 ###################################################################################################
