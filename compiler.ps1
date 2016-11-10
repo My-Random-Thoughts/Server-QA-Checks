@@ -1,4 +1,4 @@
-<#
+﻿<#
     Compiles all the needed powershell files for QA checks into one master script.
 #>
 
