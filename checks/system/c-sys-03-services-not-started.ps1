@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check services and ensure all services set to start automatically are running (NetBackup Bare Metal Restore Boot Server, 
         NetBackup SAN Client Fibre Transport Service and .NET4.0 are all expected to be Automatic but not running)
@@ -30,9 +30,9 @@ Function c-sys-03-services-not-started
 
     Try
     {
-        [string]$query = 'SELECT DisplayName FROM Win32_Service WHERE StartMode="Auto" AND Started="False"'
+        [string]$query = 'SELECT Name, DisplayName FROM Win32_Service WHERE StartMode="Auto" AND Started="False"'
         $script:appSettings['IgnoreTheseServices'] | ForEach {  $query += ' AND NOT DisplayName LIKE "%{0}%"' -f $_ }
-        [array]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty DisplayName
+        [array]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object Name, DisplayName
     }
     Catch
     {
@@ -44,9 +44,24 @@ Function c-sys-03-services-not-started
 
     If ($check.Count -gt 0)
     {
-        $result.result  = $script:lang['Fail']
-        $result.message = 'An auto-start service was found not running'
-        $check | ForEach { $result.data += '{0},#' -f $_ }
+        $check | ForEach {
+            Try
+            {
+                # Check for and ignore "Trigger Start" services
+                $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
+                $regKey = $reg.OpenSubKey("SYSTEM\CurrentControlSet\Services\$($_.Name)\TriggerInfo\0")
+                Try { $regKey.Close() } Catch { }
+                $reg.Close()
+            }
+            Catch { }
+
+            If (-not $regKey)
+            {
+                $result.result  = $script:lang['Fail']
+                $result.message = 'An auto-start service was found not running'
+                $result.data   += '{0},#' -f $($_.DisplayName)
+            }
+        }
     }
     Else
     {
