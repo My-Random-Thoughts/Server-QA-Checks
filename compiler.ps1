@@ -98,6 +98,7 @@ Param (
     [Parameter(ParameterSetName='QAC', Mandatory=$true, Position=1)][string[]]$ComputerName,
     [Parameter(ParameterSetName='QAC', Mandatory=$false           )][switch]  $SkipHTMLHelp,
     [Parameter(ParameterSetName='QAC', Mandatory=$false           )][switch]  $GenerateCSV,
+    [Parameter(ParameterSetName='QAC', Mandatory=$false           )][switch]  $GenerateXML,
     [Parameter(ParameterSetName='HLP', Mandatory=$false           )][switch]  $Help
 )
 
