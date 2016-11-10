@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check that the server time is correct.  If a valid source is used, the time is also checked against that source.
         Maximum time difference allowed is 10 seconds.  Any longer and the check fails
@@ -30,6 +30,9 @@ Function c-reg-01-local-time
 
     Try
     {
+        [string] $query2 = "SELECT PartOfDomain FROM Win32_ComputerSystem"
+        [boolean]$domain = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty PartOfDomain
+
         [string]  $query = 'SELECT Day, Month, Year, Hour, Minute, Second FROM Win32_LocalTime'
         [array]   $check = Get-WmiObject -ComputerName $serverName  -Query $query -Namespace ROOT\Cimv2 | Select  Day, Month, Year, Hour, Minute, Second
         [datetime]$rdt   = Get-Date -Year $check[0].Year -Month  $check[0].Month  -Day    $check[0].Day `
@@ -37,13 +40,20 @@ Function c-reg-01-local-time
 
         Try
         {
-            If ($serverName -eq $env:ComputerName) {
-                [string]$source = Invoke-Command                           -ScriptBlock { &"$env:SystemRoot\System32\w32tm.exe" /query /source } -ErrorAction SilentlyContinue
+            If ($domain -eq $true)
+            {
+                If ($serverName -eq $env:ComputerName) {
+                    [string]$source = Invoke-Command                           -ScriptBlock { &"$env:SystemRoot\System32\w32tm.exe" /query /source } -ErrorAction SilentlyContinue
+                }
+                Else {
+                    [string]$source = Invoke-Command -ComputerName $serverName -ScriptBlock { &"$env:SystemRoot\System32\w32tm.exe" /query /source } -ErrorAction SilentlyContinue
+                }
+                If ($source.Contains(',') -eq $true) { $source = ($source.Split(',')[0]) }
             }
-            Else {
-                [string]$source = Invoke-Command -ComputerName $serverName -ScriptBlock { &"$env:SystemRoot\System32\w32tm.exe" /query /source } -ErrorAction SilentlyContinue
+            Else
+            {
+                $source = 'WORKGROUP'
             }
-            If ($source.Contains(',') -eq $true) { $source = ($source.Split(',')[0]) }
         }
         Catch
         {
@@ -75,6 +85,12 @@ Function c-reg-01-local-time
             $result.result  = $script:lang['Manual']
             $result.message = 'Not a supported operating system for this check'
             $result.data    = 'Time is {0}' -f $rdt
+        }
+        ElseIf ($source -eq 'WORKGROUP')
+        {
+            $result.result   = $script:lang['Warning']
+            $result.message += 'This is a workgroup server'
+            $result.data    += 'Time is {0}' -f $rdt
         }
         Else
         {
