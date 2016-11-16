@@ -216,12 +216,13 @@ $qaChecks | ForEach-Object {
 
     # Generate the help text for from each check (taken from the header information)
     # ALSO, add any required additional script functions
-    [string]  $xmlHelp   = "<xml>"
-    [string[]]$keyWords = @('DESCRIPTION', 'PASS', 'WARNING', 'FAIL', 'MANUAL', 'NA', 'APPLIES', 'REQUIRED-FUNCTIONS')
+    [string]  $xmlHelp    = "<xml>"
+    [string[]]$keyWords   = @('DESCRIPTION', 'PASS', 'WARNING', 'FAIL', 'MANUAL', 'NA', 'APPLIES', 'REQUIRED-FUNCTIONS')
+    [string[]]$getContent = (Get-Content -Path ($_.FullName))
     ForEach ($keyWord In $KeyWords)
     {
         # Code from Reddit user "sgtoj"
-        $regEx = [RegEx]::Match((Get-Content -Path ($_.FullName)), "$($keyWord):((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))")
+        $regEx = [RegEx]::Match($getContent, "$($keyWord):((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))")
         $sectionValue = $regEx.Groups[1].Value.Replace("`r`n", ' ').Replace('  ', '').Trim()
 
         If ([string]::IsNullOrEmpty($sectionValue) -eq $false)
