@@ -30,7 +30,7 @@ Function c-net-03-network-adapter-labels
 
     Try
     {
-        [string]$query = 'SELECT NetConnectionID FROM Win32_NetworkAdapter WHERE NetConnectionID = ""'
+        [string]$query = 'SELECT NetConnectionID, NetConnectionStatus FROM Win32_NetworkAdapter WHERE NetConnectionID = "" AND NetConnectionStatus = "2"'
         ('Local Area Connection', 'Ethernet') | ForEach { $query += ' OR NetConnectionID LIKE "%{0}%"' -f $_ }
         [array] $check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty NetConnectionID
     }
