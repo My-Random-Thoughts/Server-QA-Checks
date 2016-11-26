@@ -6,7 +6,7 @@
     THIS FILE IS AUTO-COMPILED FROM SEVERAL SOURCE FILES
 
     VERSION : v3.16.1126
-    COMPILED: 2016/11/26 09:14
+    COMPILED: 2016/11/26 21:07
 #> 
 
 [CmdletBinding(DefaultParameterSetName = 'HLP')]
@@ -42,7 +42,7 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
                            'c-sys-07-devices-status','c-sys-09-scheduled-tasks','c-sys-10-print-spooler','c-sys-11-autorun-disabled','c-sys-12-snmp-configuration',
                            'c-sys-13-domain-user-logon','c-sys-14-power-plan','c-sys-15-hibernation','c-sys-16-remote-desktop','c-sys-17-terminal-services-licenced',
                            'c-vhv-01-tools-version','c-vmw-01-tools-version','c-vmw-02-time-sync','c-vmw-03-nic-type','c-vmw-04-lsi-sas-controller','c-vmw-05-scsi-drive-count',
-                           'c-vmw-06-total-vm-size','c-vmw-07-cd-dvd-floppy-mounted')
+                           'c-vmw-06-total-vm-size','c-vmw-07-cd-dvd-floppy-mounted','c-vmw-08-check-vosot-registry','c-vmw-09-check-vosot-services-tasks')
 
 ##############################################################################################################################################################################################
 # QA Check Script Blocks
@@ -7944,6 +7944,406 @@ Function Check-VMware
 }
 }
 
+$cvmw08 = {
+Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
+$script:lang        = @{}
+$script:appSettings = @{}
+$script:appSettings['vosotXmlFile'] = 'C:\ProgramData\VMware\OSOT\VMware Templates\636009.xml'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
+<#
+    DESCRIPTION: 
+        Checks against a specified VMware OS Optimisation Template
+        Registry setting specific checks only
+
+
+    PASS:    All mandatory and recommended settings configured
+    WARNING: All mandatory settings configured, recommended settings not configured
+    FAIL:    All mandatory and recommended settings not configured
+    MANUAL:  
+    NA:      Not a virtual machine / XML check file not applicable for this server
+
+    APPLIES: Virtuals
+
+    REQUIRED-FUNCTIONS: Check-VMware
+#>
+
+Function c-vmw-08-check-vosot-registry
+{
+    Param ( [string]$serverName, [string]$resultPath )
+
+    $serverName    = $serverName.Replace('[0]', '')
+    $resultPath    = $resultPath.Replace('[0]', '')
+    $result        = newResult
+    $result.server = $serverName
+    $result.name   = 'Check vOSOT Settings (Registry)'
+    $result.check  = 'c-vmw-08-check-vosot-registry'
+
+    #... CHECK STARTS HERE ...#
+
+    If ((Check-VMware $serverName) -eq $false)
+    {
+        Try
+        {
+            [int]$total_M = 0; [int]$count_M = 0    # Mandatory
+            [int]$total_R = 0; [int]$count_R = 0    # Recommended
+            [int]$total_O = 0; [int]$count_O = 0    # Optional
+
+            # Load the XML
+            [xml]$xml = New-Object System.Xml.XmlDataDocument
+            If ((Test-Path -Path $script:appSettings['vosotXmlFile']) -eq $false) { Throw "Required XML file '$($script:appSettings['vosotXmlFile'])' missing" }
+            Try { $xml.LoadXml($(Get-Content -Path $script:appSettings['vosotXmlFile'])) } Catch { Throw 'There was a problem loading the XML' }
+
+            # Get current OS type
+            [string[]]$osType  = ('Microsoft', 'Standard', 'Professional', 'Enterprise')
+            [string]  $query   = "SELECT Caption, OSArchitecture, Version, ProductType FROM Win32_OperatingSystem"
+            [object]  $osCheck = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object Caption, OSArchitecture, Version, ProductType
+            $osType | ForEach { $osCheck.Caption = (($osCheck.Caption).Replace($_, '')).Trim() }
+
+            # Compare current OS against the template allowed list
+            [boolean] $runAgainst = $false
+            [string[]]$runOnOS    = ($xml.sequence.runOnOs).Split(',')
+            ForEach ($osEntry In ($xml.sequence.globalVarList.osCollection.osEntry))
+            {
+                If ($osEntry.ProductType -eq $osCheck.ProductType) { If ($runOnOS -contains $osEntry.osId) { $runAgainst = $true }
+                Else { ForEach ($osSubEntry In $osEntry.osEntry) { If ($osSubEntry.OSArchitecture -eq $osCheck.OSArchitecture) { If ($runOnOS -contains $osSubEntry.osId) { $runAgainst = $true } } } } }
+            }
+            If ($runAgainst -eq $false) { Throw 'The specified XML file is not suitable for this OS version/type' }
+            [string]$logFileName = "$serverName-vOSOT-Registry.log"
+
+            If ((Test-Path -Path ('{0}OSOT'     -f $resultPath              )) -eq $false) { Try { New-Item    -Path ('{0}OSOT'     -f $resultPath              ) -ItemType Directory -Force | Out-Null } Catch {} }
+            If ((Test-Path -Path ('{0}OSOT\{1}' -f $resultPath, $logFileName)) -eq $true)  { Try { Remove-Item -Path ('{0}OSOT\{1}' -f $resultPath, $logFileName)                     -Force | Out-Null } Catch {} }
+
+            # Start master loop
+            [boolean]$return = $false
+            ForEach ($step In ($xml.GetElementsByTagName('step')))
+            {
+                Log-Output "$($($step.category).ToUpper().PadRight(12)): $($step.Name)"
+                $return = $false
+                If ($($step.action.type) -eq 'Registry')
+                {
+                    $return = Check-Registry -Action ($step.action)
+
+                    Switch ($($step.category))
+                    {
+                        'Mandatory'   { $total_M++; If ($return -eq $true) { $count_M++ } }
+                        'Recommended' { $total_R++; If ($return -eq $true) { $count_R++ } }
+                        'Optional'    { $total_O++; If ($return -eq $true) { $count_O++ } }
+                    }
+                }
+            }
+
+            # Compile the results
+            If (($count_M -eq $total_M) -and ($count_R -eq $total_R)) { $result.result = $script:lang['Pass']   ; $result.message = 'All mandatory and recommended settings are correct' }
+            If (($count_M -eq $total_M) -and ($count_R -ne $total_R)) { $result.result = $script:lang['Warning']; $result.message = 'One or more recommended settings are incorrect'     }
+            If (($count_M -ne $total_M)                             ) { $result.result = $script:lang['Fail']   ; $result.message = 'One or more mandatory settings are incorrect'       }
+
+            $result.data = ('Mandatory: {0}/{1},#Recommended: {2}/{3},#Optional: {4}/{5}' -f $count_M, $total_M, $count_R, $total_R, $count_O, $total_O)
+        }
+        Catch
+        {
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
+            $result.data    = $_.Exception.Message
+            Return $result
+        }
+    }
+    Else
+    {
+        $result.result  = $script:lang['Not-Applicable']
+        $result.message = 'Not a virtual machine'
+    }
+
+    Return $result
+}
+
+Function Log-Output ([string]$LogString)
+{
+    $LogString | Out-File -FilePath ('{0}OSOT\{1}-vOSOT-Registry.log' -f $resultPath, $serverName.ToUpper()) -Encoding ascii -Append
+}
+
+Function Check-Registry
+{
+    Param ([System.Xml.XmlElement]$Action)
+    Try
+    {
+        [boolean]$func_return = $false
+        If ($($Action.params.keyName).StartsWith('hku\') -eq $true) { Log-Output "   Skipped"; Return $true }
+
+        [string]$baseKey = 'LocalMachine'
+        [string]$shortNm = 'HKLM'
+        [string]$regPath = $($Action.params.keyName).Replace('HKEY_LOCAL_MACHINE\', 'HKLM\').Replace('HKEY_CURRENT_USER\', 'HKCU\')
+        If ($regPath.StartsWith('HKCU\')) { $baseKey = 'CurrentUser'; $shortNm = 'HKCU' }
+        $regpath = $regPath.Replace('HKLM\', '').Replace('HKCU\', '')
+
+        $reg = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey($baseKey, $serverName)
+        Try { $regKey = $reg.OpenSubKey($regPath) } Catch { $regKey = $null }
+
+        Switch ($($Action.command))
+        {
+            'LOAD'        { Log-Output "   Skipped"; $func_return = $true }
+            'UNLOAD'      { Log-Output "   Skipped"; $func_return = $true }
+
+            'ADD'         {
+                # Check that KEY and VALUE exists and is the correct data value
+                [string]$keyVal = ''
+                If ($($Action.params.valueName) -eq '(Default)') { $Action.params.valueName = '' }    # Change '(Default)' to ''
+
+                If ($regKey) { $keyVal = $regKey.GetValue($($Action.params.valueName)) } Else { $func_return =  $false }
+                If ($keyVal) { If ($keyVal -ne $($Action.params.data))                        { $func_return =  $false } Else { $func_return = $true } }
+                Else { If ([string]::IsNullOrEmpty($($Action.params.data)) -eq $false)        { $func_return =  $false } Else { $func_return = $true } }
+
+                If ($func_return -eq $false)
+                {
+                    Log-Output "   Path     : '$shortNm\$regPath  -  $($Action.params.valueName)'"
+                    Log-Output "   Should be: '$($Action.params.data)', currently: '$keyVal'"
+                }
+            }
+
+            'DELETEKEY'   {
+                # Check that the KEY does not exists
+                If ($regKey) { $func_return =  $false } Else { $func_return = $true }
+                If ($func_return -eq $false)
+                {
+                    Log-Output "   Path     : '$shortNm\$regPath'"
+                    Log-Output "   Should be removed"
+                }
+            }
+
+            'DELETEVALUE' {
+                # Check that is value does not exist
+                [string]$keyVal = ''
+                If ($regKey) { $keyVal = $regKey.GetValue($($Action.params.valueName)) }
+                If ($keyVal) { $func_return =  $false } Else { $func_return = $true }
+                If ($func_return -eq $false)
+                {
+                    Log-Output "   Path     : '$shortNm\$regPath  -  $($Action.params.valueName)'"
+                    Log-Output "   Should be blank or removed"
+                }
+            }
+        }
+    }
+    Catch { $func_return = $false }
+    Finally
+    {
+        Try { $regKey.Close() } Catch { }
+        Try { $reg.Close()    } Catch { }
+    }
+
+    Return $func_return
+}
+Function Check-VMware
+{
+    Param ( [string] $serverName )
+    $wmiBIOS = Get-WmiObject -ComputerName $serverName -Class Win32_BIOS -Namespace ROOT\Cimv2 | Select-Object SerialNumber
+    If ($wmiBIOS.SerialNumber -like '*VMware*') { Return $true } Else { Return $false }        
+}
+}
+
+$cvmw09 = {
+Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
+$script:lang        = @{}
+$script:appSettings = @{}
+$script:appSettings['vosotXmlFile'] = 'C:\ProgramData\VMware\OSOT\VMware Templates\636009.xml'
+$script:lang['Error'] = 'Error'
+$script:lang['Fail'] = 'Fail'
+$script:lang['Manual'] = 'Manual'
+$script:lang['Not-Applicable'] = 'N/A'
+$script:lang['Pass'] = 'Pass'
+$script:lang['Script-Error'] = 'SCRIPT ERROR'
+$script:lang['Warning'] = 'Warning'
+<#
+    DESCRIPTION: 
+        Checks against a specified VMware OS Optimisation Template
+        Services and scheduled task setting specific checks only
+
+
+    PASS:    All mandatory and recommended settings configured
+    WARNING: All mandatory settings configured, recommended settings not configured
+    FAIL:    All mandatory and recommended settings not configured
+    MANUAL:  
+    NA:      Not a virtual machine / XML check file not applicable for this server
+
+    APPLIES: Virtuals
+
+    REQUIRED-FUNCTIONS: Check-VMware
+#>
+
+Function c-vmw-09-check-vosot-services-tasks
+{
+    Param ( [string]$serverName, [string]$resultPath )
+
+    $serverName    = $serverName.Replace('[0]', '')
+    $resultPath    = $resultPath.Replace('[0]', '')
+    $result        = newResult
+    $result.server = $serverName
+    $result.name   = 'Check vOSOT Settings (Services And Tasks)'
+    $result.check  = 'c-vmw-09-check-vosot-services-tasks'
+
+    #... CHECK STARTS HERE ...#
+
+    If ((Check-VMware $serverName) -eq $false)
+    {
+        Try
+        {
+            [int]$total_M = 0; [int]$count_M = 0    # Mandatory
+            [int]$total_R = 0; [int]$count_R = 0    # Recommended
+            [int]$total_O = 0; [int]$count_O = 0    # Optional
+
+            # Load the XML
+            [xml]$xml = New-Object System.Xml.XmlDataDocument
+            If ((Test-Path -Path $script:appSettings['vosotXmlFile']) -eq $false) { Throw "Required XML file '$($script:appSettings['vosotXmlFile'])' missing" }
+            Try { $xml.LoadXml($(Get-Content -Path $script:appSettings['vosotXmlFile'])) } Catch { Throw 'There was a problem loading the XML' }
+
+            # Get current OS type
+            [string[]]$osType  = ('Microsoft', 'Standard', 'Professional', 'Enterprise')
+            [string]  $query   = "SELECT Caption, OSArchitecture, Version, ProductType FROM Win32_OperatingSystem"
+            [object]  $osCheck = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object Caption, OSArchitecture, Version, ProductType
+            $osType | ForEach { $osCheck.Caption = (($osCheck.Caption).Replace($_, '')).Trim() }
+
+            # Compare current OS against the template allowed list
+            [boolean] $runAgainst = $false
+            [string[]]$runOnOS    = ($xml.sequence.runOnOs).Split(',')
+            ForEach ($osEntry In ($xml.sequence.globalVarList.osCollection.osEntry))
+            {
+                If ($osEntry.ProductType -eq $osCheck.ProductType) { If ($runOnOS -contains $osEntry.osId) { $runAgainst = $true }
+                Else { ForEach ($osSubEntry In $osEntry.osEntry) { If ($osSubEntry.OSArchitecture -eq $osCheck.OSArchitecture) { If ($runOnOS -contains $osSubEntry.osId) { $runAgainst = $true } } } } }
+            }
+            If ($runAgainst -eq $false) { Throw 'The specified XML file is not suitable for this OS version/type' }
+            [string]$logFileName = "$serverName-vOSOT-Services-Tasks.log"
+
+            If ((Test-Path -Path ('{0}OSOT'     -f $resultPath              )) -eq $false) { Try { New-Item    -Path ('{0}OSOT'     -f $resultPath              ) -ItemType Directory -Force | Out-Null } Catch {} }
+            If ((Test-Path -Path ('{0}OSOT\{1}' -f $resultPath, $logFileName)) -eq $true)  { Try { Remove-Item -Path ('{0}OSOT\{1}' -f $resultPath, $logFileName)                     -Force | Out-Null } Catch {} }
+
+            # Pre-load services and scheduled tasks
+            [string]  $query    = "SELECT Name, Caption, StartMode FROM Win32_Service"
+            [object[]]$service  = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object Name, Caption, StartMode
+            [object]  $schedule = New-Object -ComObject('Schedule.Service'); $schedule.Connect($serverName)
+            [object[]]$tasks    = Get-Tasks($schedule.GetFolder('\'))
+
+            # Start master loop
+            [boolean]$return = $false
+            ForEach ($step In ($xml.GetElementsByTagName('step')))
+            {
+                Log-Output "$($($step.category).ToUpper().PadRight(12)): $($step.Name)"
+                $return = $false
+
+                If (($($step.action.type) -eq 'Service') -or ($($step.action.type) -eq 'SchTasks'))
+                {
+                    Switch ($($step.action.type))
+                    {
+                        'Service'      { $return = Check-Service  -Action ($step.action) -ServiceList $service }
+                        'SchTasks'     { $return = Check-SchTasks -Action ($step.action) -TaskList    $tasks   }
+                    }
+                    
+                    Switch ($($step.category))
+                    {
+                        'Mandatory'   { $total_M++; If ($return -eq $true) { $count_M++ } }
+                        'Recommended' { $total_R++; If ($return -eq $true) { $count_R++ } }
+                        'Optional'    { $total_O++; If ($return -eq $true) { $count_O++ } }
+                    }
+                }
+            }
+
+            # Compile the results
+            If (($count_M -eq $total_M) -and ($count_R -eq $total_R)) { $result.result = $script:lang['Pass']   ; $result.message = 'All mandatory and recommended settings are correct' }
+            If (($count_M -eq $total_M) -and ($count_R -ne $total_R)) { $result.result = $script:lang['Warning']; $result.message = 'One or more recommended settings are incorrect'     }
+            If (($count_M -ne $total_M)                             ) { $result.result = $script:lang['Fail']   ; $result.message = 'One or more mandatory settings are incorrect'       }
+
+            $result.data = ('Mandatory: {0}/{1},#Recommended: {2}/{3},#Optional: {4}/{5}' -f $count_M, $total_M, $count_R, $total_R, $count_O, $total_O)
+        }
+        Catch
+        {
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
+            $result.data    = $_.Exception.Message
+            Return $result
+        }
+    }
+    Else
+    {
+        $result.result  = $script:lang['Not-Applicable']
+        $result.message = 'Not a virtual machine'
+    }
+
+    Return $result
+}
+
+Function Log-Output ([string]$LogString)
+{
+    $LogString | Out-File -FilePath ('{0}OSOT\{1}-vOSOT-Services-Tasks.log' -f $resultPath, $serverName.ToUpper()) -Encoding ascii -Append
+}
+
+Function Get-Tasks
+{
+    Param ( [Object]$taskFolder )
+    $tasks = $taskFolder.GetTasks(0)
+    $tasks | ForEach-Object { $_ }
+    Try {
+        $taskFolders = $taskFolder.GetFolders(0)
+        $taskFolders | ForEach-Object { Get-Tasks $_ $true } }
+    Catch { }
+}
+
+Function Check-Service
+{
+    Param ([System.Xml.XmlElement]$Action, [object[]]$ServiceList)
+    Try
+    {
+        [boolean]$found       = $false
+        [boolean]$func_return = $false
+        $ServiceList | ForEach {
+            If (($_.Name -eq $($Action.params.serviceName)) -and ($($_.StartMode) -ne $($Action.params.startMode))) { $func_return = $false; $found = $true; Break }
+        }
+
+        # Return TRUE if the service is not found
+        If ($found -eq $true)
+        {
+            If ($func_return -eq $false) { Log-Output "   Service should be: $($Action.params.startMode)" }
+            Return $func_return
+        }
+        Else { Return $true }
+    }
+    Catch { Return $false }
+}
+
+Function Check-SchTasks
+{
+    Param ([System.Xml.XmlElement]$Action, [object[]]$TaskList)
+    Try
+    {
+        [boolean]$found       = $false
+        [boolean]$func_return = $false
+        $TaskList | ForEach {
+            If (($($_.Name) -eq $(Split-Path -Path $($Action.params.taskName) -Leaf)) -and ($(Split-Path -Path $($_.Path) -Parent) -eq "\$(Split-Path -Path $($Action.params.taskName))")) 
+            {
+                If ($($_.Enabled) -eq $True) { [string]$endis = 'ENABLED' } Else { [string]$endis = 'DISABLED' }
+                If ($endis -ne $($Action.params.status)) { $func_return = $false; $found = $true; Break }
+            }
+        }
+
+        If ($found -eq $true)
+        {
+            If ($func_return -eq $false) { Log-Output "   Scheduled task should be: '$($Action.params.status)'" }
+            Return $func_return
+        }
+        Else { Return $true }
+    }
+    Catch { Return $false }
+}
+Function Check-VMware
+{
+    Param ( [string] $serverName )
+    $wmiBIOS = Get-WmiObject -ComputerName $serverName -Class Win32_BIOS -Namespace ROOT\Cimv2 | Select-Object SerialNumber
+    If ($wmiBIOS.SerialNumber -like '*VMware*') { Return $true } Else { Return $false }        
+}
+}
+
 ##############################################################################################################################################################################################
 $script:qahelp['acc01']='<xml><description>Check all local users to ensure that no non-standard accounts exist.Unless the server is not in a domain, there should be no additional user accounts. Example standard accounts include "ASPNET", "__VMware"</description><pass>No additional local accounts exist</pass><fail>One or more local accounts exist</fail><applies>All</applies></xml>'
 $script:qahelp['acc02']='<xml><description>Checks to see if the local default accounts have been renamed. The "Administrator" and "Guest" accounts should be.</description><pass>All local accounts have been renamed</pass><fail>A local account was found that needs to be renamed</fail><applies>All</applies></xml>'
@@ -8022,6 +8422,8 @@ $script:qahelp['vmw04']='<xml><description>Check Windows disk controller is set 
 $script:qahelp['vmw05']='<xml><description>Checks to see if there are are more than 8 drives attached to the same SCSI adapter.</description><pass>More than 7 drives exist, but on different SCSI adapters</pass><fail>More than 7 drives exist on one SCSI adapter</fail><na>Not a virtual machine / There are less than 8 drives attached to server</na><applies>Virtuals</applies></xml>'
 $script:qahelp['vmw06']='<xml><description>Checks to see if the total VM size is less than 1tb</description><pass>VM is smaller than 1</pass><warning>VM is larger than 1TB.Make sure there is an engineering exception in place for this</warning><na>Not a virtual machine</na><applies>Virtuals</applies></xml>'
 $script:qahelp['vmw07']='<xml><description>Checks for any mounted CD/DVD or floppy drives</description><pass>No CD/ROM or floppy drives are mounted</pass><fail>One or more CD/ROM or floppy drives are mounted</fail><na>Not a virtual machine</na><applies>Virtuals</applies></xml>'
+$script:qahelp['vmw08']='<xml><description>Checks against a specified VMware OS Optimisation Template Registry setting specific checks only</description><pass>All mandatory and recommended settings configured</pass><warning>All mandatory settings configured, recommended settings not configured</warning><fail>All mandatory and recommended settings not configured</fail><na>Not a virtual machine / XML check file not applicable for this server</na><applies>Virtuals</applies></xml>'
+$script:qahelp['vmw09']='<xml><description>Checks against a specified VMware OS Optimisation Template Services and scheduled task setting specific checks only</description><pass>All mandatory and recommended settings configured</pass><warning>All mandatory settings configured, recommended settings not configured</warning><fail>All mandatory and recommended settings not configured</fail><na>Not a virtual machine / XML check file not applicable for this server</na><applies>Virtuals</applies></xml>'
 
 ##############################################################################################################################################################################################
 $script:lang['Accounts'] = 'Accounts'                 # User and group accounts
