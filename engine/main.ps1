@@ -1,4 +1,4 @@
-Function Show-HelpScreen
+﻿Function Show-HelpScreen
 {
     Clear-Host
     Write-Header -Message $($script:lang['Help_01']) -Width $script:screenwidth
@@ -481,7 +481,7 @@ Function Export-Results
         $cnvCSV | ForEach-Object { $outCSV += $_.Replace(',#',', ') }
         $outCSV | Out-File -FilePath $path -Encoding utf8 -Force
     }
-    
+
     If ($GenerateXML -eq $true)
     {
         [string]$path   =  $script:qaOutput + 'QA_Results.xml'
