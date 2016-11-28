@@ -28,7 +28,7 @@ Function c-vmw-08-check-vosot-registry
 
     #... CHECK STARTS HERE ...#
 
-    If ((Check-VMware $serverName) -eq $false)
+    If ((Check-VMware $serverName) -eq $true)
     {
         Try
         {
