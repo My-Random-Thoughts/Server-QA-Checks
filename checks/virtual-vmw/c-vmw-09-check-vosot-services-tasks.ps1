@@ -28,7 +28,7 @@ Function c-vmw-09-check-vosot-services-tasks
 
     #... CHECK STARTS HERE ...#
 
-    If ((Check-VMware $serverName) -eq $false)
+    If ((Check-VMware $serverName) -eq $true)
     {
         Try
         {
