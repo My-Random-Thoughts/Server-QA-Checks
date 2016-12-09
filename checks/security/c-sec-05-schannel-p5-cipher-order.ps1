@@ -23,7 +23,7 @@ Function c-sec-05-schannel-p5-cipher-order
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Security Settings 5: Cipher Suite Order'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-05-schannel-p5-cipher-order'
 
     #... CHECK STARTS HERE ...#

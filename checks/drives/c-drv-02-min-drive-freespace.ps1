@@ -23,7 +23,7 @@ Function c-drv-02-min-drive-freespace
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Min Drive % Freespace'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-drv-02-min-drive-freespace'
  
     #... CHECK STARTS HERE ...#

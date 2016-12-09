@@ -23,7 +23,7 @@ Function c-vmw-05-scsi-drive-count
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'VMware SCSI Drive Count'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-vmw-05-scsi-drive-count'
 
     #... CHECK STARTS HERE ...#

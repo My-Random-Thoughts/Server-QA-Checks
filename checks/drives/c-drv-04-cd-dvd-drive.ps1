@@ -23,7 +23,7 @@ Function c-drv-04-cd-dvd-drive
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'CD/DVD Drive Letter'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-drv-04-cd-dvd-drive'
 
     #... CHECK STARTS HERE ...#

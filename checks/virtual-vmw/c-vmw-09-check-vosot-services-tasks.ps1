@@ -23,12 +23,12 @@ Function c-vmw-09-check-vosot-services-tasks
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Check vOSOT Settings (Services And Tasks)'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-vmw-09-check-vosot-services-tasks'
 
     #... CHECK STARTS HERE ...#
 
-    If ((Check-VMware $serverName) -eq $false)
+    If ((Check-VMware $serverName) -eq $true)
     {
         Try
         {

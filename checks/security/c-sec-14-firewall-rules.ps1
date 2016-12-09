@@ -23,7 +23,7 @@ Function c-sec-14-firewall-rules
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Additional Firewall Rules'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-14-firewall-rules'
 
     #... CHECK STARTS HERE ...#

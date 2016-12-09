@@ -326,7 +326,7 @@ Function InputBoxFORM ( [string]$Type, [string]$Title, [string]$Instruction, [st
             $textBox                = New-Object 'System.Windows.Forms.TextBox'
             $textBox.Location       = ' 12,  75'
             $textBox.Size           = '370,  20'
-            $textBox.Text            = ($SelectedValue.Trim())
+            $textBox.Text            = ($SelectedValue.Trim("'").Trim())
             $inputForm.Controls.Add($textBox)
             Break
         }
@@ -345,7 +345,9 @@ Function InputBoxFORM ( [string]$Type, [string]$Title, [string]$Instruction, [st
                 [string]$return = ''
                 ForEach ($Control In $inputForm.Controls) { If ($control -is [System.Windows.Forms.TextBox]) { [string]$return += "'$($control.Text.Trim())';" }}
                 Do { $return = $return.Replace(';;',';').Replace("''","") } While ( $return.IndexOf(';;') -gt -1 )
-                Return "($($return.Trim(';').Replace(';', '; ')))"
+                $return = "($($return.Trim(';').Replace(';', '; ')))"
+                If ($return -eq "()") { $return = "('')" }
+                Return $return
             }
             'TEXT'  {
                 Return "'$($textBox.Text.Trim())'"
@@ -404,7 +406,7 @@ Function Display-MainForm
     Function Update-SelectedCount
     {
         [int]$iCnt = 0
-        ForEach ($item In $lst_t2_SelectChecks.Items) { If ($item.Checked -eq $True) { $iCnt++ } }
+        ForEach ($item In $lst_t2_SelectChecks.Items) { If ($item.Checked -eq $True) { $iCnt++; $item.BackColor = 'Window' } Else { $item.BackColor = 'Control' } }
         $lbl_t2_SelectedCount.Text = "$iCnt of $($lst_t2_SelectChecks.Items.Count) selected"
     }
 
@@ -472,6 +474,8 @@ Function Display-MainForm
         $txt_t1_Location.Text           = "$script:scriptLocation\checks"
         $txt_t4_ShortCode.Text          = ($settingsINI.settings.shortcode)
         $txt_t4_ReportTitle.Text        = ($settingsINI.settings.reportCompanyName)
+        $btn_t4_Save.Enabled            = $False
+        $btn_t4_Generate.Enabled        = $false
         $txt_t1_Location.Refresh()
         $tab_t3_Pages.TabPages.Clear()
         $lst_t2_SelectChecks.Items.Clear()
@@ -653,7 +657,9 @@ Function Display-MainForm
         $btn_t4_Save.Enabled     = $False
         $btn_t4_Generate.Enabled = $False
 
-        Start-Process -FilePath 'PowerShell.exe' -ArgumentList "$script:ExecutionFolder\compiler.ps1 -Settings $(Split-Path -Path $script:saveFile -Leaf)" -Wait
+        [string]$Cmd = "PowerShell -Command {& '$script:ExecutionFolder\compiler.ps1' -Settings $(Split-Path -Path $script:saveFile -Leaf)}"
+        Invoke-Expression -Command $Cmd
+
         [System.Windows.Forms.MessageBox]::Show($MainFORM, "Custom QA Script generated", 'Generate QA Script', 'OK', 'Information') 
 
         $btn_t4_Save.Enabled     = $True
@@ -1067,7 +1073,7 @@ This form will help you create custom settings file for the QA checks.  This set
     $btn_Cancel.Location = '707, 635'
     $btn_Cancel.Size     = '75, 25'
     $btn_Cancel.TabIndex = 98
-    $btn_Cancel.Text     = 'Cancel'
+    $btn_Cancel.Text     = 'Exit'
     $btn_Cancel.DialogResult = [System.Windows.Forms.DialogResult]::Cancel    # Use this instead of a "Click" event
     $MainFORM.Controls.Add($btn_Cancel)
 

@@ -23,7 +23,7 @@ Function c-sys-17-terminal-services-licenced
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Terminal Services Licenced'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-17-terminal-services-licenced'
 
     #... CHECK STARTS HERE ...#

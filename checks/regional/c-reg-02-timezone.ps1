@@ -23,7 +23,7 @@ Function c-reg-02-timezone
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Local Timezone'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-reg-02-timezone'
 
     #... CHECK STARTS HERE ...#

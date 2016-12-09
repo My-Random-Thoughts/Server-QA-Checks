@@ -23,7 +23,7 @@ Function c-sys-12-snmp-configuration
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'SNMP Configuration'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-12-snmp-configuration'
 
     #... CHECK STARTS HERE ...#

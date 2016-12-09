@@ -23,7 +23,7 @@ Function c-sys-13-domain-user-logon
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Domain User Logon'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-13-domain-user-logon'
 
     #... CHECK STARTS HERE ...#

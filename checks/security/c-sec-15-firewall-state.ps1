@@ -23,7 +23,7 @@ Function c-sec-15-firewall-state
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Check Firewall State'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-15-firewall-state'
     
     #... CHECK STARTS HERE ...#

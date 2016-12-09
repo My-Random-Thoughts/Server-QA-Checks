@@ -23,7 +23,7 @@ Function c-vmw-01-tools-version
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'VMware Tools Version'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-vmw-01-tools-version'
 
     #... CHECK STARTS HERE ...#

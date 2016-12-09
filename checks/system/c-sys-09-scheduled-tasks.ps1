@@ -23,7 +23,7 @@ Function c-sys-09-scheduled-tasks
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Scheduled Tasks'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-09-scheduled-tasks'
 
     #... CHECK STARTS HERE ...#

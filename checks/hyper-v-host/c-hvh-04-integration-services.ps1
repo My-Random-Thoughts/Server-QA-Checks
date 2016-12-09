@@ -23,7 +23,7 @@ Function c-hvh-04-integration-services
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Integration Services'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-hvh-04-integration-services'
  
     #... CHECK STARTS HERE ...#

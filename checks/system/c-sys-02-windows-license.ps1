@@ -23,7 +23,7 @@ Function c-sys-02-windows-license
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Windows License'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-02-windows-license'
     
     #... CHECK STARTS HERE ...#

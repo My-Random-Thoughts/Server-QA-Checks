@@ -23,7 +23,7 @@ Function c-sys-14-power-plan
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Power Plan'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-14-power-plan'
     
     #... CHECK STARTS HERE ...#

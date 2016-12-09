@@ -23,7 +23,7 @@ Function c-sys-10-print-spooler
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Print Spool Directory'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-10-print-spooler'
 
     #... CHECK STARTS HERE ...#

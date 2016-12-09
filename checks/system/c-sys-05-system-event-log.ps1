@@ -23,7 +23,7 @@ Function c-sys-05-system-event-log
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'System Event Log Errors'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-05-system-event-log'
 
     #... CHECK STARTS HERE ...#

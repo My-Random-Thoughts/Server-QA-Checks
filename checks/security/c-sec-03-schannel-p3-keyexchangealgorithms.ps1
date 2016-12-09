@@ -23,7 +23,7 @@ Function c-sec-03-schannel-p3-keyexchangealgorithms
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Security Settings 3: Key Exchange Algorithms'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-03-schannel-p3-keyexchangealgorithms'
 
     #... CHECK STARTS HERE ...#

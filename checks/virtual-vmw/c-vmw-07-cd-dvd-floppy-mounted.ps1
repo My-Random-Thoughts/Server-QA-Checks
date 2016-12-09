@@ -23,7 +23,7 @@ Function c-vmw-07-cd-dvd-floppy-mounted
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Mounted drives'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-vmw-07-cd-dvd-floppy-mounted'
  
     #... CHECK STARTS HERE ...#

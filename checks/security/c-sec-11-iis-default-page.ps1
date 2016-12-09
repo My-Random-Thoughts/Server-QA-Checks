@@ -23,7 +23,7 @@ Function c-sec-11-iis-default-page
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'IIS Default Page'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-11-iis-default-page'
 
     #... CHECK STARTS HERE ...#

@@ -23,7 +23,7 @@ Function c-drv-01-system-drive-size
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'System Drive Size'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-drv-01-system-drive-size'
     
     #... CHECK STARTS HERE ...#

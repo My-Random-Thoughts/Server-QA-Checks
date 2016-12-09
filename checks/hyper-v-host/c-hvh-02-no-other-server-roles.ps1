@@ -23,7 +23,7 @@ Function c-hvh-02-no-other-server-roles
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'No Other Server Roles'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-hvh-02-no-other-server-roles'
  
     #... CHECK STARTS HERE ...#

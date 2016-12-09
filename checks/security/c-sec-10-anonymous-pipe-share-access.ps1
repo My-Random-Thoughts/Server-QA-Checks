@@ -23,7 +23,7 @@ Function c-sec-10-anonymous-pipe-share-access
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Reject Annonymous Pipe/Share Access'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-10-anonymous-pipe-share-access'
 
     #... CHECK STARTS HERE ...#

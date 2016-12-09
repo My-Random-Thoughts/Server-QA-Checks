@@ -23,7 +23,7 @@ Function c-sys-16-remote-desktop
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Remote Desktop'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-16-remote-desktop'
     
     #... CHECK STARTS HERE ...#

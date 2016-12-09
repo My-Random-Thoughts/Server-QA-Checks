@@ -8,7 +8,7 @@
 #################################################################################################
 #                                                                                               #
 #  STRINGS FOR THE MAIN QA CHECKING SCRIPT ENGINE                                               #
-#                                                                                               #
+#  Make sure and curly brackets and numbers are kept {0}, {1}, ...                              #
 #################################################################################################
 
 [engine]
@@ -168,4 +168,226 @@ Name = 'WSUS Server Setting'
 
 [com07]
 Name = 'Sentinel Agent Installed'
+
+#################################################################################################
+# DRIVES
+
+[drv01]
+Name = 'System Drive Size'
+
+[drv02]
+Name = 'Min Drive % Freespace'
+
+[drv03]
+Name = 'Pagefile Location & Size'
+
+[drv04]
+Name = 'CD/DVD Drive Letter'
+
+[drv05]
+Name = 'Shared Folders'
+
+[drv06]
+Name = 'SAN Storage Software'
+
+[drv07]
+Name = 'Disk Management Agent'
+
+[drv08]
+Name = 'All Drives Are NTFS format'
+
+#################################################################################################
+# HYPER-V-HOST
+
+[hvh01]
+Name = 'Server Core'
+
+[hvh02]
+Name = 'No Other Server Roles'
+
+[hvh03]
+Name = 'VM Location'
+
+[hvh04]
+Name = 'Integration Services'
+
+#################################################################################################
+# NETWORK
+
+[net01]
+Name = 'IPv6 Disabled'
+
+[net02]
+Name = 'Unused Network Adapters'
+
+[net03]
+Name = 'Network Adapter Names'
+
+[net04]
+Name = 'Network Binding Order'
+
+[net05]
+Name = 'Network Speed And Duplex'
+
+[net06]
+Name = 'Network Management Agent'
+
+[net07]
+Name = 'Network Teaming'
+
+[net08]
+Name = 'Management Adapter'
+
+[net09]
+Name = 'Static Routes'
+
+#################################################################################################
+# REGIONAL
+
+[reg01]
+Name = 'Local Date/Time'
+
+[reg02]
+Name = 'Local Timezone'
+
+[reg03]
+Name = 'Region > Location'
+
+[reg04]
+Name = 'Region > Language'
+
+#################################################################################################
+# SECURITY
+
+[sec01]
+Name = 'Security Settings 1: Ciphers'
+
+[sec02]
+Name = 'Security Settings 2: Hashes'
+
+[sec03]
+Name = 'Security Settings 3: Key Exchange Algorithms'
+
+[sec04]
+Name = 'Security Settings 4: Protocols'
+
+[sec05]
+Name = 'Security Settings 5: Cipher Suite Order'
+
+[sec06]
+Name = 'Reject Annonymous Account Enumeration'
+
+[sec07]
+Name = 'Reject Annonymous Share Enumeration'
+
+[sec08]
+Name = 'Domain Credential Caching'
+
+[sec09]
+Name = 'Elevate Prompt For Admin Credentials'
+
+[sec10]
+Name = 'Reject Annonymous Pipe/Share Access'
+
+[sec11]
+Name = 'IIS Default Page'
+
+[sec12]
+Name = 'SMB Signing On'
+
+[sec13]
+Name = 'RSA Monitoring Installed'
+
+[sec14]
+Name = 'Additional Firewall Rules'
+
+[sec15]
+Name = 'Check Firewall State'
+
+#################################################################################################
+# SYSTEM
+
+[sys01]
+Name = 'Pending Reboot'
+
+[sys02]
+Name = 'Windows License'
+
+[sys03]
+Name = 'Services Not Started'
+
+[sys04]
+Name = 'Services Not Stopped'
+
+[sys05]
+Name = 'System Event Log Errors'
+
+[sys06]
+Name = 'Application Event Log Errors'
+
+[sys07]
+Name = 'Device Errors'
+
+[sys09]
+Name = 'Scheduled Tasks'
+
+[sys10]
+Name = 'Print Spool Directory'
+
+[sys11]
+Name = 'Drive Autorun'
+
+[sys12]
+Name = 'SNMP Configuration'
+
+[sys13]
+Name = 'Domain User Logon'
+
+[sys14]
+Name = 'Power Plan'
+
+[sys15]
+Name = 'Hibernation'
+
+[sys16]
+Name = 'Remote Desktop'
+
+[sys17]
+Name = 'Terminal Services Licenced'
+
+#################################################################################################
+# VIRTUAL-HYPERV
+
+[vhv01]
+Name = 'HyperV Tools Version'
+
+#################################################################################################
+# VIRTUAL-VMWARE
+
+[vmw01]
+Name = 'VMware Tools Version'
+
+[vmw02]
+Name = 'VMware Time Sync'
+
+[vmw03]
+Name = 'VMware NIC Type'
+
+[vmw04]
+Name = 'VMware Disk Controller'
+
+[vmw05]
+Name = 'VMware SCSI Drive Count'
+
+[vmw06]
+Name = 'Total VM Size'
+
+[vmw07]
+Name = 'Mounted Drives'
+
+[vmw08]
+Name = 'Check vOSOT Settings (Registry)'
+
+[vmw09]
+Name = 'Check vOSOT Settings (Services And Tasks)'
 

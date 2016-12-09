@@ -23,7 +23,7 @@ Function c-sec-07-reject-enumerate-shares
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Reject Annonymous Share Enumeration'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-07-reject-enumerate-shares'
 
     #... CHECK STARTS HERE ...#

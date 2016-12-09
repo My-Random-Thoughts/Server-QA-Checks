@@ -23,7 +23,7 @@ Function c-sys-15-hibernation
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Hibernation'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-15-hibernation'
     
     #... CHECK STARTS HERE ...#

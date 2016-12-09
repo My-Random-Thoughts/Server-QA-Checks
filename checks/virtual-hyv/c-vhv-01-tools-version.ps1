@@ -23,7 +23,7 @@ Function c-vhv-01-tools-version
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'HyperV Tools Version'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-vhv-01-tools-version'
 
     #... CHECK STARTS HERE ...#

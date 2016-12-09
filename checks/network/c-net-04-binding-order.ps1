@@ -23,7 +23,7 @@ Function c-net-04-binding-order
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Network Binding Order'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-net-04-binding-order'
 
     #... CHECK STARTS HERE ...#

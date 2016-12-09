@@ -23,7 +23,7 @@ Function c-sec-02-schannel-p2-hashes
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Security Settings 2: Hashes'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-02-schannel-p2-hashes'
 
     #... CHECK STARTS HERE ...#

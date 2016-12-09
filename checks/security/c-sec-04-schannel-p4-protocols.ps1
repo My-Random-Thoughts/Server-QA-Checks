@@ -23,7 +23,7 @@ Function c-sec-04-schannel-p4-protocols
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Security Settings 4: Protocols'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-04-schannel-p4-protocols'
 
     #... CHECK STARTS HERE ...#

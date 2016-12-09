@@ -23,7 +23,7 @@ Function c-drv-06-san-storage
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'SAN Storage Software'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-drv-06-san-storage'
     
     #... CHECK STARTS HERE ...#

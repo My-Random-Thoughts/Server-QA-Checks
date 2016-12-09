@@ -23,7 +23,7 @@ Function c-sec-13-rsa-authentication
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'RSA Monitoring Installed'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-13-rsa-authentication'
 
     #... CHECK STARTS HERE ...#

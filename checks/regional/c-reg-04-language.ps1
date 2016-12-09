@@ -23,7 +23,7 @@ Function c-reg-04-language
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Region > Language'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-reg-04-language'
 
     #... CHECK STARTS HERE ...#

@@ -23,7 +23,7 @@ Function c-drv-03-pagefile-size-location
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Pagefile Location & Size'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-drv-03-pagefile-size-location'
 
     #... CHECK STARTS HERE ...#

@@ -23,7 +23,7 @@ Function c-net-05-network-speed-duplex
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Network Speed And Duplex'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-net-05-network-speed-duplex'
 
     #... CHECK STARTS HERE ...#

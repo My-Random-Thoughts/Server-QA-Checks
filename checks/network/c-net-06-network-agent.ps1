@@ -23,7 +23,7 @@ Function c-net-06-network-agent
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Network Management Agent'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-net-06-network-agent'
 
     #... CHECK STARTS HERE ...#

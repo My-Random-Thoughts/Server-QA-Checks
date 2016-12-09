@@ -23,7 +23,7 @@ Function c-drv-08-drive-ntfs-format
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'All drives are NTFS format'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-drv-08-drive-ntfs-format'
  
     #... CHECK STARTS HERE ...#

@@ -23,7 +23,7 @@ Function c-reg-03-location
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Region > Location'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-reg-03-location'
     
     #... CHECK STARTS HERE ...#

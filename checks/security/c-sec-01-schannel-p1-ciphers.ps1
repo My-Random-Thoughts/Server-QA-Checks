@@ -23,7 +23,7 @@ Function c-sec-01-schannel-p1-ciphers
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Security Settings 1: Ciphers'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-01-schannel-p1-ciphers'
 
     #... CHECK STARTS HERE ...#

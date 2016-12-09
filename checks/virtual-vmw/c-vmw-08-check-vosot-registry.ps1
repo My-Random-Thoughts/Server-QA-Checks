@@ -23,12 +23,12 @@ Function c-vmw-08-check-vosot-registry
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Check vOSOT Settings (Registry)'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-vmw-08-check-vosot-registry'
 
     #... CHECK STARTS HERE ...#
 
-    If ((Check-VMware $serverName) -eq $false)
+    If ((Check-VMware $serverName) -eq $true)
     {
         Try
         {

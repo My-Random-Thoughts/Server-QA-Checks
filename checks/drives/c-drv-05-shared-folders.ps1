@@ -23,7 +23,7 @@ Function c-drv-05-shared-folders
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Shared Folders'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-drv-05-shared-folders'
 
     #... CHECK STARTS HERE ...#

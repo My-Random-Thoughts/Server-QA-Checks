@@ -23,7 +23,7 @@ Function c-net-01-no-ipv6
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'IPv6 Disabled'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-net-01-no-ipv6'
     
     #... CHECK STARTS HERE ...#

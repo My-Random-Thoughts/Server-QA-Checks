@@ -23,7 +23,7 @@ Function c-vmw-03-nic-type
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'VMware NIC Type'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-vmw-03-nic-type'
     
     #... CHECK STARTS HERE ...#

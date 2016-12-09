@@ -23,7 +23,7 @@ Function c-sys-04-services-not-stopped
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Services Not Stopped'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-04-services-not-stopped'
     
     #... CHECK STARTS HERE ...#

@@ -23,7 +23,7 @@ Function c-net-09-static-routes
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Static Routes'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-net-09-static-routes'
 
     #... CHECK STARTS HERE ...#

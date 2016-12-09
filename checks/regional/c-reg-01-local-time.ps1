@@ -23,7 +23,7 @@ Function c-reg-01-local-time
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Local Date/Time'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-reg-01-local-time'
 
     #... CHECK STARTS HERE ...#

@@ -23,7 +23,7 @@ Function c-net-07-network-teaming
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Network Teaming'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-net-07-network-teaming'
 
     #... CHECK STARTS HERE ...#

@@ -23,7 +23,7 @@ Function c-sys-07-devices-status
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Device Errors'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-07-devices-status'
     
     #... CHECK STARTS HERE ...#

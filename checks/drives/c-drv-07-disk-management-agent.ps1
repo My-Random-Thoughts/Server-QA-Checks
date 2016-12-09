@@ -23,7 +23,7 @@ Function c-drv-07-disk-management-agent
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Disk Management Agent'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-drv-07-disk-management-agent'
     
     #... CHECK STARTS HERE ...#

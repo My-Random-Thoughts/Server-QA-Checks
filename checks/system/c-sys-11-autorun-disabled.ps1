@@ -23,7 +23,7 @@ Function c-sys-11-autorun-disabled
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Drive Autorun'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-11-autorun-disabled'
 
     #... CHECK STARTS HERE ...#

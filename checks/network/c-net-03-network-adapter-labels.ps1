@@ -23,7 +23,7 @@ Function c-net-03-network-adapter-labels
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Network Adapter Names'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-net-03-network-adapter-labels'
 
     #... CHECK STARTS HERE ...#

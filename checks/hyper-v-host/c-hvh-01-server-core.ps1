@@ -23,7 +23,7 @@ Function c-hvh-01-server-core
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Server Core'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-hvh-01-server-core'
  
     #... CHECK STARTS HERE ...#

@@ -23,7 +23,7 @@ Function c-vmw-02-time-sync
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'VMware Time Sync'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-vmw-02-time-sync'
 
     #... CHECK STARTS HERE ...#

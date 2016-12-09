@@ -23,7 +23,7 @@ Function c-vmw-04-lsi-sas-controller
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'VMware Disk Controller'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-vmw-04-lsi-sas-controller'
 
     #... CHECK STARTS HERE ...#

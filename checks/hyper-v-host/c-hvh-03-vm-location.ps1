@@ -23,7 +23,7 @@ Function c-hvh-03-vm-location
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'VM Location'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-hvh-03-vm-location'
  
     #... CHECK STARTS HERE ...#

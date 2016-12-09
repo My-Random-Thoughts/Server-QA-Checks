@@ -23,7 +23,7 @@ Function c-sec-12-smb-signing-on
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'SMB Signing On'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-12-smb-signing-on'
 
     #... CHECK STARTS HERE ...#

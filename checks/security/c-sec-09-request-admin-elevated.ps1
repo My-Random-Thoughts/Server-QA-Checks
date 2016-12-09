@@ -23,7 +23,7 @@ Function c-sec-09-request-admin-elevated
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Elevate Prompt For Admin Credentials'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-09-request-admin-elevated'
 
     #... CHECK STARTS HERE ...#

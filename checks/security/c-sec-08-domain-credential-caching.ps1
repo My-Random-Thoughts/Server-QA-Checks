@@ -23,7 +23,7 @@ Function c-sec-08-domain-credential-caching
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Domain Credential Caching'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-08-domain-credential-caching'
     
     #... CHECK STARTS HERE ...#

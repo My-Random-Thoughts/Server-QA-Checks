@@ -23,7 +23,7 @@ Function c-sec-06-reject-enumerate-accounts
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Reject Annonymous Account Enumeration'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sec-06-reject-enumerate-accounts'
     
     #... CHECK STARTS HERE ...#

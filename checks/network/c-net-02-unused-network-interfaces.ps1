@@ -23,7 +23,7 @@ Function c-net-02-unused-network-interfaces
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Unused Network Adapters'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-net-02-unused-network-interfaces'
     
     #... CHECK STARTS HERE ...#

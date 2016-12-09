@@ -23,7 +23,7 @@ Function c-vmw-06-total-vm-size
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Total VM Size'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-vmw-06-total-vm-size'
 
     #... CHECK STARTS HERE ...#

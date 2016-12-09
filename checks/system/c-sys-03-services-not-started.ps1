@@ -23,7 +23,7 @@ Function c-sys-03-services-not-started
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Services Not Started'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-03-services-not-started'
 
     #... CHECK STARTS HERE ...#

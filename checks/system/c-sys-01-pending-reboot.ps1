@@ -23,7 +23,7 @@ Function c-sys-01-pending-reboot
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Pending Reboot'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-sys-01-pending-reboot'
     
     #... CHECK STARTS HERE ...#

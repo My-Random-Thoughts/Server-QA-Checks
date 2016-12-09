@@ -23,7 +23,7 @@ Function c-net-08-management-adapter
     $resultPath    = $resultPath.Replace('[0]', '')
     $result        = newResult
     $result.server = $serverName
-    $result.name   = 'Management Adapter'
+    $result.name   = $script:lang['Name']
     $result.check  = 'c-net-08-management-adapter'
 
     #... CHECK STARTS HERE ...#
