@@ -6,7 +6,6 @@ Clear-Host
 [Reflection.Assembly]::LoadWithPartialName('System.Drawing')            | Out-Null
 [System.Drawing.Font]$sysFont       =                                   [System.Drawing.SystemFonts]::MessageBoxFont
 [System.Drawing.Font]$sysFontBold   = New-Object 'System.Drawing.Font' ([System.Drawing.SystemFonts]::MessageBoxFont.Name, [System.Drawing.SystemFonts]::MessageBoxFont.SizeInPoints, [System.Drawing.FontStyle]::Bold)
-[System.Drawing.Font]$sysFontItalic = New-Object 'System.Drawing.Font' ([System.Drawing.SystemFonts]::MessageBoxFont.Name, [System.Drawing.SystemFonts]::MessageBoxFont.SizeInPoints, [System.Drawing.FontStyle]::Italic)
 
 ###################################################################################################
 ##                                                                                               ##
@@ -375,6 +374,10 @@ Function Display-MainForm
     $MainFORM_Load = {
         # Change font to a nicer one
         ForEach ($control In $MainFORM.Controls) { $control.Font = $sysFont }
+        $lbl_t1_Welcome.Font         = $sysFontBold
+        $lbl_t2_CheckSelection.Font  = $sysFontBold
+        $lbl_t3_ScriptSelection.Font = $sysFontBold
+        $lbl_t4_Complete.Font        = $sysFontBold
     }
 
     $MainFORM_FormClosing = [System.Windows.Forms.FormClosingEventHandler] {
@@ -392,7 +395,6 @@ Function Display-MainForm
         Try {
             $sysFont.Dispose()
             $sysFontBold.Dispose()
-            $sysFontItalic.Dispose()
         } Catch {}
 
         $MainFORM.Remove_FormClosing($MainFORM_FormClosing)
@@ -408,11 +410,13 @@ Function Display-MainForm
         [int]$iCnt = 0
         ForEach ($item In $lst_t2_SelectChecks.Items) { If ($item.Checked -eq $True) { $iCnt++; $item.BackColor = 'Window' } Else { $item.BackColor = 'Control' } }
         $lbl_t2_SelectedCount.Text = "$iCnt of $($lst_t2_SelectChecks.Items.Count) selected"
+        $lbl_ChangesMade.Visible = $True
     }
 
     Function ListView_DoubleClick ( [System.Windows.Forms.ListView]$SourceControl )
     {
         If ([string]::IsNullOrEmpty(($SourceControl.SelectedItems[0].Text).Trim()) -eq $True) { Return }
+        $MainFORM.Cursor = 'WaitCursor'
 
         # Start EDIT for selected item
         Try { [System.Windows.Forms.ListViewItem]$selectedItem = $($SourceControl.SelectedItems[0]) } Catch { }
@@ -424,6 +428,7 @@ Function Display-MainForm
             Default  { $returnValue = (InputBoxFORM -Type 'TEXT' -Title $($selectedItem.SubItems[0].Text) -Instruction $($selectedItem.SubItems[0].Text) -SelectedValue $($selectedItem.SubItems[1].Text)                       ); Break }
         }
         If ($returnValue -ne '!!-CANCELED-!!') { $SourceControl.SelectedItems[0].SubItems[1].Text = $returnValue }
+        $MainFORM.Cursor = 'Default'
     }
 
     $btn_t1_Search_Click = {
@@ -433,6 +438,7 @@ Function Display-MainForm
         $cmo_t1_Language.Enabled     = $False
         $cmo_t1_SettingsFile.Enabled = $False
         
+        $MainFORM.Cursor = 'WaitCursor'
         [string]$InitialDirectory = "$script:ExecutionFolder"
         $script:scriptLocation = (Get-Folder -Description 'Select the QA checks root folder:' -InitialDirectory $InitialDirectory -ShowNewFolderButton $False)
         If ([string]::IsNullOrEmpty($script:scriptLocation) -eq $True) { $btn_t1_Search.Enabled = $True; Return }
@@ -451,9 +457,11 @@ Function Display-MainForm
         # Get list of custom settings
         [string[]]$settingList = (Get-ChildItem -Path "$script:scriptLocation\settings" -Filter '*.ini' | Select-Object -ExpandProperty Name | Sort-Object Name)
         Load-ComboBox -ComboBox $cmo_t1_SettingsFile -Items ($settingList | Sort-Object Name) -SelectedItem 'default-settings.ini' -Clear
+        $MainFORM.Cursor = 'Default'
     }
 
     $btn_t1_Import_Click = {
+        $MainFORM.Cursor = 'WaitCursor'
         [System.Globalization.TextInfo]$TextInfo = (Get-Culture).TextInfo
         $languageINI = (Load-IniFile -Inputfile "$script:scriptLocation\i18n\$($cmo_t1_Language.Text)")
         $settingsINI = (Load-IniFile -Inputfile "$script:scriptLocation\settings\$($cmo_t1_SettingsFile.Text)")
@@ -541,12 +549,14 @@ Function Display-MainForm
         }
         Update-SelectedCount
 
+        $tab_Pages.SelectedIndex        = 1
+        $lbl_ChangesMade.Visible        = $False
         $lbl_t1_ScanningScripts.Visible = $False
         $btn_t1_Search.Enabled          = $True
         $btn_t1_Import.Enabled          = $True
         $btn_t2_NextPage.Enabled        = $True
-        $tab_Pages.SelectedIndex        = 1
         $lst_t2_SelectChecks.Items[0].Selected = $True
+        $MainFORM.Cursor                = 'Default'
     }
 
     $btn_t2_SelectAll_Click  = { ForEach ($item In $lst_t2_SelectChecks.Items) { $item.Checked = $true                }; Update-SelectedCount }
@@ -557,6 +567,21 @@ Function Display-MainForm
     $lst_t2_SelectChecks_SelectedIndexChanged = { If ($lst_t2_SelectChecks.SelectedItems.Count -eq 1) { $lbl_t2_Description.Text = ($lst_t2_SelectChecks.SelectedItems[0].SubItems[2].Text) } }
 
     $btn_t2_NextPage_Click = {
+        If ($lst_t2_SelectChecks.Items.Count -eq 0) { Return }
+        ForEach ($folder In $lst_t2_SelectChecks.Groups)
+        {
+            [System.Windows.Forms.TabPage] $tabObject = $tab_t3_Pages.TabPages["tab_$($folder.Header.Trim())"]
+            [System.Windows.Forms.ListView]$lvwObject =    $tabObject.Controls["lvw_$($folder.Header.Trim())"]
+            If ($lvwObject.Items.Count -gt 0)
+            {
+                $msgbox = ([System.Windows.Forms.MessageBox]::Show($MainFORM, "Any unsaved changes will be lost`nAre you sure you want to continue.?`n`nTo save your current changes: Click 'No',`nChange to the 'Generate QA' tab, click 'Save Settings'", 'Warning', 'YesNo', 'Warning', 'Button2'))
+                If ($msgbox -eq 'No') { Return }
+                Break
+            }
+        }
+
+        $MainFORM.Cursor         = 'WaitCursor'
+        $lbl_ChangesMade.Visible = $False
         $tab_Pages.SelectedIndex = 2
         $settingsINI = (Load-IniFile -Inputfile "$script:scriptLocation\settings\$($cmo_t1_SettingsFile.Text)")
 
@@ -566,12 +591,15 @@ Function Display-MainForm
             [System.Windows.Forms.TabPage] $tabObject = $tab_t3_Pages.TabPages["tab_$($folder.Header.Trim())"]
             [System.Windows.Forms.ListView]$lvwObject =    $tabObject.Controls["lvw_$($folder.Header.Trim())"]
 
+            # Clear any existing entries
+            $lvwObject.Items.Clear()
+            $lvwObject.Groups.Clear()
+
             ForEach ($listItem In $folder.Items)
             {
                 If ($listItem.Checked -eq $true)
                 {
                     # Create group for the checks
-                    #[string]$guid = ([guid]::NewGuid() -as [string]).Split('-')[0]
                     [string]$guid = $($listItem.Text)
                     $lvwObject.Groups.Add($(New-Object 'System.Windows.Forms.ListViewGroup' ($guid, " $($listItem.SubItems[1].Text) ($($listItem.Text.ToUpper()))"))) | Out-Null
 
@@ -585,15 +613,13 @@ Function Display-MainForm
                     }
 
                     # Add 'spacing' gap between groups
-                    #If ($lvwObject.Groups[$guid].Items.Count -gt 0) { Add-ListViewItem -ListView $lvwObject -Items ' ' -Group $guid -ImageIndex -1 }
+                    If ($lvwObject.Groups[$guid].Items.Count -gt 0) { Add-ListViewItem -ListView $lvwObject -Items ' ' -Group $guid -ImageIndex -1 }
                 }
             }
-
-            # Remove empty pages
-            If ($lvwObject.Items.Count -eq 0) { $tab_t3_Pages.TabPages.Remove($tabObject) }
         }
 
-        $btn_t4_Save.Enabled     = $True
+        $btn_t4_Save.Enabled = $True
+        $MainFORM.Cursor = 'Default'
     }
 
     $btn_t4_Save_Click = {
@@ -603,6 +629,7 @@ Function Display-MainForm
             Return
         }
 
+        $MainFORM.Cursor = 'WaitCursor'
         $script:saveFile = (Save-File -InitialDirectory "$script:ExecutionFolder\settings" -Title 'Save Settings File')
         If ([string]::IsNullOrEmpty($script:saveFile) -eq $True) { Return }
 
@@ -651,9 +678,11 @@ Function Display-MainForm
         $outputFile.ToString() | Out-File -FilePath $script:saveFile -Encoding ascii -Force
         [System.Windows.Forms.MessageBox]::Show($MainFORM, "Settings file '$(Split-Path -Path $script:saveFile -Leaf)' saved successfully.", 'Save Settings', 'OK', 'Information') 
         $btn_t4_Generate.Enabled = $True
+        $MainFORM.Cursor = 'Default'
     }
 
     $btn_t4_Generate_Click = {
+        $MainFORM.Cursor = 'WaitCursor'
         $btn_t4_Save.Enabled     = $False
         $btn_t4_Generate.Enabled = $False
 
@@ -664,6 +693,7 @@ Function Display-MainForm
 
         $btn_t4_Save.Enabled     = $True
         $btn_t4_Generate.Enabled = $True
+        $MainFORM.Cursor = 'Default'
     }
 #endregion
 ###################################################################################################
@@ -678,7 +708,7 @@ Function Display-MainForm
     $tab_Page2                   = New-Object 'System.Windows.Forms.TabPage'
     $tab_Page3                   = New-Object 'System.Windows.Forms.TabPage'
     $tab_Page4                   = New-Object 'System.Windows.Forms.TabPage'
-    $btn_Help                    = New-Object 'System.Windows.Forms.Button'
+    $lbl_ChangesMade             = New-Object 'System.Windows.Forms.Label'
     $btn_Cancel                  = New-Object 'System.Windows.Forms.Button'
 
     # TAB 1
@@ -810,7 +840,6 @@ Function Display-MainForm
 #endregion
 #region TAB 1 - Introduction / Select Location / Import
     # lbl_t1_Welcome
-    $lbl_t1_Welcome.Font      = $sysFontBold
     $lbl_t1_Welcome.Location  = '  9,   9'
     $lbl_t1_Welcome.Size      = '744,  20'
     $lbl_t1_Welcome.Text      = 'Welcome.!'
@@ -1004,7 +1033,6 @@ This form will help you create custom settings file for the QA checks.  This set
 #endregion
 #region TAB 4 - Generate Settings And QA Script
     # lbl_t1_Welcome
-    $lbl_t4_Complete.Font      = $sysFontBold
     $lbl_t4_Complete.Location  = '  9,   9'
     $lbl_t4_Complete.Size      = '744,  20'
     $lbl_t4_Complete.Text      = 'Complete.!'
@@ -1076,6 +1104,13 @@ This form will help you create custom settings file for the QA checks.  This set
     $btn_Cancel.Text     = 'Exit'
     $btn_Cancel.DialogResult = [System.Windows.Forms.DialogResult]::Cancel    # Use this instead of a "Click" event
     $MainFORM.Controls.Add($btn_Cancel)
+
+    $lbl_ChangesMade.Location  = ' 12, 635'
+    $lbl_ChangesMade.Size      = '689,  25'
+    $lbl_ChangesMade.Text      = "If you make any selection changes, click the 'Next >' button to update the Details tab; any unsaved changes will be lost"
+    $lbl_ChangesMade.TextAlign = 'MiddleLeft'
+    $lbl_ChangesMade.Visible   = $False
+    $MainFORM.Controls.Add($lbl_ChangesMade)
 
     # img_ListImages - All 16x16 Icons
     $img_ListImages.TransparentColor = 'Transparent'
@@ -1162,7 +1197,6 @@ This form will help you create custom settings file for the QA checks.  This set
         Try {
             $sysFont.Dispose()
             $sysFontBold.Dispose()
-            $sysFontItalic.Dispose()
         } Catch {}
 
         $MainFORM.Remove_FormClosing($MainFORM_FormClosing)
