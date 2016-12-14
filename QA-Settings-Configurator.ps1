@@ -59,16 +59,21 @@ Function Load-ComboBox ( [System.Windows.Forms.ComboBox]$ComboBox, $Items, [stri
     If ([string]::IsNullOrEmpty($SelectedItem) -eq $False) { $ComboBox.SelectedItem = $SelectedItem }
 }
 
-Function Add-ListViewItem ( [System.Windows.Forms.ListView]$ListView, $Items, [int]$ImageIndex = -1, [string[]]$SubItems, [string]$Group, [switch]$Clear )
+Function Add-ListViewItem ( [System.Windows.Forms.ListView]$ListView, $Items, [int]$ImageIndex = -1, [string[]]$SubItems, [string]$Group, [switch]$Clear, [boolean]$Enabled )
 {
     If ($Clear) { $ListView.Items.Clear(); }
     [System.Windows.Forms.ListViewGroup]$lvGroup = $null
     ForEach ($groupItem in $ListView.Groups) { If ($groupItem.Name -eq $Group) { $lvGroup = $groupItem; Break } }
     If ($lvGroup -eq $null) { $lvGroup = $ListView.Groups.Add($Group, "ERR: $Group") }
 
-    $listitem = $ListView.Items.Add($Items.ToString(), $Items.ToString(), $ImageIndex)
-    If ($SubItems -ne $null) { $listitem.SubItems.AddRange($SubItems) }
-    If ($lvGroup  -ne $null) { $listitem.Group = $lvGroup }
+    [System.Windows.Forms.ListViewItem]$listitem = $ListView.Items.Add($Items.ToString(), $Items.ToString(), $ImageIndex)
+    If ($SubItems -ne $null ) { $listitem.SubItems.AddRange($SubItems) }
+    If ($lvGroup  -ne $null ) { $listitem.Group = $lvGroup }
+    If ($Enabled  -eq $false)
+    {
+        $listitem.ForeColor  = 'GrayText'    # Make the item look disabled
+        $listitem.ImageIndex = -1            # Remove the icon
+    }
 }
 
 Function Load-IniFile ( [string]$Inputfile )
@@ -413,9 +418,16 @@ Function Display-MainForm
         $lbl_ChangesMade.Visible = $True
     }
 
+    Function ListView_SelectedIndexChanged ( [System.Windows.Forms.ListView]$SourceControl )
+    {
+        If ( $SourceControl.SelectedItems                -eq $null) { Return }
+        If (($SourceControl.SelectedItems[0].ImageIndex) -eq -1   ) { Return }    # TODO: Unselect item
+    }
+
     Function ListView_DoubleClick ( [System.Windows.Forms.ListView]$SourceControl )
     {
         If ([string]::IsNullOrEmpty(($SourceControl.SelectedItems[0].Text).Trim()) -eq $True) { Return }
+        If (($SourceControl.SelectedItems[0].ImageIndex) -eq -1) { Return }
         $MainFORM.Cursor = 'WaitCursor'
 
         # Start EDIT for selected item
@@ -523,8 +535,9 @@ Function Display-MainForm
             $newLVW.Columns.Add($newLVW_CH_Name)  | Out-Null
             $newLVW.Columns.Add($newLVW_CH_Value) | Out-Null
             $newLVW.Columns.Add($newLVW_CH_Type)  | Out-Null
-            $newLVW.Add_KeyPress( { If ($_.KeyChar -eq 13) { ListView_DoubleClick -SourceControl $this } } )
-            $newLVW.Add_DoubleClick(                       { ListView_DoubleClick -SourceControl $this }   )
+            $newLVW.Add_KeyPress( { If ($_.KeyChar -eq 13) { ListView_DoubleClick          -SourceControl $this } } )
+            $newLVW.Add_DoubleClick(                       { ListView_DoubleClick          -SourceControl $this }   )
+            $newLVW.Add_SelectedIndexChanged(              { ListView_SelectedIndexChanged -SourceControl $this }   )
             $newTab.Controls.Add($newLVW)
 
             [string]$guid = ([guid]::NewGuid() -as [string]).Split('-')[0]
@@ -543,7 +556,7 @@ Function Display-MainForm
                 $regEx = [RegEx]::Match($content, "DESCRIPTION:((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))")
                 [string]  $checkDesc = $regEx.Groups[1].Value.Replace("`r`n", ' ').Replace('  ', '').Trim()
 
-                Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc) -Group $guid -ImageIndex 1
+                Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc) -Group $guid -ImageIndex 1 -Enabled $True
                 If ($settingsINI.ContainsKey($checkCode) -eq $true) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True }
             }
         }
@@ -597,24 +610,21 @@ Function Display-MainForm
 
             ForEach ($listItem In $folder.Items)
             {
-                If ($listItem.Checked -eq $true)
+                # Create group for the checks
+                [string]$guid = $($listItem.Text)
+                $lvwObject.Groups.Add($(New-Object 'System.Windows.Forms.ListViewGroup' ($guid, " $($listItem.SubItems[1].Text) ($($listItem.Text.ToUpper()))"))) | Out-Null
+
+                # Create each item
+                ForEach ($item In (($settingsINI.$($listItem.Text).Keys) | Sort-Object))
                 {
-                    # Create group for the checks
-                    [string]$guid = $($listItem.Text)
-                    $lvwObject.Groups.Add($(New-Object 'System.Windows.Forms.ListViewGroup' ($guid, " $($listItem.SubItems[1].Text) ($($listItem.Text.ToUpper()))"))) | Out-Null
-
-                    # Create each item
-                    ForEach ($item In (($settingsINI.$($listItem.Text).Keys) | Sort-Object))
-                    {
-                        [string]$value = $($settingsINI.$($listItem.Text).$item)
-                        If ($value.StartsWith('(')) { [string]$type = 'LIST' } Else { [string]$type = 'TEXT' }
-                        $value = $value.Replace("', '", "'; '").Replace("','", "'; '")
-                        Add-ListViewItem -ListView $lvwObject -Items $item -SubItems ($value, $type) -Group $guid -ImageIndex 1
-                    }
-
-                    # Add 'spacing' gap between groups
-                    If ($lvwObject.Groups[$guid].Items.Count -gt 0) { Add-ListViewItem -ListView $lvwObject -Items ' ' -Group $guid -ImageIndex -1 }
+                    [string]$value = $($settingsINI.$($listItem.Text).$item)
+                    If ($value.StartsWith('(')) { [string]$type = 'LIST' } Else { [string]$type = 'TEXT' }
+                    $value = $value.Replace("', '", "'; '").Replace("','", "'; '")
+                    Add-ListViewItem -ListView $lvwObject -Items $item -SubItems ($value, $type) -Group $guid -ImageIndex 1 -Enabled $($listItem.Checked)
                 }
+
+                # Add 'spacing' gap between groups
+                If ($lvwObject.Groups[$guid].Items.Count -gt 0) { Add-ListViewItem -ListView $lvwObject -Items ' ' -Group $guid -ImageIndex -1 -Enabled $false }
             }
         }
 
@@ -666,7 +676,8 @@ Function Display-MainForm
                         {
                             If (($item.SubItems[2].Text) -eq 'LIST') { [string]$out = "$(($item.SubItems[1].Text).Replace(';', ','))" }
                             Else                                     { [string]$out = "$($item.SubItems[1].Text)" }
-                            $outputFile.AppendLine("$(($item.Text).Trim().PadRight(34)) = $out")
+
+                            If ([string]::IsNullOrEmpty($($item.Text).Trim(' ')) -eq $False) { $outputFile.AppendLine("$(($item.Text).Trim().PadRight(34)) = $out") }
                         }
                         If (($group.Items.Count) -eq 0) { $outputFile.AppendLine('; No Settings') }
                         $outputFile.AppendLine('')
