@@ -1,11 +1,11 @@
 Remove-Variable * -ErrorAction SilentlyContinue
 Clear-Host
 
-[Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')      | Out-Null
-[Reflection.Assembly]::LoadWithPartialName('System.Data')               | Out-Null
-[Reflection.Assembly]::LoadWithPartialName('System.Drawing')            | Out-Null
-[System.Drawing.Font]$sysFont       =                                   [System.Drawing.SystemFonts]::MessageBoxFont
-[System.Drawing.Font]$sysFontBold   = New-Object 'System.Drawing.Font' ([System.Drawing.SystemFonts]::MessageBoxFont.Name, [System.Drawing.SystemFonts]::MessageBoxFont.SizeInPoints, [System.Drawing.FontStyle]::Bold)
+[Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')    | Out-Null
+[Reflection.Assembly]::LoadWithPartialName('System.Data')             | Out-Null
+[Reflection.Assembly]::LoadWithPartialName('System.Drawing')          | Out-Null
+[System.Drawing.Font]$sysFont     =                                   [System.Drawing.SystemFonts]::MessageBoxFont
+[System.Drawing.Font]$sysFontBold = New-Object 'System.Drawing.Font' ([System.Drawing.SystemFonts]::MessageBoxFont.Name, [System.Drawing.SystemFonts]::MessageBoxFont.SizeInPoints, [System.Drawing.FontStyle]::Bold)
 
 ###################################################################################################
 ##                                                                                               ##
@@ -596,7 +596,7 @@ Function Display-MainForm
         $MainFORM.Cursor         = 'WaitCursor'
         $lbl_ChangesMade.Visible = $False
         $tab_Pages.SelectedIndex = 2
-        $settingsINI = (Load-IniFile -Inputfile "$script:scriptLocation\settings\$($cmo_t1_SettingsFile.Text)")
+        [System.Collections.Hashtable]$settingsINI = (Load-IniFile -Inputfile "$script:scriptLocation\settings\$($cmo_t1_SettingsFile.Text)")
 
         ForEach ($folder In $lst_t2_SelectChecks.Groups)
         {
@@ -615,9 +615,11 @@ Function Display-MainForm
                 $lvwObject.Groups.Add($(New-Object 'System.Windows.Forms.ListViewGroup' ($guid, " $($listItem.SubItems[1].Text) ($($listItem.Text.ToUpper()))"))) | Out-Null
 
                 # Create each item
-                ForEach ($item In (($settingsINI.$($listItem.Text).Keys) | Sort-Object))
+                [System.Collections.Hashtable+KeyCollection]$iniKeys = $null
+                If (($settingsINI.$("$($listItem.Text)-skip").Keys).Count -gt 0) { $iniKeys = ($settingsINI.$("$($listItem.Text)-skip")) } Else { $iniKeys = ($settingsINI.$($listItem.Text)) }
+                ForEach ($item In (($iniKeys.Keys) | Sort-Object))
                 {
-                    [string]$value = $($settingsINI.$($listItem.Text).$item)
+                    [string]$value = ($iniKeys.$item)
                     If ($value.StartsWith('(')) { [string]$type = 'LIST' } Else { [string]$type = 'TEXT' }
                     $value = $value.Replace("', '", "'; '").Replace("','", "'; '")
                     Add-ListViewItem -ListView $lvwObject -Items $item -SubItems ($value, $type) -Group $guid -ImageIndex 1 -Enabled $($listItem.Checked)
