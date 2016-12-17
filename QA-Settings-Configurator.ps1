@@ -83,8 +83,14 @@ Function Load-IniFile ( [string]$Inputfile )
     [string]   $item    = "^\s*(?!$($comment))\s*([^=]*)\s*=\s*(.*)\s*$"
     [hashtable]$ini     = @{}
     Switch -Regex -File $inputfile {
-        "$($header)" { $section = ($matches[1] -replace ' ','_'); $ini[$section.Trim()] = @{} }
-        "$($item)"   { $name, $value = $matches[1..2]; If (($name -ne $null) -and ($section -ne $null)) { $ini[$section][$name.Trim()] = $value.Trim() } }
+        "$($header)" {
+            $section = ($matches[1] -replace ' ','_')
+            $ini[$section.Trim()] = @{}
+        }
+        "$($item)"   {
+            $name, $value = $matches[1..2];
+            If (($name -ne $null) -and ($section -ne $null)) { $ini[$section][$name.Trim()] = $value.Trim() }
+        }
     }
     Return $ini
 }
@@ -530,7 +536,7 @@ Function Display-MainForm
             $newLVW.Font           = $sysFont
             $newLVW.SmallImageList = $img_ListImages
             $newLVW_CH_Name  = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Name.Text  = 'Check'; $newLVW_CH_Name.Width  = 225
-            $newLVW_CH_Value = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Value.Text = 'Value'; $newLVW_CH_Value.Width = 519 - ([System.Windows.Forms.SystemInformation]::VerticalScrollBarWidth + 4)
+            $newLVW_CH_Value = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Value.Text = 'Value'; $newLVW_CH_Value.Width = 505 - ([System.Windows.Forms.SystemInformation]::VerticalScrollBarWidth + 4)
             $newLVW_CH_Type  = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Type.Text  = ''     ; $newLVW_CH_Type.Width  =   0
             $newLVW.Columns.Add($newLVW_CH_Name)  | Out-Null
             $newLVW.Columns.Add($newLVW_CH_Value) | Out-Null
