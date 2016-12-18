@@ -6,7 +6,7 @@
 
     PASS:    Domain credential caching is disabled
     WARNING:
-    FAIL:    Domain credential cahing is enabled / Registry setting not found
+    FAIL:    Domain credential caching is enabled / Registry setting not found
     MANUAL:
     NA:
 

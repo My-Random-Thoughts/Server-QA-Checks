@@ -43,12 +43,12 @@ Function Check-CommandLine
         Exit 
     } }
 
-    # Resize window to be 120 wide and keep the height.
+    # Resize window to be 132 wide and keep the height.
     # Also change the buffer size to be huge
     $gh = Get-Host
     $ws = $gh.UI.RawUI.WindowSize
     $wh = $ws.Height
-    If ($ws.Width -le 120)
+    If ($ws.Width -le 132)
     {
         $ws.Height = 9999
         $ws.Width  =  120; $gh.UI.RawUI.Set_BufferSize($ws)
@@ -708,11 +708,7 @@ Function Write-Header
     Write-Host ''
 }
 
-Function DivLine
-{
-    Param ([int]$Width);[string]$divLine=' ';For($i=0;$i-lt$Width;$i++){$divLine+='─'}
-    Return $divLine
-}
+Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width, '─') }
 
 ###################################################################################################
 

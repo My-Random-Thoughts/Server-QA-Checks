@@ -69,7 +69,7 @@ Write-Header -Message 'QA Script Engine Check Compiler' -Width $ws
 
 # Load settings file
 [hashtable]$iniSettings = (Load-IniFile -InputFile ("$path\settings\$Settings" ))
-[hashtable]$lngStrings  = (Load-IniFile -InputFile ("$path\i18n\{0}_text.ps1" -f ($iniSettings['settings']['language'])))
+[hashtable]$lngStrings  = (Load-IniFile -InputFile ("$path\i18n\{0}_text.ini" -f ($iniSettings['settings']['language'])))
 [string]$shared = "Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }"
 
 [string]$scriptHeader = @"
@@ -128,16 +128,16 @@ Write-Host '   ' -NoNewline; For ($j = 0; $j -lt ($qaChecks.Count + 5); $j++) { 
 Write-Host '   ' -NoNewline
 
 # Start building the QA file
-Out-File -FilePath $outPath -InputObject $scriptHeader                                                      -Encoding utf8
-Out-File -FilePath $outPath -InputObject ('[string]   $version               = "' + $version   + '"')       -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('[string]   $settingsFile          = "' + $Settings  + '"')       -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('[hashtable]$script:lang           = @{}'                 )       -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('[hashtable]$script:qahelp         = @{}'                 )       -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('')                                                               -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject $scriptHeader                                                                 -Encoding utf8
+Out-File -FilePath $outPath -InputObject ('[string]   $version               = "' + $version   + '"')                  -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('[string]   $settingsFile          = "' + $Settings  + '"')                  -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('[hashtable]$script:lang           = @{}'                 )                  -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('[hashtable]$script:qahelp         = @{}'                 )                  -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('')                                                                          -Encoding utf8 -Append
 
 # Add the shared variables code
-Out-File -FilePath $outPath -InputObject ($shared)                                                          -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('')                                                               -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
+Out-File -FilePath $outPath -InputObject ($shared)                                                                     -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('')                                                                          -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
 
 # Get a list of all the checks, adding them into an array
 [string]$cList = '[array]$script:qaChecks = ('
@@ -163,21 +163,21 @@ If ($cLine.Length -gt 10)
 }
 
 $cList = $cList.Trim(',') + ')'
-Out-File -FilePath $outPath -InputObject $cList                                                             -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
-Out-File -FilePath $outPath -InputObject ('')                                                               -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                             -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('# QA Check Script Blocks')                                       -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject $cList                                                                        -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
+Out-File -FilePath $outPath -InputObject ('')                                                                          -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('# QA Check Script Blocks')                                                  -Encoding utf8 -Append
 
 [System.Text.StringBuilder]$qaHelp = ''
 
 # Add each check into the script
 ForEach ($qa In $qaChecks)
 {
-    Out-File -FilePath $outPath -InputObject "`$c$($qa.Name.Substring(2, 6).Replace('-','')) = {"           -Encoding utf8 -Append
-    Out-File -FilePath $outPath -InputObject ($shared)                                                      -Encoding utf8 -Append
+    Out-File -FilePath $outPath -InputObject "`$c$($qa.Name.Substring(2, 6).Replace('-','')) = {"                      -Encoding utf8 -Append
+    Out-File -FilePath $outPath -InputObject ($shared)                                                                 -Encoding utf8 -Append
     
-    Out-File -FilePath $outPath -InputObject '$script:lang        = @{}'                                    -Encoding utf8 -Append
-    Out-File -FilePath $outPath -InputObject '$script:appSettings = @{}'                                    -Encoding utf8 -Append
+    Out-File -FilePath $outPath -InputObject '$script:lang        = @{}'                                               -Encoding utf8 -Append
+    Out-File -FilePath $outPath -InputObject '$script:appSettings = @{}'                                               -Encoding utf8 -Append
     [string]$checkName = ($qa.Name).Substring(1, 8).Replace('-','')
     If ($iniSettings["$checkName-skip"]) { $checkName += '-skip' }
 
@@ -188,7 +188,7 @@ ForEach ($qa In $qaChecks)
             [string]$value = $iniSettings[$checkName][$key]
             If ($value -eq '') { $value = "''" }
             [string]$appSetting = ('$script:appSettings[' + "'{0}'] = {1}" -f $key, $value)
-            Out-File -FilePath $outPath -InputObject $appSetting                                            -Encoding utf8 -Append
+            Out-File -FilePath $outPath -InputObject $appSetting                                                       -Encoding utf8 -Append
         }
     } Catch { }
 
@@ -200,7 +200,7 @@ ForEach ($qa In $qaChecks)
             [string]$value = $lngStrings['common'][$key]
             If ($value -eq '') { $value = "''" }
             [string]$lang = ('$script:lang[' + "'{0}'] = {1}" -f $key, $value)
-            Out-File -FilePath $outPath -InputObject $lang                                                  -Encoding utf8 -Append
+            Out-File -FilePath $outPath -InputObject $lang                                                             -Encoding utf8 -Append
         }
 
         $checkName = $checkName.TrimEnd('-skip')
@@ -209,13 +209,13 @@ ForEach ($qa In $qaChecks)
             [string]$value = $lngStrings[$checkName][$key]
             If ($value -eq '') { $value = "''" }
             [string]$lang = ('$script:lang[' + "'{0}'] = {1}" -f $key, $value)
-            Out-File -FilePath $outPath -InputObject $lang                                                  -Encoding utf8 -Append
+            Out-File -FilePath $outPath -InputObject $lang                                                             -Encoding utf8 -Append
         }
     }
     Catch { }
 
     # Add the check itself
-    Out-File -FilePath $outPath -InputObject (Get-Content -Path ($qa.FullName))                              -Encoding utf8 -Append
+    Out-File -FilePath $outPath -InputObject (Get-Content -Path ($qa.FullName))                                        -Encoding utf8 -Append
 
     # Generate the help text for from each check (taken from the header information)
     # ALSO, add any required additional script functions
@@ -233,7 +233,7 @@ ForEach ($qa In $qaChecks)
             # Add any required additional script functions
             If ($keyWord -eq 'REQUIRED-FUNCTIONS') {
                 ForEach ($function In ($sectionValue).Split(',')) {
-                    Out-File -FilePath $outPath -InputObject (Get-Content "$path\functions\$($function.Trim()).ps1") -Encoding utf8 -Append
+                    Out-File -FilePath $outPath -InputObject (Get-Content "$path\functions\$($function.Trim()).ps1")   -Encoding utf8 -Append
                 }
             }
             Else
@@ -248,18 +248,18 @@ ForEach ($qa In $qaChecks)
     $qaHelp.AppendLine('$script:qahelp[' + "'$checkName']='$xmlHelp'") | Out-Null
 
     # Complete this check
-    Out-File -FilePath $outPath -InputObject '}'                                                            -Encoding utf8 -Append
-    Out-File -FilePath $outPath -InputObject ''                                                             -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Green
+    Out-File -FilePath $outPath -InputObject '}'                                                                       -Encoding utf8 -Append
+    Out-File -FilePath $outPath -InputObject ''                                                                        -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Green
 }
-Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                             -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
 
 # Write out the EN-GB help file
-Out-File -FilePath "$path\i18n\en-gb_help.ps1" -InputObject ($qaHelp.ToString()) -Force                     -Encoding utf8;         Write-Host '▀' -NoNewline -ForegroundColor Yellow
+Out-File -FilePath "$path\i18n\en-gb_help.ps1" -InputObject ($qaHelp.ToString()) -Force                                -Encoding utf8;         Write-Host '▀' -NoNewline -ForegroundColor Yellow
 
 [string]$language = ($iniSettings['settings']['language'])
-If (($language -eq '') -or ((Test-Path -Path "$path\i18n\$language.ps1") -eq $false)) { $language = 'en-gb' }
-Out-File -FilePath $outPath -InputObject (Get-Content ("$path\i18n\$language" + "_help.ps1"))               -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
-Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                             -Encoding utf8 -Append
+If (($language -eq '') -or ((Test-Path -Path "$path\i18n\$language.ini") -eq $false)) { $language = 'en-gb' }
+Out-File -FilePath $outPath -InputObject (Get-Content ("$path\i18n\$language" + "_help.ps1"))                          -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
+Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
 Try
 {
     ForEach ($key In ($lngStrings['engine'].Keys | Sort-Object))
@@ -267,14 +267,14 @@ Try
         [string]$value = $lngStrings['engine'][$key]
         If ($value -eq '') { $value = "''" }
         [string]$lang = ('$script:lang[' + "'{0}'] = {1}" -f $key, $value)
-        Out-File -FilePath $outPath -InputObject $lang                                                      -Encoding utf8 -Append
+        Out-File -FilePath $outPath -InputObject $lang                                                                 -Encoding utf8 -Append
     }
 }
 Catch { }
-Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                             -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
 Out-File -FilePath $outPath -InputObject ('[string]$reportCompanyName = "' + ($iniSettings['settings']['reportCompanyName']) + '"') -Encoding utf8 -Append
 Out-File -FilePath $outPath -InputObject ('[string]$script:qaOutput   = "' + ($iniSettings['settings']['outputLocation'])    + '"') -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject (Get-Content ($path + '\engine\main.ps1'))                         -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
+Out-File -FilePath $outPath -InputObject (Get-Content ($path + '\engine\main.ps1'))                                    -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
 Write-Host ''
 
 ###################################################################################################
