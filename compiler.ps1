@@ -6,9 +6,9 @@ Param ([string]$Settings)
 Set-StrictMode -Version 2
 
 If ([string]::IsNullOrEmpty($Settings)) { $Settings = 'default-settings.ini' }
-[string]$version  = ('v3.{0}.{1}' -f (Get-Date -Format 'yy'), (Get-Date -Format 'MMdd'))
-[string]$date     = Get-Date -Format 'yyyy/MM/dd HH:mm'
-[string]$path     = Split-Path (Get-Variable MyInvocation -ValueOnly).MyCommand.Path
+[string]$version = ('v3.{0}.{1}' -f (Get-Date -Format 'yy'), (Get-Date -Format 'MMdd'))
+[string]$date    = Get-Date -Format 'yyyy/MM/dd HH:mm'
+[string]$path    = Split-Path (Get-Variable MyInvocation -ValueOnly).MyCommand.Path
 Try { $gh = Get-Host;  [int]$ws = $gh.UI.RawUI.WindowSize.Width - 2 } Catch { [int]$ws = 80 }
 If ($ws -lt 80) { $ws = 80 }
 
@@ -33,16 +33,10 @@ Function Write-Header
     Write-Host ''
 }
 
-Function DivLine
-{
-    Param ([int]$Width);[string]$divLine=' ';For($i=0;$i-lt$Width;$i++){$divLine+='─'}
-    Return "$divLine"
-}
-
+Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width, '─') }
 Function Load-IniFile
 {
     Param ([string]$InputFile)
-
     If ((Test-Path -Path $InputFile) -eq $false)
     {
         Switch (Split-Path -Path (Split-Path -Path $InputFile -Parent) -Leaf)
@@ -75,7 +69,7 @@ Write-Header -Message 'QA Script Engine Check Compiler' -Width $ws
 
 # Load settings file
 [hashtable]$iniSettings = (Load-IniFile -InputFile ("$path\settings\$Settings" ))
-[hashtable]$iniStrings  = (Load-IniFile -InputFile ("$path\i18n\{0}_text.ps1" -f ($iniSettings['settings']['language'])))
+[hashtable]$lngStrings  = (Load-IniFile -InputFile ("$path\i18n\{0}_text.ps1" -f ($iniSettings['settings']['language'])))
 [string]$shared = "Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }"
 
 [string]$scriptHeader = @"
@@ -148,17 +142,24 @@ Out-File -FilePath $outPath -InputObject ('')                                   
 # Get a list of all the checks, adding them into an array
 [string]$cList = '[array]$script:qaChecks = ('
 [string]$cLine = ''
-$qaChecks | ForEach-Object {
-    [string]$iniSection = ($_.BaseName).Substring(1, 8).Replace('-','')
-    If (-not $iniSettings["$iniSection-skip"])
+ForEach ($qa In $qaChecks)
+{
+    [string]$checkName = ($qa.BaseName).Substring(1, 8).Replace('-','')
+    If (-not $iniSettings["$checkName-skip"])
     {
-        $cCheck = 'c-' + $_.BaseName.Substring(2); $cLine += "'$cCheck',"
+        $cCheck = 'c-' + $qa.BaseName.Substring(2); $cLine += "'$cCheck',"
         If ($cList.EndsWith('(')) { $space = '' } Else { $space = "`n".PadRight(28) }
-        If ($cLine.Length -ge 130) { $cList+="$space$cLine"; $cLine='' }
+        If ($cLine.Length -ge 130) { $cList += "$space$cLine"; $cLine='' }
     }
 }
-If ($cLine.Length -gt 10) {
-    If ($cList.Substring($cList.Length-10, 10) -ne $cLine.Substring($cLine.Length-10, 10)) { $cList+="$space$cLine"; $cLine='' }
+
+If ($cLine.Length -gt 10)
+{
+    If ($cList.Substring($cList.Length - 10, 10) -ne $cLine.Substring($cLine.Length - 10, 10))
+    {
+        $cList += "$space$cLine"
+        $cLine=''
+    }
 }
 
 $cList = $cList.Trim(',') + ')'
@@ -170,55 +171,57 @@ Out-File -FilePath $outPath -InputObject ('# QA Check Script Blocks')           
 [System.Text.StringBuilder]$qaHelp = ''
 
 # Add each check into the script
-$qaChecks | ForEach-Object {
-    Out-File -FilePath $outPath -InputObject "`$c$($_.Name.Substring(2, 6).Replace('-','')) = {"            -Encoding utf8 -Append
+ForEach ($qa In $qaChecks)
+{
+    Out-File -FilePath $outPath -InputObject "`$c$($qa.Name.Substring(2, 6).Replace('-','')) = {"           -Encoding utf8 -Append
     Out-File -FilePath $outPath -InputObject ($shared)                                                      -Encoding utf8 -Append
     
     Out-File -FilePath $outPath -InputObject '$script:lang        = @{}'                                    -Encoding utf8 -Append
     Out-File -FilePath $outPath -InputObject '$script:appSettings = @{}'                                    -Encoding utf8 -Append
-    [string]$checkName = ($_.Name).Substring(1, 8).Replace('-','')
+    [string]$checkName = ($qa.Name).Substring(1, 8).Replace('-','')
+    If ($iniSettings["$checkName-skip"]) { $checkName += '-skip' }
 
     # Add each checks settings
-    Try
-    {
-        $iniSettings[$checkName].Keys | Sort-Object | ForEach {
-            [string]$value = $iniSettings[$checkName][$_]
+    Try {
+        ForEach ($key In ($iniSettings[$checkName].Keys | Sort-Object))
+        {
+            [string]$value = $iniSettings[$checkName][$key]
             If ($value -eq '') { $value = "''" }
-            [string]$appSetting = ('$script:appSettings[' + "'{0}'] = {1}" -f $_, $value)
+            [string]$appSetting = ('$script:appSettings[' + "'{0}'] = {1}" -f $key, $value)
             Out-File -FilePath $outPath -InputObject $appSetting                                            -Encoding utf8 -Append
         }
-    }
-    Catch { }
+    } Catch { }
 
     # Add language specific strings to each check
     Try
     {
-        $iniStrings['common'].Keys | Sort-Object | ForEach {
-            [string]$value = $iniStrings['common'][$_]
+        ForEach ($key In ($lngStrings['common'].Keys | Sort-Object))
+        {
+            [string]$value = $lngStrings['common'][$key]
             If ($value -eq '') { $value = "''" }
-            [string]$lang = ('$script:lang[' + "'{0}'] = {1}" -f $_, $value)
+            [string]$lang = ('$script:lang[' + "'{0}'] = {1}" -f $key, $value)
             Out-File -FilePath $outPath -InputObject $lang                                                  -Encoding utf8 -Append
         }
 
-        $iniStrings[$checkName].Keys | Sort-Object | ForEach {
-            [string]$value = $iniStrings[$checkName][$_]
+        $checkName = $checkName.TrimEnd('-skip')
+        ForEach ($key In ($lngStrings[$checkName].Keys | Sort-Object))
+        {
+            [string]$value = $lngStrings[$checkName][$key]
             If ($value -eq '') { $value = "''" }
-            [string]$lang = ('$script:lang[' + "'{0}'] = {1}" -f $_, $value)
+            [string]$lang = ('$script:lang[' + "'{0}'] = {1}" -f $key, $value)
             Out-File -FilePath $outPath -InputObject $lang                                                  -Encoding utf8 -Append
         }
     }
     Catch { }
-    
-
 
     # Add the check itself
-    Out-File -FilePath $outPath -InputObject (Get-Content -Path ($_.FullName))                              -Encoding utf8 -Append
+    Out-File -FilePath $outPath -InputObject (Get-Content -Path ($qa.FullName))                              -Encoding utf8 -Append
 
     # Generate the help text for from each check (taken from the header information)
     # ALSO, add any required additional script functions
     [string]  $xmlHelp    = "<xml>"
     [string[]]$keyWords   = @('DESCRIPTION', 'PASS', 'WARNING', 'FAIL', 'MANUAL', 'NA', 'APPLIES', 'REQUIRED-FUNCTIONS')
-    [string[]]$getContent = (Get-Content -Path ($_.FullName))
+    [string[]]$getContent = (Get-Content -Path ($qa.FullName))
     ForEach ($keyWord In $KeyWords)
     {
         # Code from Reddit user "sgtoj"
@@ -241,6 +244,7 @@ $qaChecks | ForEach-Object {
         }
     }
     $xmlHelp  += "</xml>"
+    $checkName = $checkName.TrimEnd('-skip')
     $qaHelp.AppendLine('$script:qahelp[' + "'$checkName']='$xmlHelp'") | Out-Null
 
     # Complete this check
@@ -258,10 +262,11 @@ Out-File -FilePath $outPath -InputObject (Get-Content ("$path\i18n\$language" + 
 Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                             -Encoding utf8 -Append
 Try
 {
-    $iniStrings['engine'].Keys | Sort-Object | ForEach {
-        [string]$value = $iniStrings['engine'][$_]
+    ForEach ($key In ($lngStrings['engine'].Keys | Sort-Object))
+    {
+        [string]$value = $lngStrings['engine'][$key]
         If ($value -eq '') { $value = "''" }
-        [string]$lang = ('$script:lang[' + "'{0}'] = {1}" -f $_, $value)
+        [string]$lang = ('$script:lang[' + "'{0}'] = {1}" -f $key, $value)
         Out-File -FilePath $outPath -InputObject $lang                                                      -Encoding utf8 -Append
     }
 }
