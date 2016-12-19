@@ -39,6 +39,20 @@ Function Get-Folder ( [string]$Description, [string]$InitialDirectory, [boolean]
     Return $return
 }
 
+Function Get-File ( [string]$InitialDirectory, [string]$Title )
+{
+    [string]$return = ''
+    $filename = New-Object 'System.Windows.Forms.OpenFileDialog'
+    $filename.InitialDirectory = $InitialDirectory
+    $filename.Multiselect      = $true
+    $filename.Title            = $Title
+    $filename.Filter           = 'Compiled QA Scripts (*.ps1)|*.ps1'
+    If ([threading.thread]::CurrentThread.GetApartmentState() -ne 'STA') { $filename.ShowHelp = $true }    # Workaround for MTA issues not showing dialog box
+    If ($filename.ShowDialog($MainFORM) -eq [System.Windows.Forms.DialogResult]::OK) { [string]$return = ($filename.FileName) }
+    Try { $filename.Dispose() } Catch {}
+    Return $return
+}
+
 Function Save-File ( [string]$InitialDirectory, [string]$Title, [string]$InitialFileName )
 {
     [string]$return = ''
@@ -748,6 +762,73 @@ Function Display-MainForm
         $btn_t4_Generate.Enabled = $True
         $MainFORM.Cursor = 'Default'
     }
+
+    $btn_RestoreINI_Click = {
+        [string]$msgbox = [System.Windows.Forms.MessageBox]::Show($MainFORM, "If you have lost your settings file, you can use this option to restore it.`nClick 'OK' to select the compiled QA script you want to restore the settings from.", 'Restore Settings File', 'OKCancel', 'Information')
+        If ($msgbox -eq 'Cancel') { Return }
+
+        [string]$originalQA = (Get-File -InitialDirectory $script:ExecutionFolder -Title 'Select the compiled QA script to restore the settings from:')
+        If ([string]::IsNullOrEmpty($originalQA)) { Return }
+        $MainFORM.Cursor = 'WaitCursor'
+
+        # Start retrevial process
+        [array]   $skippedChecks = ''
+        [string[]]$content   = (Get-Content -Path $originalQA)
+        [string]  $enabledF  = ([regex]::Match($content, '(\[array\]\$script\:qaChecks \= \()((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))'))
+                  $enabledF  = $enabledF.Replace(' ', '').Trim()
+        [string[]]$functions = ($content | Select-String -Pattern '(Function c-)([a-z]{3}[-][0-9]{2})' -AllMatches)
+        [string]  $FuncOLD = ''
+        [string]  $FuncNEW = ''
+
+        ForEach ($func In $functions) { If ($enabledF.Contains($func) -eq $false) { $skippedChecks += ($func.Substring(11, 6).Replace('-', '')) } }
+
+        [System.Text.StringBuilder]$outputFile = ''
+        $outputFile.AppendLine('[settings]')                   | Out-Null
+        $outputFile.AppendLine('shortcode         = RESTORED') | Out-Null
+        $outputFile.AppendLine('language          = en-gb')    | Out-Null
+
+        ForEach ($line In $content)
+        {
+            If ($line.StartsWith('[string]$reportCompanyName')) { $outputFile.AppendLine("reportCompanyName =$($line.Split('=')[1])".Replace('"', '').Trim()) | Out-Null }
+            If ($line.StartsWith('[string]$script:qaOutput'  )) { $outputFile.AppendLine("outputLocation    =$($line.Split('=')[1])".Replace('"', '').Trim()) | Out-Null
+                $outputFile.AppendLine('') | Out-Null
+                Break
+            }
+        }
+
+        ForEach ($line In $content)
+        {
+            If ($line.StartsWith('Function newResult { Return ')) { [string]$funcName = ''; [string[]]$appSettings = $null }
+            If ($line.StartsWith('$script:appSettings['        )) {
+                [string[]]$newLine = ($line.Substring(21).Replace("']", '')).Split('=')
+                $appSettings += (($newLine[0].Trim()).PadRight(35) + '= ' + ($newLine[1]).Trim())
+            }
+            If ($line.StartsWith('Function c-'))
+            {
+                $funcName = ($line.Substring(11, 6).Replace('-', ''))
+                $FuncNEW  = $funcName.Substring(0,3)
+
+                If ($FuncNEW -ne $FuncOLD)
+                {
+                    $FuncOLD = $FuncNEW
+                    $outputFile.AppendLine('')                                                                                                    | Out-Null
+                    $outputFile.AppendLine('; _________________________________________________________________________________________________') | Out-Null
+                    $outputFile.AppendLine("; $(($FuncNEW).ToUpper().Trim())")                                                                    | Out-Null
+                }
+
+                If ($skippedChecks.Contains($funcName))    { $outputFile.AppendLine("[$funcName-skip]") | Out-Null }
+                Else                                       { $outputFile.AppendLine("[$funcName]"     ) | Out-Null }
+                If ([string]::IsNullOrEmpty($appSettings)) { $outputFile.AppendLine("; No Settings")    | Out-Null }
+                Else { ForEach ($setting In $appSettings)  { $outputFile.AppendLine($setting)           | Out-Null } }
+                $outputFile.AppendLine('')                                                              | Out-Null
+             }
+        }
+
+        $outputFile.ToString() | Out-File -FilePath "$(Split-Path -Path $originalQA -Parent)\RESTORED.ini" -Encoding ascii -Force
+
+        $MainFORM.Cursor = 'Default'
+        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Restore Complete`nThe file is called 'RESTORED.ini'`n`nIt is located in the same folder as the QA script you selected.`nRemember to move this to the Settings folder.", 'Restore Settings File', 'OK', 'Information')
+    }
 #endregion
 ###################################################################################################
 #region FORM ITEMS
@@ -762,7 +843,8 @@ Function Display-MainForm
     $tab_Page3                   = New-Object 'System.Windows.Forms.TabPage'
     $tab_Page4                   = New-Object 'System.Windows.Forms.TabPage'
     $lbl_ChangesMade             = New-Object 'System.Windows.Forms.Label'
-    $btn_Cancel                  = New-Object 'System.Windows.Forms.Button'
+    $btn_RestoreINI              = New-Object 'System.Windows.Forms.Button'
+    $btn_Exit                    = New-Object 'System.Windows.Forms.Button'
 
     # TAB 1
     $lbl_t1_Welcome               = New-Object 'System.Windows.Forms.Label'
@@ -855,7 +937,7 @@ Function Display-MainForm
         ////EBAQ/wAAAFAAAAAAAAAAAAAAAAAAAAD/v7+//21tbf+Li4v/9vb2/xAQEP+2trb/HBwc/y8vL/+dnZ3//////xAQEP8AAABQAAAAAAAAAAAAAAAAAAAA/7+/v/+Ghob/UlJS/6qqqv8WFhb/+Pj4/ygoKP8cHBz/8/Pz//////8QEBD/AAAAUAAAAAAAAAAAAAAAAAAAAP+/v7//9/f3/3Fxcf9NTU3/
         wcHB//////+fn5//jIyM////////////EBAQ/wAAAFAAAAAAAAAAAAAAAAAAAAD/v7+//////////////////////////////////////////////////xAQEP8AAABQAAAAAAAAAAAAAAAAAAAA/4+Pj/+/v7//v7+//7+/v/+/v7//v7+//7+/v/+/v7//v7+//7+/v/8MDAz/AAAAUAAAAAAAAAAAAAAA
         AAAAALYAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/GRkZ/wAAACAAAAAAAAAAAAAAAAAABwAAAAcAAAADAAAAAQAAAAEAAAAAAAAAAAAAAAQAAAAHAAAABwAAAAcAAAAHAAAABwAAAAcAAAAHAAAABwAA')
-    $MainFORM.CancelButton        = $btn_Cancel
+    $MainFORM.CancelButton        = $btn_Exit
     $MainFORM.Add_Load($MainFORM_Load)
     $MainFORM.Add_FormClosing($MainFORM_FormClosing)
 
@@ -1168,13 +1250,21 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
     $tab_Page4.Controls.Add($btn_t4_Generate)
 #endregion
 #region Common Controls
+    # btn_RestoreINI
+    $btn_RestoreINI.Location = ' 12, 635'
+    $btn_RestoreINI.Size     = '150,  25'
+    $btn_RestoreINI.TabIndex = 99
+    $btn_RestoreINI.Text     = 'Restore Settings File'
+    $btn_RestoreINI.Add_Click($btn_RestoreINI_Click)
+    $MainFORM.Controls.Add($btn_RestoreINI)
+
     # btn_Cancel
-    $btn_Cancel.Location = '707, 635'
-    $btn_Cancel.Size     = '75, 25'
-    $btn_Cancel.TabIndex = 98
-    $btn_Cancel.Text     = 'Exit'
-    $btn_Cancel.DialogResult = [System.Windows.Forms.DialogResult]::Cancel    # Use this instead of a "Click" event
-    $MainFORM.Controls.Add($btn_Cancel)
+    $btn_Exit.Location = '707, 635'
+    $btn_Exit.Size     = '75, 25'
+    $btn_Exit.TabIndex = 98
+    $btn_Exit.Text     = 'Exit'
+    $btn_Exit.DialogResult = [System.Windows.Forms.DialogResult]::Cancel    # Use this instead of a "Click" event
+    $MainFORM.Controls.Add($btn_Exit)
 
     $lbl_ChangesMade.Location  = ' 12, 635'
     $lbl_ChangesMade.Size      = '689,  25'
