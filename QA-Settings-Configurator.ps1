@@ -314,7 +314,7 @@ Function Show-InputForm ( [string]$Type, [string]$Title, [string]$Description, [
         'LIST' {
             # List of text boxes
             [int]$itemCount = ($CurrentValue.Count)
-            If ($itemCount -gt 5) { [int]$numberOfTextBoxes = $itemCount + 1 } Else { [int]$numberOfTextBoxes = 5 }
+            If ($itemCount -ge 5) { [int]$numberOfTextBoxes = $itemCount + 1 } Else { [int]$numberOfTextBoxes = 5 }
             $numberOfTextBoxes--    # Count from zero
 
             # Add 'Add' button
