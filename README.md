@@ -31,4 +31,8 @@ The scripts can be run on any Windows operating system as long as PowerShell ver
 
 ─────────────────────────────────────────────────────────────────────────────
 
+# QA Settings Configurator
+
+This is a GUI form (written entirely in PowerShell) that makes it easier for you to enable/disable specific checks as well as configure the specific settings for each QA check.
+
 ## Please read the documentation before starting out
