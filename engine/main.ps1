@@ -479,7 +479,7 @@ Function Export-Results
         [array] $outCSV =  @()
         [array] $cnvCSV = ($results_input | Select-Object server, name, check, datetime, result, message, data | Sort-Object check, server | ConvertTo-Csv -NoTypeInformation)
         $cnvCSV | ForEach-Object { $outCSV += $_.Replace(',#',', ') }
-        $outCSV | Out-File -FilePath $path -Encoding utf8 -Force
+        $outCSV | Out-File -FilePath $path -Encoding utf8 -Force -Append
     }
 
     If ($GenerateXML -eq $true)
@@ -488,7 +488,7 @@ Function Export-Results
         [array] $outXML =  @()
         [array] $cnvXML = (($results_input | Select-Object server, name, check, datetime, result, message, data | Sort-Object check, server | ConvertTo-Xml -NoTypeInformation).OuterXml -as [string])
         $cnvXML | ForEach-Object { $outXML += $_.Replace(',#',', ') }
-        $outXML | Out-File -FilePath $path -Encoding utf8 -Force
+        $outXML | Out-File -FilePath $path -Encoding utf8 -Force -Append
     }
 
     Remove-Variable resultsplit, Head, Body, serversOut, server, serverResults, outHTML, outCSV, cnvCSV, outXML, cnvXML, path -ErrorAction SilentlyContinue
