@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check sentinel monitoring agent is installed, and that the correct port is open to the management server
 
@@ -38,7 +38,11 @@ Function c-com-07-sentinel-agent-installed
         Try
         {
             $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
-            $regKey = $reg.OpenSubKey('Software\Wow6432Node\NetIQ\Security Manager\Configurations\AgentManager\Operations\Agent\Consolidators')
+            $regKey = $reg.OpenSubKey('Software\Wow6432Node\NetIQ\Security Manager\Configurations')
+            If ($regKey) { [string[]]$regAgt = ($regKey.GetSubKeyNames()) }
+            Try {$regKey.Close() } Catch {}
+
+            $regKey = $reg.OpenSubKey("Software\Wow6432Node\NetIQ\Security Manager\Configurations\$($regAgt[0])\Operations\Agent\Consolidators")
             If ($regKey) {
                 [array]$valCons = @()
                 ForEach ($key In (0..9))
@@ -63,8 +67,8 @@ Function c-com-07-sentinel-agent-installed
             If ([string]::IsNullOrEmpty($($valCons[$key].host)) -eq $false)
             {
                 $portTest = Test-Port -serverName $($valCons[$key].host) -Port $($valCons[$key].port)
-                If ($portTest -eq $true) { $result.message += ('Port {0} open to {1}'     -f $($valCons[$key].host), $($valCons[$key].port))                                        }
-                Else                     { $result.message += ('Port {0} not open to {1}' -f $($valCons[$key].host), $($valCons[$key].port)); $result.result = $script:lang['Fail'] }
+                If ($portTest -eq $true) { $result.message += ('Port {0} open to {1}'     -f $($valCons[$key].port), $($valCons[$key].host))                                        }
+                Else                     { $result.message += ('Port {0} not open to {1}' -f $($valCons[$key].port), $($valCons[$key].host)); $result.result = $script:lang['Fail'] }
             }
         }
     }
