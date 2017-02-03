@@ -1,3 +1,4 @@
+#Requires -version 4
 Remove-Variable * -ErrorAction SilentlyContinue
 Clear-Host
 
@@ -6,6 +7,7 @@ Clear-Host
 [Reflection.Assembly]::LoadWithPartialName('System.Drawing')          | Out-Null
 [System.Drawing.Font]$sysFont     =                                   [System.Drawing.SystemFonts]::MessageBoxFont
 [System.Drawing.Font]$sysFontBold = New-Object 'System.Drawing.Font' ([System.Drawing.SystemFonts]::MessageBoxFont.Name, [System.Drawing.SystemFonts]::MessageBoxFont.SizeInPoints, [System.Drawing.FontStyle]::Bold)
+[System.Windows.Forms.Application]::EnableVisualStyles()
 $script:qahelp = @{}
 
 ###################################################################################################
@@ -48,7 +50,7 @@ Function Get-File ( [string]$InitialDirectory, [string]$Title )
     $filename.Title            = $Title
     $filename.Filter           = 'Compiled QA Scripts (*.ps1)|*.ps1'
     If ([threading.thread]::CurrentThread.GetApartmentState() -ne 'STA') { $filename.ShowHelp = $true }    # Workaround for MTA issues not showing dialog box
-    If ($filename.ShowDialog($MainFORM) -eq [System.Windows.Forms.DialogResult]::OK) { [string]$return = ($filename.FileName) }
+    If ($filename.ShowDialog($MainFORM) -eq [System.Windows.Forms.DialogResult]::OK) { $return = ($filename.FileName) }
     Try { $filename.Dispose() } Catch {}
     Return $return
 }
@@ -62,7 +64,7 @@ Function Save-File ( [string]$InitialDirectory, [string]$Title, [string]$Initial
     $filename.FileName         = $InitialFileName
     $filename.Filter           = 'QA Configuration Settings (*.ini)|*.ini|All Files|*.*'
     If ([threading.thread]::CurrentThread.GetApartmentState() -ne 'STA') { $filename.ShowHelp = $true }    # Workaround for MTA issues not showing dialog box
-    If ($filename.ShowDialog($MainForm) -eq [System.Windows.Forms.DialogResult]::OK) { [string]$return = ($filename.FileName) }
+    If ($filename.ShowDialog($MainForm) -eq [System.Windows.Forms.DialogResult]::OK) { $return = ($filename.FileName) }
     Try { $filename.Dispose() } Catch {}
     Return $return
 }
@@ -123,7 +125,7 @@ Function Show-InputForm ( [string]$Type, [string]$Title, [string]$Description, [
     # https://github.com/My-Random-Thoughts/Various-Code/blob/master/Show-InputForm.ps1
 
 #region Form Scripts
-    $AddButton_Click = { AddButton_Click -BoxNumber (($frm_Main.Controls.Count - 5) / 2) -Value '' -Override $false }
+    $btn_AddNew_Click = { AddButton_Click -BoxNumber (($frm_Main.Controls.Count - 5) / 2) -Value '' -Override $false }
     Function AddButton_Click ( [int]$BoxNumber, [string]$Value, [boolean]$Override )
     {
         ForEach ($control In $frm_Main.Controls) {
@@ -134,38 +136,37 @@ Function Show-InputForm ( [string]$Type, [string]$Title, [string]$Description, [
         }
     
         If ($Override -eq $true) { $isEmtpy = $null } 
-        If ($isEmtpy -ne $null)
+        If ($isEmtpy  -ne $null)
         {
-            $isEmtpy.Select()
             $isEmtpy.Text = $Value
+            $isEmtpy.Select()
             Return
         }
 
         # Increase form size, move buttons down, add new field
         $numberOfTextBoxes++
-        $frm_Main.ClientSize        = "394, $(147 + ($BoxNumber * 26))"
-        $btn_Accept.Location        = "307, $(110 + ($BoxNumber * 26))"
-        $btn_Cancel.Location        = "220, $(110 + ($BoxNumber * 26))"
-
-        $AddButton.Location     = " 39, $(110 + ($BoxNumber * 26))"
+        $frm_Main.ClientSize   = "394, $(147 + ($BoxNumber * 26))"
+        $btn_Accept.Location   = "307, $(110 + ($BoxNumber * 26))"
+        $btn_Cancel.Location   = "220, $(110 + ($BoxNumber * 26))"
+        $btn_AddNew.Location   = " 39, $(110 + ($BoxNumber * 26))"
 
         # Add new counter label
-        $labelCounter           = New-Object 'System.Windows.Forms.Label'
-        $labelCounter.Location  = " 12, $(75 + ($BoxNumber * 26))"
-        $labelCounter.Size      = ' 21,   20'
-        $labelCounter.Font      = $sysFont
-        $labelCounter.Text      = "$($BoxNumber + 1):"
-        $labelCounter.TextAlign = 'MiddleRight'
-        $frm_Main.Controls.Add($labelCounter)
+        $lbl_Counter           = New-Object 'System.Windows.Forms.Label'
+        $lbl_Counter.Location  = " 12, $(75 + ($BoxNumber * 26))"
+        $lbl_Counter.Size      = ' 21,   20'
+        $lbl_Counter.Font      = $sysFont
+        $lbl_Counter.Text      = "$($BoxNumber + 1):"
+        $lbl_Counter.TextAlign = 'MiddleRight'
+        $frm_Main.Controls.Add($lbl_Counter)
 
         # Add new text box and select it for focus
-        $textBox                = New-Object 'System.Windows.Forms.TextBox'
-        $textBox.Location       = " 39, $(75 + ($BoxNumber * 26))"
-        $textBox.Size           = '343,   20'
-        $textBox.Font           = $sysFont
-        $textBox.Name           = "textBox$BoxNumber"
-        $textBox.Text           = $Value.Trim()
-        $frm_Main.Controls.Add($textBox)
+        $txt_TextBox           = New-Object 'System.Windows.Forms.TextBox'
+        $txt_TextBox.Location  = " 39, $(75 + ($BoxNumber * 26))"
+        $txt_TextBox.Size      = '343,   20'
+        $txt_TextBox.Font      = $sysFont
+        $txt_TextBox.Name      = "textBox$BoxNumber"
+        $txt_TextBox.Text      = $Value.Trim()
+        $frm_Main.Controls.Add($txt_TextBox)
         $frm_Main.Controls["textbox$BoxNumber"].Select()
     }
 
@@ -223,7 +224,7 @@ Function Show-InputForm ( [string]$Type, [string]$Title, [string]$Description, [
     $frm_Main_Cleanup_FormClosed = {
         Try {
             $btn_Accept.Remove_Click($btn_Accept_Click)
-            $AddButton.Remove_Click($AddButton_Click)
+            $btn_AddNew.Remove_Click($btn_AddNew_Click)
         } Catch {}
         $frm_Main.Remove_FormClosed($frm_Main_Cleanup_FormClosed)
     }
@@ -231,24 +232,24 @@ Function Show-InputForm ( [string]$Type, [string]$Title, [string]$Description, [
 #region Input Form Controls
     [System.Windows.Forms.Application]::EnableVisualStyles()
     $frm_Main = New-Object 'System.Windows.Forms.Form'
-    $frm_Main.FormBorderStyle      = 'FixedDialog'
-    $frm_Main.MaximizeBox          = $False
-    $frm_Main.MinimizeBox          = $False
-    $frm_Main.ControlBox           = $False
-    $frm_Main.Text                 = " $Title"
-    $frm_Main.ShowInTaskbar        = $True
-    $frm_Main.AutoScaleDimensions  = '6, 13'
-    $frm_Main.AutoScaleMode        = 'Font'
-    $frm_Main.ClientSize           = '394, 147'    # 400 x 175
-    $frm_Main.StartPosition        = 'CenterScreen'
+    $frm_Main.FormBorderStyle     = 'FixedDialog'
+    $frm_Main.MaximizeBox         = $False
+    $frm_Main.MinimizeBox         = $False
+    $frm_Main.ControlBox          = $False
+    $frm_Main.Text                = " $Title"
+    $frm_Main.ShowInTaskbar       = $True
+    $frm_Main.AutoScaleDimensions = '6, 13'
+    $frm_Main.AutoScaleMode       = 'Font'
+    $frm_Main.ClientSize          = '394, 147'    # 400 x 175
+    $frm_Main.StartPosition       = 'CenterScreen'
 
-    $ToolTip                       = New-Object 'System.Windows.Forms.ToolTip'
+    $ToolTip                      = New-Object 'System.Windows.Forms.ToolTip'
 
     # 48x16 Image List for INVALID and DUPLICATE error message icons
-    $img_Input                     = New-Object 'System.Windows.Forms.ImageList'
-	$img_Input.TransparentColor    = 'Transparent'
-	$img_Input_binaryFomatter      = New-Object 'System.Runtime.Serialization.Formatters.Binary.BinaryFormatter'
-	$img_Input_MemoryStream        = New-Object 'System.IO.MemoryStream' (,[byte[]][System.Convert]::FromBase64String('
+    $img_Input                    = New-Object 'System.Windows.Forms.ImageList'
+	$img_Input.TransparentColor   = 'Transparent'
+	$img_Input_BinaryFomatter     = New-Object 'System.Runtime.Serialization.Formatters.Binary.BinaryFormatter'
+	$img_Input_MemoryStream       = New-Object 'System.IO.MemoryStream' (,[byte[]][System.Convert]::FromBase64String('
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkD
         AAAADwMAAADkCgAAAk1TRnQBSQFMAgEBAgEAAQgBAAEIAQABMAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAHAAwABEAMAAQEBAAEgBgABMP8A/wD/AP8AGgADNAFxAzQBiP8A/wD6AAMyAZkDKwG2/wD/APoAAzIBmQMrAbb/AP8ANgADNAGPAzUBeQQAAy0BUAMvAaoEAAM1AXkDNQGBCAADEQEX
         AywBswwAAyMBNgMqAboDMwFqAygBvwMcASgDDgESAygBvwMcASgDDgESAygBvwMcASgEAAMxAV0DKgG6AzMBZwMoAb8YAAMtAbEDKAG/AysBuAMxAVsMAAM1AX4DKAG/AzEBowMRARYEAAMyAZkDKQG8AzIBmQMwAaYDCAEKBAADMQGiAy8BVwQAAzEBogMvAVcEAAMaASUDLQGvAy0BsgMNBBEBFgMvAaoD
@@ -267,44 +268,44 @@ Function Show-InputForm ( [string]$Type, [string]$Title, [string]$Description, [
         AAMOARIDKAG/AxwBKAQAAyEBMhAAAyUBOQMoAb8YAAMlAToDJwE+AyUBOjwAAzEBogMvAVcEAAMaASUDCQEM/wD/AP8A/wDUAAFCAU0BPgcAAT4DAAEoAwABwAMAARADAAEBAQABAQUAAYABARYAA/8BAAz/DAAI/wGfA/8MAAj/AZ8D/wwACP8BnwP/DAAC/wEkAc4BAAEhAfgBcAGCAUgBAgFhDAAC/wEk
         AcYBAAEBAfgBIAGCAUgBAgFhDAAC/wEkAcYBAAEBAfkBJAGSAUkBkgFBDAAC/wEkAcQBAAEBAfkBJAGSAUEBkgFBDAAC/wEkAYABAAEBAfkBBAGSAUEBkgFBDAAC/wEkAYIBAAEBAfkBBAGSAUkBggFBDAAC/wEgAZIBAAEhAfkBJAGCAUgBAAEhDAAC/wEhAZMBAAEhAfkBJAGGAUwBwAEzDAAC/wE/Af8B
         8QF5AfgBPwH+AU8B/gF/DAAC/wE/Af8B8AE5AfgBPwH+AU8C/wwAAv8BPwH/AfEBeQH4Af8B/gFPAv8MAAz/DAAL'))
-	$img_Input.ImageStream         = $img_Input_binaryFomatter.Deserialize($img_Input_MemoryStream)
-	$img_Input_binaryFomatter      = $null
-	$img_Input_MemoryStream        = $null
+	$img_Input.ImageStream        = $img_Input_BinaryFomatter.Deserialize($img_Input_MemoryStream)
+	$img_Input_BinaryFomatter     = $null
+	$img_Input_MemoryStream       = $null
 
-    $pic_InvalidValue              = New-Object 'System.Windows.Forms.PictureBox'
-    $pic_InvalidValue.BackColor    = 'Info'
-    $pic_InvalidValue.Location     = '  0,   0'
-    $pic_InvalidValue.Size         = ' 48,  16'
-    $pic_InvalidValue.Visible      = $false
-    $pic_InvalidValue.TabStop      = $False
+    $pic_InvalidValue             = New-Object 'System.Windows.Forms.PictureBox'
+    $pic_InvalidValue.BackColor   = 'Info'
+    $pic_InvalidValue.Location    = '  0,   0'
+    $pic_InvalidValue.Size        = ' 48,  16'
+    $pic_InvalidValue.Visible     = $false
+    $pic_InvalidValue.TabStop     = $False
     $pic_InvalidValue.BringToFront()
     $frm_Main.Controls.Add($pic_InvalidValue)
 
-    $lbl_Description               = New-Object 'System.Windows.Forms.Label'
-    $lbl_Description.Location      = ' 12,  12'
-    $lbl_Description.Size          = '370,  48'
-    $lbl_Description.Font          = $sysFont
-    $lbl_Description.Text          =  $($Description.Trim())
+    $lbl_Description              = New-Object 'System.Windows.Forms.Label'
+    $lbl_Description.Location     = ' 12,  12'
+    $lbl_Description.Size         = '370,  48'
+    $lbl_Description.Font         = $sysFont
+    $lbl_Description.Text         =  $($Description.Trim())
     $frm_Main.Controls.Add($lbl_Description)
 
-    $btn_Accept                    = New-Object 'System.Windows.Forms.Button'
-    $btn_Accept.Location           = '307, 110'
-    $btn_Accept.Size               = ' 75,  25'
-    $btn_Accept.Font               = $sysFont
-    $btn_Accept.Text               = 'OK'
-    $btn_Accept.TabIndex           = '97'
+    $btn_Accept                   = New-Object 'System.Windows.Forms.Button'
+    $btn_Accept.Location          = '307, 110'
+    $btn_Accept.Size              = ' 75,  25'
+    $btn_Accept.Font              = $sysFont
+    $btn_Accept.Text              = 'OK'
+    $btn_Accept.TabIndex          = '97'
     $btn_Accept.Add_Click($btn_Accept_Click)
     If (($Type -ne 'MULTI') -and ($Type -ne 'LARGE')) { $frm_Main.AcceptButton = $btn_Accept }
     $frm_Main.Controls.Add($btn_Accept)
 
-    $btn_Cancel                    = New-Object 'System.Windows.Forms.Button'
-    $btn_Cancel.Location           = '220, 110'
-    $btn_Cancel.Size               = ' 75,  25'
-    $btn_Cancel.Font               = $sysFont
-    $btn_Cancel.Text               = 'Cancel'
-    $btn_Cancel.TabIndex           = '98'
-    $btn_Cancel.DialogResult       = [System.Windows.Forms.DialogResult]::Cancel
-    $frm_Main.CancelButton         = $btn_Cancel
+    $btn_Cancel                   = New-Object 'System.Windows.Forms.Button'
+    $btn_Cancel.Location          = '220, 110'
+    $btn_Cancel.Size              = ' 75,  25'
+    $btn_Cancel.Font              = $sysFont
+    $btn_Cancel.Text              = 'Cancel'
+    $btn_Cancel.TabIndex          = '98'
+    $btn_Cancel.DialogResult      = [System.Windows.Forms.DialogResult]::Cancel
+    $frm_Main.CancelButton        = $btn_Cancel
     $frm_Main.Controls.Add($btn_Cancel)
     $frm_Main.Add_FormClosed($frm_Main_Cleanup_FormClosed)
 #endregion
@@ -318,13 +319,13 @@ Function Show-InputForm ( [string]$Type, [string]$Title, [string]$Description, [
             $numberOfTextBoxes--    # Count from zero
 
             # Add 'Add' button
-            $AddButton              = New-Object 'System.Windows.Forms.Button'
-            $AddButton.Location     = " 39, $(110 + ($numberOfTextBoxes * 26))"
-            $AddButton.Size         = ' 75,   25'
-            $AddButton.Font         = $sysFont
-            $AddButton.Text         = 'Add'
-            $AddButton.Add_Click($AddButton_Click)
-            $frm_Main.Controls.Add($AddButton)
+            $btn_AddNew          = New-Object 'System.Windows.Forms.Button'
+            $btn_AddNew.Location = " 39, $(110 + ($numberOfTextBoxes * 26))"
+            $btn_AddNew.Size     = ' 75,   25'
+            $btn_AddNew.Font     = $sysFont
+            $btn_AddNew.Text     = 'Add'
+            $btn_AddNew.Add_Click($btn_AddNew_Click)
+            $frm_Main.Controls.Add($btn_AddNew)
 
             # Add initial textboxes
             For ($i = 0; $i -le $numberOfTextBoxes; $i++) { AddButton_Click -BoxNumber $i -Value ($CurrentValue[$i]) -Override $true -Type 'TEXT' }
@@ -333,10 +334,10 @@ Function Show-InputForm ( [string]$Type, [string]$Title, [string]$Description, [
         }
         'SIMPLE' {
             # Add default text box
-            $textBox                = New-Object 'System.Windows.Forms.TextBox'
-            $textBox.Location       = ' 12,  75'
-            $textBox.Size           = '370,  20'
-            $textBox.Font           = $sysFont
+            $textBox             = New-Object 'System.Windows.Forms.TextBox'
+            $textBox.Location    = ' 12,  75'
+            $textBox.Size        = '370,  20'
+            $textBox.Font        = $sysFont
             If ([string]::IsNullOrEmpty($CurrentValue) -eq $false) { $textBox.Text = (($CurrentValue.Trim()) -join "`r`n") }
             $frm_Main.Controls.Add($textBox)
             $textBox.Select()
@@ -511,7 +512,7 @@ Function Display-MainForm
 
     $btn_t1_Import_Click = {
         $MainFORM.Cursor = 'WaitCursor'
-        [System.Globalization.TextInfo]$TextInfo = (Get-Culture).TextInfo
+        [System.Globalization.TextInfo]$TextInfo = (Get-Culture).TextInfo    # Used for 'ToTitleCase' below
 
         # Load Language, Settings and Help details
         [hashtable]$languageINI = (Load-IniFile -Inputfile "$script:scriptLocation\i18n\$($cmo_t1_Language.Text)_text.ini")
@@ -829,17 +830,17 @@ Function Display-MainForm
 #region FORM ITEMS
 #region MAIN FORM
     [System.Windows.Forms.Application]::EnableVisualStyles()
-    $MainFORM                    = New-Object 'System.Windows.Forms.Form'
-    $img_ListImages              = New-Object 'System.Windows.Forms.ImageList'
-    $img_Input                   = New-Object 'System.Windows.Forms.ImageList'
-    $tab_Pages                   = New-Object 'System.Windows.Forms.TabControl'
-    $tab_Page1                   = New-Object 'System.Windows.Forms.TabPage'
-    $tab_Page2                   = New-Object 'System.Windows.Forms.TabPage'
-    $tab_Page3                   = New-Object 'System.Windows.Forms.TabPage'
-    $tab_Page4                   = New-Object 'System.Windows.Forms.TabPage'
-    $lbl_ChangesMade             = New-Object 'System.Windows.Forms.Label'
-    $btn_RestoreINI              = New-Object 'System.Windows.Forms.Button'
-    $btn_Exit                    = New-Object 'System.Windows.Forms.Button'
+    $MainFORM                     = New-Object 'System.Windows.Forms.Form'
+    $img_ListImages               = New-Object 'System.Windows.Forms.ImageList'
+    $img_Input                    = New-Object 'System.Windows.Forms.ImageList'
+    $tab_Pages                    = New-Object 'System.Windows.Forms.TabControl'
+    $tab_Page1                    = New-Object 'System.Windows.Forms.TabPage'
+    $tab_Page2                    = New-Object 'System.Windows.Forms.TabPage'
+    $tab_Page3                    = New-Object 'System.Windows.Forms.TabPage'
+    $tab_Page4                    = New-Object 'System.Windows.Forms.TabPage'
+    $lbl_ChangesMade              = New-Object 'System.Windows.Forms.Label'
+    $btn_RestoreINI               = New-Object 'System.Windows.Forms.Button'
+    $btn_Exit                     = New-Object 'System.Windows.Forms.Button'
 
     # TAB 1
     $lbl_t1_Welcome               = New-Object 'System.Windows.Forms.Label'
@@ -936,37 +937,37 @@ Function Display-MainForm
     $MainFORM.Add_Load($MainFORM_Load)
     $MainFORM.Add_FormClosing($MainFORM_FormClosing)
 
-    $tab_Pages.Location      = '12, 12'
-    $tab_Pages.SelectedIndex = 0
+    $tab_Pages.Location      = ' 12,  12'
     $tab_Pages.Size          = '770, 608'
+    $tab_Pages.Padding       = ' 12,   6'
+    $tab_Pages.SelectedIndex = 0
     $tab_Pages.TabIndex      = 0
-    $tab_Pages.Padding       = '12, 6'
-    $tab_Pages.Controls.Add($tab_Page1)    # Select Location / Import
-    $tab_Pages.Controls.Add($tab_Page2)    # Select QA Checks
-    $tab_Pages.Controls.Add($tab_Page3)    # Enter Values for QA checks
-    $tab_Pages.Controls.Add($tab_Page4)    # Compile
+    $tab_Pages.Controls.Add($tab_Page1)    # Introduction
+    $tab_Pages.Controls.Add($tab_Page2)    # Select Required Checks
+    $tab_Pages.Controls.Add($tab_Page3)    # Specific QA Values
+    $tab_Pages.Controls.Add($tab_Page4)    # Generate QA
     $tab_Pages.Add_SelectedIndexChanged($tab_Pages_SelectedIndexChanged)
     $MainFORM.Controls.Add($tab_Pages)
 
     # tabpage1
-    $tab_Page1.Text      = 'Introduction'
     $tab_Page1.TabIndex  = 0
     $tab_Page1.BackColor = 'Control'
+    $tab_Page1.Text      = 'Introduction'
 
     # tabpage2
-    $tab_Page2.Text      = 'Select Checks'
     $tab_Page2.TabIndex  = 1
     $tab_Page2.BackColor = 'Control'
+    $tab_Page2.Text      = 'Select Required Checks'
 
     # tabpage3
-    $tab_Page3.Text      = 'Check Details'
     $tab_Page3.TabIndex  = 2
     $tab_Page3.BackColor = 'Control'
+    $tab_Page3.Text      = 'QA Check Values'
 
     # tabpage4
-    $tab_Page4.Text      = 'Generate QA'
     $tab_Page4.TabIndex  = 3
     $tab_Page4.BackColor = 'Control'
+    $tab_Page4.Text      = 'Generate QA'
 #endregion
 #region TAB 1 - Introduction / Select Location / Import
     # lbl_t1_Welcome
