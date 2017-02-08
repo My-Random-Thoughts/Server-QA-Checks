@@ -1,8 +1,8 @@
 ﻿<#
     DESCRIPTION:
-        Checks to make sure the specified static routes have been added
-
-
+        Checks to make sure the specified static routes have been added.
+        Add routes to check as: StaticRoute01 = ("source", "mask", "gateway").
+        To check for no extra persistent routes, use: StaticRoute01 = ("None", "", "").
 
     PASS:    All static routes are present
     WARNING:
@@ -30,8 +30,11 @@ Function c-net-09-static-routes
 
     Try
     {
-        [string]$query = 'SELECT Destination, Mask, NextHop FROM Win32_IP4RouteTable'
-        [object]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object Destination, Mask, NextHop
+        [string]$query1 = 'SELECT Destination, Mask, NextHop FROM Win32_IP4RouteTable'
+        [object]$check1 = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2 | Select-Object Destination, Mask, NextHop
+        
+        [string]$query2 = 'SELECT Destination, Mask, NextHop FROM Win32_IP4PersistedRouteTable'
+        [object]$check2 = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Cimv2 | Select-Object Destination, Mask, NextHop
     }
     Catch
     {
@@ -41,24 +44,42 @@ Function c-net-09-static-routes
         Return $result
     }
 
+    [boolean]$noneEntry     = $false
     [boolean]$RoutesToCheck = $false
-    For ($i = 1; $i -le 99; $i++)
+    Try
     {
-        [string[]]$routeEntry = $script:appSettings["StaticRoute$(($i -as [string]).PadLeft(2, '0'))"]
-        If ([string]::IsNullOrEmpty($routeEntry) -eq $false) { $RoutesToCheck = $true; Break }
+        For ($i = 1; $i -le 99; $i++)
+        {
+            [string[]]$routeEntry = $script:appSettings["StaticRoute$(($i -as [string]).PadLeft(2, '0'))"]
+            If ([string]::IsNullOrEmpty($routeEntry[0]) -eq $false) { $RoutesToCheck = $true; Break }
+        }
+        If (($script:appSettings['StaticRoute01'][0]) -eq 'None') { $noneEntry = $true }
     }
-    
-    If ($RoutesToCheck -eq $false)
+    Catch {}
+
+    If ([string]::IsNullOrEmpty($check1) -eq $true)
+    {
+        $result.result  = $script:lang['Fail']
+        $result.message = 'No static routes present'
+    }
+    ElseIf ($RoutesToCheck -eq $false)
     {
         $result.result  = $script:lang['Not-Applicable']
         $result.message = 'No static routes to check'
         Return $result
     }
-
-    If ([string]::IsNullOrEmpty($check) -eq $true)
+    ElseIf ($noneEntry -eq 'None')
     {
-        $result.result  = $script:lang['Fail']
-        $result.message = 'No static routes present'
+        If ([string]::IsNullOrEmpty($check2) -eq $false)
+        {
+            $result.result  = $script:lang['Fail']
+            $result.message = 'Static routes are present, they need removing'
+        }
+        Else
+        {
+            $result.result  = $script:lang['Pass']
+            $result.message = 'No static routes are present'
+        }
     }
     Else
     {
@@ -67,13 +88,16 @@ Function c-net-09-static-routes
             [string[]]$routeEntry = $script:appSettings["StaticRoute$(($i -as [string]).PadLeft(2, '0'))"]
             If ([string]::IsNullOrEmpty($routeEntry) -eq $false)
             {
-                $pos = [array]::IndexOf($check.Destination, $routeEntry[0])
-                If ($pos -ge 0)
+                If ([string]::IsNullOrEmpty($routeEntry[0]) -eq $false)
                 {
-                    If ($check.Mask[$pos]    -ne $routeEntry[1]) { $result.data += '' + $routeEntry[0] + ' (Wrong Mask),#'    }
-                    If ($check.NextHop[$pos] -ne $routeEntry[2]) { $result.data += '' + $routeEntry[0] + ' (Wrong Gateway),#' }
+                    $pos = [array]::IndexOf($check1.Destination, $routeEntry[0])
+                    If ($pos -ge 0)
+                    {
+                        If ($check1.Mask[$pos]    -ne $routeEntry[1]) { $result.data += '' + $routeEntry[0] + ' (Wrong Mask),#'    }
+                        If ($check1.NextHop[$pos] -ne $routeEntry[2]) { $result.data += '' + $routeEntry[0] + ' (Wrong Gateway),#' }
+                    }
+                    Else { $result.data += '' + $routeEntry[0] + ' (Missing),#' }
                 }
-                Else { $result.data += '' + $routeEntry[0] + ' (Missing),#' }
             }
             $routeEntry = $null
         }

@@ -499,14 +499,13 @@ Function Display-MainForm
         $btn_t1_Import.Focus()
 
         # Get list of languages
-        [string[]]$langList = (Get-ChildItem -Path "$script:scriptLocation\i18n" -Filter '*_text.ini' | Select-Object -ExpandProperty Name | Sort-Object Name)
-        $langList = $langList.Replace('_text.ini', '')
+        [string[]]$langList = (Get-ChildItem -Path "$script:scriptLocation\i18n" -Filter '*_text.ini' | Select-Object -ExpandProperty Name | Sort-Object Name | ForEach { $_.Replace('_text.ini','') } )
         Load-ComboBox -ComboBox $cmo_t1_Language -Items ($langList | Sort-Object Name) -SelectedItem 'en-gb' -Clear
 
         # Get list of custom settings
-        [string[]]$settingList = (Get-ChildItem -Path "$script:scriptLocation\settings" -Filter '*.ini' | Select-Object -ExpandProperty Name | Sort-Object Name)
-        $settingList = $settingList.Replace('.ini', '')
+        [string[]]$settingList = (Get-ChildItem -Path "$script:scriptLocation\settings" -Filter '*.ini' | Select-Object -ExpandProperty Name | Sort-Object Name | ForEach { $_.Replace('.ini','') } )
         Load-ComboBox -ComboBox $cmo_t1_SettingsFile -Items ($settingList | Sort-Object Name) -SelectedItem 'default-settings' -Clear
+
         $MainFORM.Cursor = 'Default'
     }
 
@@ -663,7 +662,7 @@ Function Display-MainForm
                 $lvwObject.Groups.Add($guid, " $($listItem.SubItems[1].Text) ($($listItem.Text.ToUpper()))")
 
                 # Create each item
-                [System.Collections.Hashtable+KeyCollection]$iniKeys = $null
+                [System.Collections.Hashtable]$iniKeys = $null
                 If (($settingsINI.$("$($listItem.Text)-skip").Keys).Count -gt 0) { $iniKeys = ($settingsINI.$("$($listItem.Text)-skip")) } Else { $iniKeys = ($settingsINI.$($listItem.Text)) }
                 ForEach ($item In (($iniKeys.Keys) | Sort-Object))
                 {
