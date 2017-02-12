@@ -35,4 +35,8 @@ The scripts can be run on any Windows operating system as long as PowerShell ver
 
 This is a GUI form (written entirely in PowerShell) that makes it easier for you to enable/disable specific checks as well as configure the specific settings for each QA check.
 
+http://myrandomthoughts.co.uk/2017/02/server-qa-scripts-settings-configuration-tool/
+
 ## Please read the documentation before starting out
+### Wiki
+I am slowly updating the Wiki on GitHub to list all the checks and their details.
