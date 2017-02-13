@@ -1,7 +1,7 @@
 ﻿<#
     DESCRIPTION: 
-        Check Shared Folders to ensure no additional shares are present
-        (Shared folders should be documented with a designated team specified as the owner)
+        Check shared folders to ensure no additional shares are present.  Shared folders should be documented with a designated team specified as the owner
+
 
 
     PASS:    No additional shares found

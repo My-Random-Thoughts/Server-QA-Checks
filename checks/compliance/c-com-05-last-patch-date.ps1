@@ -1,7 +1,7 @@
 ﻿<#
     DESCRIPTION: 
         Check server is compliant with patch policy (must be patched to latest released patch level for this customer)
-        Check date of last patch and FAIL if not within 35 days
+        Check date of last patch and return WARNING if not within specified number of days, and FAIL if not within number of days *2
 
 
     PASS:    Windows patches applied

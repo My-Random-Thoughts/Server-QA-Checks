@@ -36,7 +36,7 @@ Function c-sys-18-check-current-ou
         If ($check -eq $true)
         {
             $result.result  = $script:lang['Pass']
-            $result.message = 'Server not located in default OU location'
+            $result.message = 'Server not located in a default OU location'
 
             $objDomain   = New-Object System.DirectoryServices.DirectoryEntry
             $objSearcher = New-Object System.DirectoryServices.DirectorySearcher
@@ -52,7 +52,7 @@ Function c-sys-18-check-current-ou
                 If ($strPath -like "*$OU")
                 {
                     $result.result  = $script:lang['Fail']
-                    $result.message = 'Server found in default OU location'
+                    $result.message = 'Server found in a default OU location'
                     Break
                 }
             }

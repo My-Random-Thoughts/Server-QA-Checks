@@ -1,6 +1,6 @@
 ﻿<#
     DESCRIPTION: 
-        Check NetBackup agent is installed
+        Check NetBackup agent is installed and that the correct port is open to the management server
 
 
 

@@ -1,7 +1,6 @@
 ﻿<#
     DESCRIPTION: 
-        Checks to make sure that the guest user account has been disabled.
-        The guest account is located via the well known SID.
+        Checks to make sure that the guest user account has been disabled.  The guest account is located via the well known SID.
 
 
     PASS:    Guest account is disabled

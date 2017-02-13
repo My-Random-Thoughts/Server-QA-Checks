@@ -44,12 +44,13 @@ Function c-sys-03-services-not-started
 
     If ($check.Count -gt 0)
     {
-        $check | ForEach {
+        ForEach ($service In $check)
+        {
             Try
             {
                 # Check for and ignore "Trigger Start" services
                 $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
-                $regKey = $reg.OpenSubKey("SYSTEM\CurrentControlSet\Services\$($_.Name)\TriggerInfo\0")
+                $regKey = $reg.OpenSubKey("SYSTEM\CurrentControlSet\Services\$($service.Name)\TriggerInfo\0")
                 Try { $regKey.Close() } Catch { }
                 $reg.Close()
             }
@@ -59,14 +60,22 @@ Function c-sys-03-services-not-started
             {
                 $result.result  = $script:lang['Fail']
                 $result.message = 'An auto-start service was found not running'
-                $result.data   += '{0},#' -f $($_.DisplayName)
+                $result.data   += '{0},#' -f $($service.DisplayName)
             }
+            Else { }    # Automatic trigger started serivce that is stopped - Ignore it.
         }
     }
-    Else
+
+    If (($check.Count -eq 0) -or ($result.message -eq ''))
     {
         $result.result  = $script:lang['Pass']
         $result.message = 'All auto-start services are running'
+    }
+    Else
+    {
+        $result.result  = $script:lang['Manual']
+        $result.message = 'Unknown issue, please check manually'
+        $result.data    = 'Unknown issue, please check manually'
     }
     
     Return $result

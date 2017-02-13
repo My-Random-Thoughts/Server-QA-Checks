@@ -1,6 +1,6 @@
 ﻿<#
     DESCRIPTION: 
-        Checks all services to ensure no user accounts are assigned. If specific application service accounts are required then they should be domain 
+        Checks all services to ensure no user accounts are assigned.  If specific application service accounts are required then they should be domain 
         level accounts (not local) and restricted from interactice access by policy.
 
 

@@ -1,7 +1,7 @@
 ﻿<#
     DESCRIPTION: 
-        Check McAfee anti virus is installed and updating automatically.
-        Also checks that virus definitions are up to date.
+        Check McAfee anti virus is installed and updating automatically, also checks that virus definitions are up to date.
+
 
 
     PASS:    McAfee product found, DATs are OK

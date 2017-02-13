@@ -1,6 +1,6 @@
 ﻿<#
     DESCRIPTION: 
-        Check that a WSUS server has been specified
+        Check that a WSUS server has been specified and that the correct port is open to the management server
 
 
 
