@@ -48,7 +48,7 @@ Function Check-CommandLine
     $gh = Get-Host
     $ws = $gh.UI.RawUI.WindowSize
     $wh = $ws.Height
-    If ($ws.Width -le 132)
+    If ($ws.Width -le 120)
     {
         $ws.Height = 9999
         $ws.Width  =  120; $gh.UI.RawUI.Set_BufferSize($ws)
