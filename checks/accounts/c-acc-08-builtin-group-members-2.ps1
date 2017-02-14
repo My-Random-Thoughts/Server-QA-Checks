@@ -1,8 +1,8 @@
-﻿<#
+<#
     DESCRIPTION: 
         Checks the builtin group memberships to make sure specific users or groups are members.
+        If there is only one entry in "GroupMembers", then "AllMustExist" will be forced to "TRUE"
         This is check 2 of 3 that can be used to check different groups.
-
 
     PASS:    No additional users exist / Additional users exist
     WARNING: Invalid group name
@@ -50,7 +50,8 @@ Function c-acc-08-builtin-group-members-2
             }
             Else
             {
-                If ($script:appSettings['AllMustExist'] -eq 'True')
+                If (($script:appSettings['GroupMembers'].Count) -eq 1) { $script:appSettings['AllMustExist'] = 'True' }
+                If  ($script:appSettings['AllMustExist'] -eq 'True')
                 {
                     $result.result  = $script:lang['Fail']
                     $result.message = 'Additional users exist'
