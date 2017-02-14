@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check BladeLogic monitoring agent is installed, and that the correct port is listening.
         Also checks that the USERS.LOCAL file is configured correctly.
@@ -32,8 +32,8 @@ Function c-com-08-bladelogic-agent-installed
     If ([string]::IsNullOrEmpty($verCheck) -eq $false)
     {
         $result.result  = $script:lang['Pass']
-        $result.message = 'BladeLogic agent found,#'
-        $result.data    = 'Version {0}' -f $verCheck
+        $result.message = 'BladeLogic agent found'
+        $result.data    = 'Version {0},#' -f $verCheck
 
         Try
         {
@@ -45,12 +45,12 @@ Function c-com-08-bladelogic-agent-installed
 
             If ($found -eq $true)
             {
-                $result.message += 'Port {0} is listening,#' -f $script:appSettings['ListeningPort']
+                $result.data += 'Port {0} is listening,#' -f $script:appSettings['ListeningPort']
             }
             Else
             {
-                $result.result   = $script:lang['Fail']
-                $result.message += 'Port {0} not listening,#' -f $script:appSettings['ListeningPort']
+                $result.result  = $script:lang['Fail']
+                $result.data   += 'Port {0} not listening,#' -f $script:appSettings['ListeningPort']
             }
 
             # Check USER.LOCAL configuration file
@@ -62,18 +62,18 @@ Function c-com-08-bladelogic-agent-installed
 
                 If ($found -eq $true)
                 {
-                    $result.message += 'USERS.LOCAL configured correctly'
+                    $result.data += 'USERS.LOCAL configured correctly'
                 }
                 Else
                 {
-                    $result.result   = $script:lang['Fail']
-                    $result.message += 'USERS.LOCAL not configured'
+                    $result.result  = $script:lang['Fail']
+                    $result.data   += 'USERS.LOCAL not configured'
                 }
             }
             Else
             {
-                $result.result   = $script:lang['Fail']
-                $result.message += 'USERS.LOCAL not found'
+                $result.result  = $script:lang['Fail']
+                $result.data   += 'USERS.LOCAL not found'
             }
         }
         Catch
