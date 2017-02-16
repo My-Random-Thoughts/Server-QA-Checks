@@ -708,7 +708,7 @@ Function Write-Header
     Write-Host ''
 }
 
-Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width, '─') }
+Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width + 1, '─') }
 
 ###################################################################################################
 
