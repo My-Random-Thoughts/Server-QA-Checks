@@ -137,7 +137,7 @@ Out-File -FilePath $outPath -InputObject ('')                                   
 
 # Add the shared variables code
 Out-File -FilePath $outPath -InputObject ($shared)                                                                     -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('')                                                                          -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
+Out-File -FilePath $outPath -InputObject ('')                                                                          -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Cyan
 
 # Get a list of all the checks, adding them into an array
 [string]$cList = '[array]$script:qaChecks = ('
@@ -163,7 +163,7 @@ If ($cLine.Length -gt 10)
 }
 
 $cList = $cList.Trim(',') + ')'
-Out-File -FilePath $outPath -InputObject $cList                                                                        -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
+Out-File -FilePath $outPath -InputObject $cList                                                                        -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Cyan
 Out-File -FilePath $outPath -InputObject ('')                                                                          -Encoding utf8 -Append
 Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
 Out-File -FilePath $outPath -InputObject ('# QA Check Script Blocks')                                                  -Encoding utf8 -Append
@@ -254,11 +254,11 @@ ForEach ($qa In $qaChecks)
 Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
 
 # Write out the EN-GB help file
-Out-File -FilePath "$path\i18n\en-gb_help.ps1" -InputObject ($qaHelp.ToString()) -Force                                -Encoding utf8;         Write-Host '▀' -NoNewline -ForegroundColor Yellow
+Out-File -FilePath "$path\i18n\en-gb_help.ps1" -InputObject ($qaHelp.ToString()) -Force                                -Encoding utf8;         Write-Host '▀' -NoNewline -ForegroundColor Cyan
 
 [string]$language = ($iniSettings['settings']['language'])
 If (($language -eq '') -or ((Test-Path -Path "$path\i18n\$language.ini") -eq $false)) { $language = 'en-gb' }
-Out-File -FilePath $outPath -InputObject (Get-Content ("$path\i18n\$language" + "_help.ps1"))                          -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
+Out-File -FilePath $outPath -InputObject (Get-Content ("$path\i18n\$language" + "_help.ps1"))                          -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Cyan
 Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
 Try
 {
@@ -274,7 +274,7 @@ Catch { }
 Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
 Out-File -FilePath $outPath -InputObject ('[string]$reportCompanyName = "' + ($iniSettings['settings']['reportCompanyName']) + '"') -Encoding utf8 -Append
 Out-File -FilePath $outPath -InputObject ('[string]$script:qaOutput   = "' + ($iniSettings['settings']['outputLocation'])    + '"') -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject (Get-Content ($path + '\engine\main.ps1'))                                    -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Yellow
+Out-File -FilePath $outPath -InputObject (Get-Content ($path + '\engine\main.ps1'))                                    -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Cyan
 Write-Host ''
 
 ###################################################################################################
