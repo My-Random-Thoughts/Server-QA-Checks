@@ -59,7 +59,7 @@ Function c-net-11-dns-settings
                 }
                 If (($result.message) -ne '')
                 {
-                    $result.result = $script:lang['Warning']
+                    $result.result = $script:lang['Fail']
                     $result.data   = "Configured: $($check -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
                 }
                 Else
