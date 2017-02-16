@@ -31,13 +31,13 @@ Function c-sec-16-open-ports
     If ($serverName -like "$env:ComputerName*")
     {
         # List of well known exclusions
-        $script:appSettings['IgnoreThesePorts'].Add( '5985') | Out-Null    # WinRM HTTP          #
-        $script:appSettings['IgnoreThesePorts'].Add( '5986') | Out-Null    # WinRM HTTPS         # Microsoft
-        $script:appSettings['IgnoreThesePorts'].Add('47001') | Out-Null    # WinRM Listener      #
+        $script:appSettings['IgnoreThesePorts'] +=  '5985'    # WinRM HTTP          #
+        $script:appSettings['IgnoreThesePorts'] +=  '5986'    # WinRM HTTPS         # Microsoft
+        $script:appSettings['IgnoreThesePorts'] += '47001'    # WinRM Listener      #
         #
-        $script:appSettings['IgnoreThesePorts'].Add( '4750') | Out-Null    # BladeLogic Agent    #
-        $script:appSettings['IgnoreThesePorts'].Add( '1556') | Out-Null    # NetBackup Agent     # Third Party
-#       $script:appSettings['IgnoreThesePorts'].Add( '0000') | Out-Null    # 
+        $script:appSettings['IgnoreThesePorts'] +=  '4750'    # BladeLogic Agent    #
+        $script:appSettings['IgnoreThesePorts'] +=  '1556'    # NetBackup Agent     # Third Party
+#       $script:appSettings['IgnoreThesePorts'] +=  '0000'    # 
 
         Try
         {
