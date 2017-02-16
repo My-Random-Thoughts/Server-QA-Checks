@@ -1,6 +1,6 @@
-﻿<#
+<#
     DESCRIPTION: 
-        Returns a list of ports that are open, excluding anything higher than 49152
+        Returns a list of ports that are open, excluding anything lower than 1024 and higher than 49152.  Will also exclude other well known ports
         IMPORTANT: THIS WORKS FOR LOCAL SERVERS ONLY
 
 
@@ -30,15 +30,24 @@ Function c-sec-16-open-ports
 
     If ($serverName -like "$env:ComputerName*")
     {
+        # List of well known exclusions
+        $script:appSettings['IgnoreThesePorts'].Add( '5985') | Out-Null    # WinRM HTTP          #
+        $script:appSettings['IgnoreThesePorts'].Add( '5986') | Out-Null    # WinRM HTTPS         # Microsoft
+        $script:appSettings['IgnoreThesePorts'].Add('47001') | Out-Null    # WinRM Listener      #
+        #
+        $script:appSettings['IgnoreThesePorts'].Add( '4750') | Out-Null    # BladeLogic Agent    #
+        $script:appSettings['IgnoreThesePorts'].Add( '1556') | Out-Null    # NetBackup Agent     # Third Party
+#       $script:appSettings['IgnoreThesePorts'].Add( '0000') | Out-Null    # 
+
         Try
         {
             $TCPProperties = [System.Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties()
             [System.Net.IPEndPoint[]]$Connections = $TCPProperties.GetActiveTcpListeners() | Sort-Object -Property Port
 
-            [System.Collections.ArrayList]$PortList = @()
+            [array]$PortList = @()
             ForEach ($Port In $Connections.Port)
             {
-                If (($script:appSettings['IgnoreThesePorts'] -notcontains $Port) -and ($Port -lt 49152)) { $PortList += $Port }
+                If (($script:appSettings['IgnoreThesePorts'] -notcontains $Port) -and ($Port -lt 49152) -and ($Port -gt 1024)) { $PortList += ($Port -as [string]) }
             }
 
             $PortList = ($PortList | Select-Object -Unique)    # Select Unique values only
