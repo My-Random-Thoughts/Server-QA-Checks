@@ -1,4 +1,4 @@
-#Requires -Version 2
+﻿#Requires -Version 2
 <#
     QA MASTER SCRIPT
 
@@ -6,7 +6,7 @@
     THIS FILE IS AUTO-COMPILED FROM SEVERAL SOURCE FILES
 
     VERSION : v3.17.0216
-    COMPILED: 2017/02/16 15:19
+    COMPILED: 2017/02/16 20:22
 #> 
 
 [CmdletBinding(DefaultParameterSetName = 'HLP')]
@@ -4484,8 +4484,8 @@ $script:lang['Name'] = 'DNS Settings'
 
 
     PASS:    All DNS servers configured (and in the right order)
-    WARNING: 
-    FAIL:    DNS Server count mismatch / Mismatched DNS servers / DNS Server list is not in the required order / No DNS servers are configured
+    WARNING: DNS Server list is not in the required order
+    FAIL:    DNS Server count mismatch / Mismatched DNS servers / No DNS servers are configured
     MANUAL:
     NA:
 
@@ -9335,7 +9335,7 @@ $script:qahelp['net07']='<xml><description>Check network interfaces for known te
 $script:qahelp['net08']='<xml><description>Check that a management network adapter exists. This must always be present on a server and labelled correctly</description><pass>Management network adapter found</pass><fail>No management network adapter</fail><applies>All</applies></xml>'
 $script:qahelp['net09']='<xml><description>Checks to make sure the specified static routes have been added. Add routes to check as: StaticRoute01 = ("source", "mask", "gateway"). To check for no extra persistent routes, use: StaticRoute01 = ("None", "", "").</description><pass>All static routes are present</pass><fail>One or more static routes are missing or incorrect</fail><na>No static routes to check</na><applies>All</applies></xml>'
 $script:qahelp['net10']='<xml><description>Check network interfaces have their power management switch disabled.</description><pass>All adapters have power saving disabled</pass><fail>One or more adapters have power saving enabled</fail><applies>All</applies></xml>'
-$script:qahelp['net11']='<xml><description>Checks that all DNS servers are configured, and if required, in the right order</description><pass>All DNS servers configured (and in the right order)</pass><fail>DNS Server count mismatch / Mismatched DNS servers / DNS Server list is not in the required order / No DNS servers are configured</fail><applies>All</applies></xml>'
+$script:qahelp['net11']='<xml><description>Checks that all DNS servers are configured, and if required, in the right order</description><pass>All DNS servers configured (and in the right order)</pass><warning>DNS Server list is not in the required order</warning><fail>DNS Server count mismatch / Mismatched DNS servers / No DNS servers are configured</fail><applies>All</applies></xml>'
 $script:qahelp['reg01']='<xml><description>Check that the server time is correct.If a valid source is used, the time is also checked against that source. Maximum time difference allowed is 10 seconds.Any longer and the check fails</description><pass>Time source is set to a remote server, and is syncronsized correctly</pass><fail>Time source is set to a remote server, and is not syncronsized correctly / Time source is not set / Time source is not set correctly / Error getting required information /</fail><manual>Not a supported operating system for this check</manual><applies>All</applies></xml>'
 $script:qahelp['reg02']='<xml><description>Check that the server timezone is correct.Default setting is "(GMT) Greenwich Mean Time</description><pass>Server timezone set correctly</pass><fail>Server timezone is incorrect and should be set to {0}</fail><applies>All</applies></xml>'
 $script:qahelp['reg03']='<xml><description>Ensure the Region and Language > Location is set correctly. Default setting is "United Kingdom"</description><pass>Regional location set correctly</pass><fail>Regional location incorrectly set to {0} / Registry setting not found</fail><applies>All</applies></xml>'
@@ -9512,7 +9512,7 @@ Function Check-CommandLine
     $gh = Get-Host
     $ws = $gh.UI.RawUI.WindowSize
     $wh = $ws.Height
-    If ($ws.Width -lt 120)
+    If ($ws.Width -le 120)
     {
         $ws.Height = 9999
         $ws.Width  =  120; $gh.UI.RawUI.Set_BufferSize($ws)
@@ -10172,7 +10172,7 @@ Function Write-Header
     Write-Host ''
 }
 
-Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width, '─') }
+Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width + 1, '─') }
 
 ###################################################################################################
 
