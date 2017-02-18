@@ -442,7 +442,7 @@ Function Display-MainForm
     Function ListView_SelectedIndexChanged ( [System.Windows.Forms.ListView]$SourceControl )
     {
         If ( $SourceControl.SelectedItems                -eq $null) { Return }
-        If (($SourceControl.SelectedItems[0].ImageIndex) -eq -1   ) { Return }    # TODO: Unselect item
+        If (($SourceControl.SelectedItems[0].ImageIndex) -eq -1   ) { Return }
     }
 
     Function ListView_DoubleClick ( [System.Windows.Forms.ListView]$SourceControl )
@@ -458,13 +458,13 @@ Function Display-MainForm
             'LIST' {
                 [string[]]$currentVal  = ($($selectedItem.SubItems[1].Text).Split(';'))
                           $currentVal  = ($currentVal.Trim().Replace("'",'').Replace('(','').Replace(')',''))
-                [string[]]$returnValue = (Show-InputForm -Type 'List'   -Title $($selectedItem.SubItems[0].Text) -Description $($selectedItem.SubItems[0].Text) -CurrentValue $currentVal)
+                [string[]]$returnValue = (Show-InputForm -Type 'List'   -Title $($selectedItem.Group.Header) -Description $($selectedItem.SubItems[0].Text) -CurrentValue $currentVal)
                 If ($returnValue -ne '!!-CANCELLED-!!') { $SourceControl.SelectedItems[0].SubItems[1].Text = ("('{0}')" -f $($returnValue -join ';').Replace(';', "'; '")) }
                 Break
             }
             'TEXT' {
                 [string[]]$currentVal  = ($($selectedItem.SubItems[1].Text).Trim("'"))
-                [string]  $returnValue = (Show-InputForm -Type 'Simple' -Title $($selectedItem.SubItems[0].Text) -Description $($selectedItem.SubItems[0].Text) -CurrentValue $currentVal)
+                [string]  $returnValue = (Show-InputForm -Type 'Simple' -Title $($selectedItem.Group.Header) -Description $($selectedItem.SubItems[0].Text) -CurrentValue $currentVal)
                 If ($returnValue -ne '!!-CANCELLED-!!') { $SourceControl.SelectedItems[0].SubItems[1].Text = "'$returnValue'" }
                 Break
             }
@@ -1261,8 +1261,8 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
     $btn_Exit.DialogResult = [System.Windows.Forms.DialogResult]::Cancel    # Use this instead of a "Click" event
     $MainFORM.Controls.Add($btn_Exit)
 
-    $lbl_ChangesMade.Location  = ' 12, 635'
-    $lbl_ChangesMade.Size      = '689,  25'
+    $lbl_ChangesMade.Location  = '174, 630'
+    $lbl_ChangesMade.Size      = '527,  35'
     $lbl_ChangesMade.Text      = "If you make any selection changes, click the 'Next >' button to update the Details tab; any unsaved changes will be lost"
     $lbl_ChangesMade.TextAlign = 'MiddleLeft'
     $lbl_ChangesMade.Visible   = $False
