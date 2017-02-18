@@ -12,10 +12,10 @@ The scripts can be run on any Windows operating system as long as PowerShell ver
 - Windows Server 2008 R2
 - Windows Server 2012
 - Windows Server 2012 R2
+- Windows Server 2016
 
 ### Also works, but not supported
 - Windows 2003 Server
-- Windows Server 2016 Technical Preview    (no known errors or issues so far)
 
 ─────────────────────────────────────────────────────────────────────────────
 
