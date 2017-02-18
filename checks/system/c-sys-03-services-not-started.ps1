@@ -66,17 +66,12 @@ Function c-sys-03-services-not-started
         }
     }
 
-    If (($check.Count -eq 0) -or ($result.message -eq ''))
+    If ($result.message -eq '')
     {
         $result.result  = $script:lang['Pass']
         $result.message = 'All auto-start services are running'
+        $result.data    = ''
     }
-    Else
-    {
-        $result.result  = $script:lang['Manual']
-        $result.message = 'Unknown issue, please check manually'
-        $result.data    = 'Unknown issue, please check manually'
-    }
-    
+
     Return $result
 }

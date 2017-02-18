@@ -36,7 +36,6 @@ Function c-net-01-no-ipv6
         If ($regKey) { [string]$keyVal = $regKey.GetValue('DisabledComponents') }
         Try { $regKey.Close() } Catch { }
         $reg.Close()
-
     }
     Catch
     {
