@@ -5,8 +5,8 @@
 
 
     PASS:    All DNS servers configured (and in the right order)
-    WARNING: DNS Server list is not in the required order
-    FAIL:    DNS Server count mismatch / Mismatched DNS servers / No DNS servers are configured
+    WARNING:
+    FAIL:    DNS Server count mismatch / Mismatched DNS servers / No DNS servers are configured / DNS Server list is not in the required order
     MANUAL:
     NA:
 
