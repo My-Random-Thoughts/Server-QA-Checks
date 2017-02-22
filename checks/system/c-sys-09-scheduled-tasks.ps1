@@ -62,7 +62,8 @@ Function c-sys-09-scheduled-tasks
         [string]$author = $xml.Task.RegistrationInfo.Author
         If (($Author -notlike '*Microsoft*') -and ($Author -notlike '*SystemRoot*'))
         {
-            If ($script:appSettings['IgnoreTheseScheduledTasks'] -notcontains $_.Name) { [string]$tasksOut += '{0} ({1}),#' -f $_.Name, $author }
+            If (($_.Name).Contains('-S-1-5-21-')) { [string]$NewName = $($_.Name).Split('-')[0] } Else { [string]$NewName = $_.Name }
+            If ($script:appSettings['IgnoreTheseScheduledTasks'] -notcontains $NewName) { [string]$tasksOut += '{0} ({1}),#' -f $_.Name, $author }
         }
     }
 
