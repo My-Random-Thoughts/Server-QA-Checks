@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check sentinel monitoring agent is installed, and that the correct port is open to the management server
 
@@ -32,8 +32,8 @@ Function c-com-07-sentinel-agent-installed
     If ([string]::IsNullOrEmpty($verCheck) -eq $false)
     {
         $result.result  = $script:lang['Pass']
-        $result.message = 'Sentinel agent found,#'
-        $result.data    = 'Version {0}' -f $verCheck
+        $result.message = 'Sentinel agent found'
+        $result.data    = 'Version {0},#' -f $verCheck
 
         Try
         {
@@ -67,8 +67,8 @@ Function c-com-07-sentinel-agent-installed
             If ([string]::IsNullOrEmpty($($valCons[$key].host)) -eq $false)
             {
                 $portTest = Test-Port -serverName $($valCons[$key].host) -Port $($valCons[$key].port)
-                If ($portTest -eq $true) { $result.message += ('Port {0} open to {1}'     -f $($valCons[$key].port), $($valCons[$key].host))                                        }
-                Else                     { $result.message += ('Port {0} not open to {1}' -f $($valCons[$key].port), $($valCons[$key].host)); $result.result = $script:lang['Fail'] }
+                If ($portTest -eq $true) { $result.data += ('Port {0} open to {1}'     -f $($valCons[$key].port), $($valCons[$key].host))                                        }
+                Else                     { $result.data += ('Port {0} not open to {1}' -f $($valCons[$key].port), $($valCons[$key].host)); $result.result = $script:lang['Fail'] }
             }
         }
     }
