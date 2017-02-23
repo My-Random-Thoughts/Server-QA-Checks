@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check relevant SCCM agent is installed, and that the correct port is open to the management server
 
@@ -46,7 +46,6 @@ Function c-com-03-sccm-installed
         $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
         $regKey = $reg.OpenSubKey('Software\Microsoft\CCM')
         If ($regKey) {
-        If ($regKey) {
             [string]               $valPort = $regKey.GetValue('Port')           # SCCM 2007
             [string]               $valName = $regKey.GetValue('NetworkName')    # SCCM 2007
             If ($valPort -eq '') { $valPort = $regKey.GetValue('HttpsPort') }    # SCCM 2010+
@@ -75,18 +74,21 @@ Function c-com-03-sccm-installed
             If ($portTest -eq $true)
             {
                 $result.result  = $script:lang['Pass']
-                $result.message = 'SCCM agent found,#Port {0} open to {1}' -f $valPort, $valName
+                $result.message = 'SCCM agent found'
+                $result.data    = 'Port {0} open to {1}' -f $valPort, $valName
             }
             Else
             {
                 $result.result  = $script:lang['Fail']
-                $result.message = 'SCCM agent found,#Port {0} not open to {1}' -f $valPort, $valName
+                $result.message = 'SCCM agent found'
+                $resilt.data    = 'Port {0} not open to {1}' -f $valPort, $valName
             }
         }
         Else
         {
             $result.result  = $script:lang['Fail']
-            $result.message = 'SCCM agent found,#Agent not configured with port and/or servername'
+            $result.message = 'SCCM agent found'
+            $result.data    = 'Agent not configured with port and/or servername'
         }
     }
     Else
