@@ -37,11 +37,14 @@ Function c-acc-08-builtin-group-members-2
         {
             [array]$check1 = $WMIObject.GetRelated('Win32_Account', 'Win32_GroupUser', '', '', 'PartComponent', 'GroupComponent', $false, $null) | Select-Object -ExpandProperty Name
 
-            [System.Collections.ArrayList]$check2 = @()    # GROUP MEMBERSHIP list
-            [System.Collections.ArrayList]$check3 = @()    # CHECK NAME list
-            ForEach ($Item In $check1)                             { If ($script:appSettings['GroupMembers'] -notcontains $Item) { $check2.Add($Item) | Out-Null } }
-            ForEach ($Item In $script:appSettings['GroupMembers']) { If (                            $check1 -notcontains $Item) { $check3.Add($Item) | Out-Null } }
+            [array]$check2 = @()    # GROUP MEMBERSHIP list
+            [array]$check3 = @()    # CHECK NAME list
+            ForEach ($Item In $check1) { If ($script:appSettings['GroupMembers'] -notcontains $Item) { $check2 += $Item } }
+            If ([string]::IsNullOrEmpty($script:appSettings['GroupMembers']) -eq $false) {
+                ForEach ($Item In $script:appSettings['GroupMembers']) { If ($check1 -notcontains $Item) { $check3 += $Item } }
+            }
 
+            $check2 = ($check2 | Select-Object -Unique)
             If (($check2.Count -eq 0) -and ($check3.Count -eq 0))
             {
                 $result.result  = $script:lang['Pass']
