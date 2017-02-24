@@ -221,12 +221,12 @@ ForEach ($qa In $qaChecks)
     # ALSO, add any required additional script functions
     [string]  $xmlHelp    = "<xml>"
     [string[]]$keyWords   = @('DESCRIPTION', 'PASS', 'WARNING', 'FAIL', 'MANUAL', 'NA', 'APPLIES', 'REQUIRED-FUNCTIONS')
-    [string[]]$getContent = (Get-Content -Path ($qa.FullName))
+    [string]  $getContent = ((Get-Content -Path ($qa.FullName)) -join "`n")
     ForEach ($keyWord In $KeyWords)
     {
         # Code from Reddit user "sgtoj"
         $regEx = [RegEx]::Match($getContent, "$($keyWord):((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))")
-        $sectionValue = $regEx.Groups[1].Value.Replace("`r`n", ' ').Replace('  ', '').Trim()
+        $sectionValue = $regEx.Groups[1].Value.Replace("`n", ' ').Replace('  ', '').Trim()
 
         If ([string]::IsNullOrEmpty($sectionValue) -eq $false)
         {
