@@ -37,6 +37,8 @@ This is a GUI form (written entirely in PowerShell) that makes it easier for you
 
 http://myrandomthoughts.co.uk/2017/02/server-qa-scripts-settings-configuration-tool/
 
-## Please read the documentation before starting out
-### Wiki
-I am slowly updating the Wiki on GitHub to list all the checks and their details.
+─────────────────────────────────────────────────────────────────────────────
+
+# Updates
+
+I have updates all the comments in each check to allow for the GUI Configurator to read in check settings information.  If you spot an issue, please let me know.
