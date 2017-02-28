@@ -1,18 +1,29 @@
 <#
     DESCRIPTION: 
-        Check Hyper-V is the only one installed
+        Check Hyper-V is the only one installed.  See this list for IDs: https://msdn.microsoft.com/en-us/library/cc280268(v=vs.85).aspx
 
+    REQUIRED-INPUTS:
+        IgnoreTheseRoleIDs - List of IDs that can be ignored|Integer
 
+    DEFAULT-VALUES:
+        IgnoreTheseRoleIDs = ('20', '67', '340', '417', '466', '477', '481', '487')
 
-    PASS:    No extra server roles or features exist
-    WARNING:
-    FAIL:    One or more extra server roles or features exist
-    MANUAL:
-    NA:      Not a Hyper-V server
+    RESULTS:
+        PASS:
+            No extra server roles or features exist
+        WARNING:
+        FAIL:
+            One or more extra server roles or features exist
+        MANUAL:
+        NA:
+            Not a Hyper-V server
 
-    APPLIES: Hyper-V Hosts
+    APPLIES:
+        Hyper-V Host Servers
 
-    REQUIRED-FUNCTIONS: Check-NameSpace, Check-HyperV
+    REQUIRED-FUNCTIONS:
+        Check-NameSpace
+        Check-HyperV
 #>
 
 Function c-hvh-02-no-other-server-roles

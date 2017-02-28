@@ -1,18 +1,29 @@
 ﻿<#
     DESCRIPTION: 
-        Check all local groups and ensure no additional groups exist. If there is a specific application requirement for local groups then
-        these need to be documented with a designated team specified as the owner.
+        Check all local groups and ensure no additional groups exist. If there is a specific application requirement for local groups then these need to be documented with a designated team specified as the owner.
         If you use specific role groups, make sure they are excluded in the settings file.
 
-    PASS:    No additional local accounts
-    WARNING:
-    FAIL:    One or more local groups exist
-    MANUAL:
-    NA:      Server is a domain controller
+    REQUIRED-INPUTS:
+        IgnoreTheseUsers - List of known user or groups accounts to ignore
 
-    APPLIES: All
+    DEFAULT-VALUES:
+        IgnoreTheseUsers = ('NT AUTHORITY\\NetworkService', 'NT AUTHORITY\\LocalService', 'LocalSystem')
 
-    REQUIRED-FUNCTIONS: Check-DomainController
+    RESULTS:
+        PASS:
+            No additional local accounts
+        WARNING:
+        FAIL:
+            One or more local groups exist
+        MANUAL:
+        NA:
+            Server is a domain controller
+
+    APPLIES:
+        All Servers
+
+    REQUIRED-FUNCTIONS:
+        Check-DomainController
 #>
 
 Function c-acc-04-local-groups

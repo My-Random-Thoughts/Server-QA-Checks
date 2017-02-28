@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Check to see if any non standard scheduled tasks exist on  the server (Any application specific scheduled tasks 
-        should be documented with a designated contact point specified).  Skips any Microsoft specific tasks
+        Check to see if any non standard scheduled tasks exist on  the server (Any application specific scheduled tasks should be documented with a designated contact point specified).
+        This check automatically ignores any Microsoft labelled specific tasks.
    
-   
-    PASS:    No additional scheduled tasks found
-    WARNING: Additional scheduled tasks found - make sure these are documented
-    FAIL:
-    MANUAL:
-    NA:
+    REQUIRED-INPUTS:
+        IgnoreTheseScheduledTasks - List of scheduled tasks that can be ignored
 
-    APPLIES: All
+    DEFAULT-VALUES:
+        IgnoreTheseScheduledTasks = ('SQM data sender', 'SystemSoundsService', 'StartComponentCleanup', 'Automatic-Workplace-Join', 'ReplaceOMCert', 'Optimize Start Menu Cache Files')
+
+    RESULTS:
+        PASS:
+            No additional scheduled tasks found
+        WARNING:
+            Additional scheduled tasks found - make sure these are documented
+        FAIL:
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sys-09-scheduled-tasks

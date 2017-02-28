@@ -1,18 +1,27 @@
 ﻿<#
     DESCRIPTION: 
-        Ensure protocols are set correctly.  Settings taken from https://www.nartac.com/Products/IISCrypto/Default.aspx using "Best Practices/FIPS 140-2" settings
+        Ensure protocols are set correctly.  Settings taken from https://www.nartac.com/Products/IISCrypto/Default.aspx using "Best Practices/FIPS 140-2" settings.
 
+    REQUIRED-INPUTS:
+        DisabledProtocols - List of protocols that should be disabled
 
+    DEFAULT-VALUES:
+        DisabledProtocols = ('Multi-Protocol Unified Hello', 'PCT 1.0', 'SSL 2.0', 'SSL 3.0', 'TLS 1.0')
 
-    PASS:    All protocols set correctly
-    WARNING:
-    FAIL:    One or more protocols set incorrectly
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            All protocols set correctly
+        WARNING:
+        FAIL:
+            One or more protocols set incorrectly
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sec-04-schannel-p4-protocols

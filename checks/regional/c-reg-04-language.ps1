@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Ensure the Region and Language > keyboard and Languages is set correctly
-        Default setting is "English (United Kingdom)"  
+        Ensure the Region and Language > keyboard and Languages is set correctly.  Default setting is "English (United Kingdom)".
 
+    REQUIRED-INPUTS:
+        DefaultLanguage - Numerical value of the correct keyboard to use
 
-    PASS:    Keyboard layout is set correctly
-    WARNING:
-    FAIL:    Keyboard layout is not set correctly / Registry setting not found
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        DefaultLanguage = '00000809'
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            Keyboard layout is set correctly
+        WARNING:
+        FAIL:
+            Keyboard layout is not set correctly
+            Registry setting not found
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-reg-04-language

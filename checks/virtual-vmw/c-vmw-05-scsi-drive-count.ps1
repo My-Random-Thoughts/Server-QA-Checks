@@ -1,18 +1,29 @@
 ﻿<#
     DESCRIPTION: 
-        Checks to see if there are are more than 8 drives attached
-        to the same SCSI adapter.
+        Checks to see if there are are more than 8 drives attached to the same SCSI adapter.
         
+    REQUIRED-INPUTS:
+        None
 
-    PASS:    More than 7 drives exist, but on different SCSI adapters
-    WARNING:
-    FAIL:    More than 7 drives exist on one SCSI adapter
-    MANUAL:
-    NA:      Not a virtual machine / There are less than 8 drives attached to server
+    DEFAULT-VALUES:
+        None
 
-    APPLIES: Virtuals
+    RESULTS:
+        PASS:
+            More than 7 drives exist, but on different SCSI adapters
+        WARNING:
+        FAIL:
+            More than 7 drives exist on one SCSI adapter
+        MANUAL:
+        NA:
+            Not a virtual machine
+            There are less than 8 drives attached to server
 
-    REQUIRED-FUNCTIONS: Check-VMware
+    APPLIES:
+        Virtual Servers
+
+    REQUIRED-FUNCTIONS:
+        Check-VMware
 #>
 
 Function c-vmw-05-scsi-drive-count

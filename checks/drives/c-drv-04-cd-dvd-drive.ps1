@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        If a CD/DVD drive is present on the server confirm it is configured as "R:"
+        If a CD/DVD drive is present on the server confirm it is configured as "R:".
 
+    REQUIRED-INPUTS:
+        DVDDriveLetter - Drive letter of the CD/DVD drive
 
+    DEFAULT-VALUES:
+        DVDDriveLetter = 'R:'
 
-    PASS:    CD/DVD drive set correctly
-    WARNING:
-    FAIL:    CD/DVD drive found, but not configured as {0}
-    MANUAL:
-    NA:      No CD/DVD drives found
+    RESULTS:
+        PASS:
+            CD/DVD drive set correctly
+        WARNING:
+        FAIL:
+            CD/DVD drive found, but not configured as {letter}
+        MANUAL:
+        NA:
+            No CD/DVD drives found
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-drv-04-cd-dvd-drive

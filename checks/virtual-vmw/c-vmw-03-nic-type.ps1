@@ -1,18 +1,29 @@
 ﻿<#
     DESCRIPTION: 
-        Check all virtual servers have network cards that are configured as VMXNET3
+        Check all virtual servers have network cards that are configured as VMXNET3.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    All active NICS configured correctly
-    WARNING: No network adapters found
-    FAIL:    One or more active NICs were found not to be VMXNET3
-    MANUAL:
-    NA:      Not a virtual machine
+    RESULTS:
+        PASS:
+            All active NICS configured correctly
+        WARNING:
+            No network adapters found
+        FAIL:
+            One or more active NICs were found not to be VMXNET3
+        MANUAL:
+        NA:
+            Not a virtual machine
 
-    APPLIES: Virtuals
+    APPLIES:
+        Virtual Servers
 
-    REQUIRED-FUNCTIONS: Check-VMware
+    REQUIRED-FUNCTIONS:
+        Check-VMware
 #>
 
 Function c-vmw-03-nic-type

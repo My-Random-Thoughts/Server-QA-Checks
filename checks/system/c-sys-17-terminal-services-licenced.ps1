@@ -2,17 +2,27 @@
     DESCRIPTION: 
         If server is a Terminal Services Server ensure it has a licence server set.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    Terminal services server is licenced
-    WARNING:
-    FAIL:    Terminal services server is not licenced
-    MANUAL:
-    NA:      Not a terminal services server
+    RESULTS:
+        PASS:
+            Terminal services server is licenced
+        WARNING:
+        FAIL:
+            Terminal services server is not licenced
+        MANUAL:
+        NA:
+            Not a terminal services server
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
-    REQUIRED-FUNCTIONS: Check-TerminalServer
+    REQUIRED-FUNCTIONS:
+        Check-TerminalServer
 #>
 
 Function c-sys-17-terminal-services-licenced

@@ -1,18 +1,29 @@
 ﻿<#
     DESCRIPTION: 
-        Check that VMware Host Time Sync is disabled
+        Check that VMware Host Time Sync is disabled.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    VMware tools time sync is disabled
-    WARNING:
-    FAIL:    VMware tools time sync is enabled
-    MANUAL:  Unable to check the VMware time sync status
-    NA:      Not a virtual machine
+    RESULTS:
+        PASS:
+            VMware tools time sync is disabled
+        WARNING:
+        FAIL:
+            VMware tools time sync is enabled
+        MANUAL:
+            Unable to check the VMware time sync status
+        NA:
+            Not a virtual machine
 
-    APPLIES: Virtuals
+    APPLIES:
+        Virtual Servers
 
-    REQUIRED-FUNCTIONS: Check-VMware
+    REQUIRED-FUNCTIONS:
+        Check-VMware
 #>
 
 Function c-vmw-02-time-sync

@@ -1,18 +1,27 @@
 ﻿<#
     DESCRIPTION: 
-        Check that File And Print Services has been disabled on all adapters, except for those specified
+        Check that File And Print Services has been disabled on all adapters, except for those specified.
 
+    REQUIRED-INPUTS:
+        IgnoreTheseAdapters - List of names or partial names of network adapters to ignore
 
+    DEFAULT-VALUES:
+        IgnoreTheseAdapters = ('Production', 'PROD', 'PRD')
 
-    PASS:    File And Print Services are disabled correctly
-    WARNING:
-    FAIL:    File And Print Services are enabled
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            File And Print Services are disabled correctly
+        WARNING:
+        FAIL:
+            File And Print Services are enabled
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-net-12-fileprint-services

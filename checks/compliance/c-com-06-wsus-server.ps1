@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Check that a WSUS server has been specified and that the correct port is open to the management server
+        Check that a WSUS server has been specified and that the correct port is open to the management server.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    WSUS server configured, Port {0} open to {1}
-    WARNING:
-    FAIL:    WSUS server has not been configured / WSUS server configured, Port {0} not open to {1}
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            WSUS server configured, port {port} open to {server}
+        WARNING:
+        FAIL:
+            WSUS server configured, port {port} not open to {server}
+            WSUS server has not been configured
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
-    REQUIRED-FUNCTIONS: Test-Port
+    REQUIRED-FUNCTIONS:
+        Test-Port
 #>
 
 Function c-com-06-wsus-server
@@ -48,15 +58,15 @@ Function c-com-06-wsus-server
     {
         $result.result  = $script:lang['Pass']
         $result.message = 'WSUS server configured'
-        $result.data    = $keyVal
+        $result.data    = $keyVal.ToLower()
 
         $keyVal = $keyVal.Replace('http://', '').Replace('https://', '')
         If ($keyVal.Contains(':') -eq $true) { [string]$name = ($keyVal.Split(':')[0]); [string]$port = $keyVal.Split(':')[1] }
         Else {                                 [string]$name =  $keyVal;                [string]$port = 80                    }
 
         [boolean]$portTest = (Test-Port -serverName $name -Port $port)
-        If   ($portTest -eq $true) {     $result.data += (',#Port {0} open to {1}'     -f $port, $name) }
-        Else { $result.result = $script:lang['Fail'];  $result.data += (',#Port {0} not open to {1}' -f $port, $name) }
+        If   ($portTest -eq $true) {                   $result.data += (',#Port {0} open to {1}'     -f $port, $name.ToLower()) }
+        Else { $result.result = $script:lang['Fail'];  $result.data += (',#Port {0} not open to {1}' -f $port, $name.ToLower()) }
     }
     Else
     {

@@ -1,18 +1,27 @@
 ﻿<#
     DESCRIPTION: 
-        Checks that the server is a member of the domain
+        Checks that the server is a member of the domain.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    Server is a domain member
-    WARNING: This is a workgroup server, is this correct.?
-    FAIL:    
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            Server is a domain member
+        WARNING:
+            This is a workgroup server, is this correct.?
+        FAIL:    
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sys-13-domain-member

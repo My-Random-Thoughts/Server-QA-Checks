@@ -1,18 +1,37 @@
 ﻿<#
     DESCRIPTION: 
-        Check NetBackup agent is installed and that the correct port is open to the management server
+        Check NetBackup agent is installed and that the correct port is open to the management server.
+        Only applies to physical servers, or virtual servers with a list of known software installed.
 
+    REQUIRED-INPUTS:
+        ProductName         - Full name of the product to look for
+        RequiredServerRoles - List of known software to check if installed
 
+    DEFAULT-VALUES:
+        ProductName         = 'Symantec NetBackup'
+        RequiredServerRoles = ('Exchange', 'SQL')
 
-    PASS:    {0} found, Port 1556 open to {1}
-    WARNING:
-    FAIL:    {0} not found / Port 1556 not open to {0} / Backup agent software not found, but this server has {0} installed which requires it / Backup agent software not found, but this server is a domain controller which requires it
-    MANUAL:  Is this server backed up via VADP.?  Manually check vCenter annotations, and look for "NetBackup.VADP: 1"
-    NA:
+    RESULTS:
+        PASS:
+            {product} found, Port 1556 open to {server}
+        WARNING:
+        FAIL:
+            {product} not found
+            Port 1556 not open to {server}
+            Backup agent software not found, but this server has {role} installed which requires it
+            Backup agent software not found, but this server is a domain controller which requires it
+        MANUAL:
+            Is this server backed up via VADP.?  Manually check vCenter annotations, and look for "NetBackup.VADP: 1"
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
-    REQUIRED-FUNCTIONS: Win32_Product, Test-Port, Check-DomainController, Check-VMware
+    REQUIRED-FUNCTIONS:
+        Check-DomainController
+        Check-VMware
+        Test-Port
+        Win32_Product
 #>
 
 Function c-com-04-netbackup-agent-installed
@@ -54,8 +73,8 @@ Function c-com-04-netbackup-agent-installed
         ForEach ($server In $valNames)
         {
             [boolean]$portTest = (Test-Port -serverName $server -Port 1556)
-            If   ($portTest -eq $true) {     $result.message += ('Port 1556 open to {0},#'     -f $server) }
-            Else { $result.result = $script:lang['Fail'];  $result.message += ('Port 1556 not open to {0},#' -f $server) }
+            If   ($portTest -eq $true)                   { $result.message += ('Port 1556 open to {0},#'     -f $server.ToLower()) }
+            Else { $result.result = $script:lang['Fail'];  $result.message += ('Port 1556 not open to {0},#' -f $server.ToLower()) }
         }
     }
     Else

@@ -1,18 +1,29 @@
 ﻿<#
     DESCRIPTION:
-        Check local network management agent is installed on the server.
-        ** ONLY CHECKS IF SOFTWARE INSTALLED **
+        Check local network management agent is installed on the server.  This only checks that known software is installed.
 
+    REQUIRED-INPUTS:
+        ProductNames - List of software to check if installed
 
-    PASS:    {0} found
-    WARNING:
-    FAIL:    Network management software not found, install required
-    MANUAL:
-    NA:      Not a physical machine
+    DEFAULT-VALUES:
+        ProductNames = ('HP Network Config Utility', 'Broadcom Advanced Control Suite', 'Broadcom Drivers and Management Applications')
 
-    APPLIES: Physicals
+    RESULTS:
+        PASS:
+            {product} found
+        WARNING:
+        FAIL:
+            Network management software not found, install required
+        MANUAL:
+        NA:
+            Not a physical machine
 
-    REQUIRED-FUNCTIONS: Win32_Product, Check-VMware
+    APPLIES:
+        Physical Servers
+
+    REQUIRED-FUNCTIONS:
+        Win32_Product
+        Check-VMware
 #>
 
 Function c-net-06-network-agent

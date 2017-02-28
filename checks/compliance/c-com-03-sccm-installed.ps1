@@ -1,18 +1,29 @@
-<#
+﻿<#
     DESCRIPTION: 
-        Check relevant SCCM agent is installed, and that the correct port is open to the management server
+        Check relevant SCCM agent process is running, and that the correct port is open to the management server.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    SCCM agent found, Port {0} open to {1}
-    WARNING:
-    FAIL:    SCCM agent not found, install required / SCCM agent found, Agent not configured with port and/or servername / SCCM agent found, Port {0} not open to {1}
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            SCCM agent found, port {port} open to {server}
+        WARNING:
+        FAIL:
+            SCCM agent found, agent not configured with port and/or servername
+            SCCM agent found, port {port} not open to {server}
+            SCCM agent not found, install required
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
-    REQUIRED-FUNCTIONS: Test-Port
+    REQUIRED-FUNCTIONS:
+        Test-Port
 #>
 
 Function c-com-03-sccm-installed
@@ -75,13 +86,13 @@ Function c-com-03-sccm-installed
             {
                 $result.result  = $script:lang['Pass']
                 $result.message = 'SCCM agent found'
-                $result.data    = 'Port {0} open to {1}' -f $valPort, $valName
+                $result.data    = 'Port {0} open to {1}' -f $valPort, $valName.ToLower()
             }
             Else
             {
                 $result.result  = $script:lang['Fail']
                 $result.message = 'SCCM agent found'
-                $resilt.data    = 'Port {0} not open to {1}' -f $valPort, $valName
+                $resilt.data    = 'Port {0} not open to {1}' -f $valPort, $valName.ToLower()
             }
         }
         Else

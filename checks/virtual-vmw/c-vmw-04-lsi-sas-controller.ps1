@@ -1,18 +1,31 @@
 ﻿<#
     DESCRIPTION: 
-        Check Windows disk controller is set correctly.
-        Default setting is "LSI logic SAS"
+        Check Windows disk controller is set correctly.  Default setting is "LSI logic SAS".
 
+    REQUIRED-INPUTS:
+        DiskControllerDeviceType   - VMware ESX default disk controller name
+        IgnoreTheseControllerTypes - List of controller types to ignore
 
-    PASS:    Disk controller set correctly
-    WARNING:
-    FAIL:    No SCSI controllers found / Disk controller not set correctly
-    MANUAL:
-    NA:      Not a virtual machine
+    DEFAULT-VALUES:
+        DiskControllerDeviceType   = 'LSI_SAS'
+        IgnoreTheseControllerTypes = ('spaceport', 'vhdmp')
 
-    APPLIES: Virtuals
+    RESULTS:
+        PASS:
+            Disk controller set correctly
+        WARNING:
+        FAIL:
+            No SCSI controllers found
+            Disk controller not set correctly
+        MANUAL:
+        NA:
+            Not a virtual machine
 
-    REQUIRED-FUNCTIONS: Check-VMware
+    APPLIES:
+        Virtual Servers
+
+    REQUIRED-FUNCTIONS:
+        Check-VMware
 #>
 
 Function c-vmw-04-lsi-sas-controller

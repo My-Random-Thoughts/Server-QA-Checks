@@ -1,18 +1,29 @@
 <#
     DESCRIPTION: 
-        Check Hyper-V is installed on server core
+        Check Hyper-V is installed on Windows Server Core.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    Hyper-V is using Windows Server Core
-    WARNING:
-    FAIL:    Hyper-V is not using Windows Server Core
-    MANUAL:
-    NA:      Not a Hyper-V server
+    RESULTS:
+        PASS:
+            Hyper-V is using Windows Server Core
+        WARNING:
+        FAIL:
+            Hyper-V is not using Windows Server Core
+        MANUAL:
+        NA:
+            Not a Hyper-V server
 
-    APPLIES: Hyper-V Hosts
+    APPLIES:
+        Hyper-V Host Servers
 
-    REQUIRED-FUNCTIONS: Check-NameSpace, Check-HyperV
+    REQUIRED-FUNCTIONS:
+        Check-NameSpace
+        Check-HyperV
 #>
 
 Function c-hvh-01-server-core

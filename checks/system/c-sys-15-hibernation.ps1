@@ -1,18 +1,27 @@
 ﻿<#
     DESCRIPTION: 
-        Check hibernation is turned off
+        Check hibernation is turned off.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    Hibernation is currently disabled
-    WARNING:
-    FAIL:    Hibernation is currently enabled
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            Hibernation is currently disabled
+        WARNING:
+        FAIL:
+            Hibernation is currently enabled
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sys-15-hibernation

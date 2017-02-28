@@ -2,17 +2,28 @@
     DESCRIPTION: 
         Check windows is licensed.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    Windows is licenced, Port 1688 open to KMS Server {0}
-    WARNING:
-    FAIL:    Windows is licenced, Port 1688 not open to KMS Server {0} / Windows licence check failed / Windows not licenced
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            Windows is licenced, Port 1688 open to KMS Server {server}
+        WARNING:
+        FAIL:
+            Windows is licenced, Port 1688 not open to KMS Server {server}
+            Windows licence check failed
+            Windows not licenced
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
-    REQUIRED-FUNCTIONS: Test-Port
+    REQUIRED-FUNCTIONS:
+        Test-Port
 #>
 
 Function c-sys-02-windows-license
@@ -79,12 +90,12 @@ Function c-sys-02-windows-license
         If ($portTest -eq $true)
         {
             $result.result  = $script:lang['Pass']
-            $result.data    = ('Port 1688 open to KMS Server {0}' -f $kms)
+            $result.data    = ('Port 1688 open to KMS Server {0}' -f $kms.ToLower())
         }
         Else
         {
             $result.result  = $script:lang['Fail']
-            $result.data    = ('Port 1688 not open to KMS Server {0}' -f $kms)
+            $result.data    = ('Port 1688 not open to KMS Server {0}' -f $kms.ToLower())
         }
     }
     Else

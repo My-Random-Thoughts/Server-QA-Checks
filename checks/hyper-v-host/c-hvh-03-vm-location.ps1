@@ -1,18 +1,30 @@
 <#
     DESCRIPTION: 
-        Check all VMs are running from a non-system drive
+        Check all VMs are running from a non-system drive.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    No virtual machines are using the system drive
-    WARNING:
-    FAIL:    One or more virtual machines are using the system drive
-    MANUAL:
-    NA:      Not a Hyper-V server / No virtual machines exist on this host
+    RESULTS:
+        PASS:
+            No virtual machines are using the system drive
+        WARNING:
+        FAIL:
+            One or more virtual machines are using the system drive
+        MANUAL:
+        NA:
+            Not a Hyper-V server
+            No virtual machines exist on this host
 
-    APPLIES: Hyper-V Hosts
+    APPLIES:
+        Hyper-V Host Servers
 
-    REQUIRED-FUNCTIONS: Check-NameSpace, Check-HyperV
+    REQUIRED-FUNCTIONS:
+        Check-NameSpace
+        Check-HyperV
 #>
 
 Function c-hvh-03-vm-location

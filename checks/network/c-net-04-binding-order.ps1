@@ -1,18 +1,33 @@
 ﻿<#
     DESCRIPTION: 
-        Check binding order is set correctly for "Production" as the primary network adapter then as applicable for other interfaces
-        If no "Production" adapter is found, "Management" should be first
+        Check binding order is set correctly for "Production" as the primary network adapter then as applicable for other interfaces.
+        If no "Production" adapter is found, then "Management" should be first.
 
+    REQUIRED-INPUTS:
+        ManagementAdapterNames - List of names or partial names of Management network adapters
+        ProductionAdapterNames - List of names or partial names of Production network adapters
 
-    PASS:    Binding order correctly set
-    WARNING:
-    FAIL:    No network adapters found / {0} or {1} adapters not listed / Binding order incorrect, {0} should be first / Registry setting not found
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        ManagementAdapterNames = ('Management', 'MGMT', 'MGT')
+        ProductionAdapterNames = ('Production', 'PROD', 'PRD')
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            Binding order correctly set
+        WARNING:
+        FAIL:
+            No network adapters found
+            Production or management adapters not listed
+            Binding order incorrect, {name} should be first
+            Registry setting not found
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-net-04-binding-order
@@ -93,7 +108,7 @@ Function c-net-04-binding-order
     If ($bindingorder -eq $null)
     {
         $result.result  = $script:lang['Fail']
-        $result.message = '{0} or {1} adapters not listed' -f $script:appSettings['ProductionAdapterNames'][0], $script:appSettings['ManagementAdapterNames'][0]
+        $result.message = 'Production or Management adapters not listed'
         $result.data    = ''
         Return $result
     }
@@ -152,7 +167,7 @@ Function c-net-04-binding-order
     If (($prodExists -eq $false) -and ($mgmtExists -eq $false))
     {
         $result.result  = $script:lang['Fail']
-        $result.message = '{0} or {1} adapters not listed' -f $script:appSettings['ProductionAdapterNames'][0], $script:appSettings['ManagementAdapterNames'][0]
+        $result.message = 'Production or Management adapters not listed'
     }
     
     Return $result

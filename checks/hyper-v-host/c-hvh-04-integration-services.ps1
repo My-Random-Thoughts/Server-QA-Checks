@@ -1,18 +1,29 @@
 <#
     DESCRIPTION: 
-        Check the version of the Integration Services
+        Check the version of the Integration Services.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    
-    WARNING:
-    FAIL:    Registry setting not found
-    MANUAL:  Integration services found
-    NA:      Not a Hyper-V server
+    RESULTS:
+        PASS:    
+        WARNING:
+        FAIL:
+            Registry setting not found
+        MANUAL:
+            Integration services found
+        NA:
+            Not a Hyper-V server
 
-    APPLIES: Hyper-V Hosts
+    APPLIES:
+        Hyper-V Host Servers
 
-    REQUIRED-FUNCTIONS: Check-NameSpace, Check-HyperV
+    REQUIRED-FUNCTIONS:
+        Check-NameSpace
+        Check-HyperV
 #>
 
 Function c-hvh-04-integration-services

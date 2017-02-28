@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Check services and ensure all listed services are set to disabled and are stopped
+        Check services and ensure all listed services are set to disabled and are stopped.
+
+    REQUIRED-INPUTS:
+        CheckTheseServices - List of known serivces that should be in a disabled state
+
+    DEFAULT-VALUES:
+        CheckTheseServices = ('HP System Management Homepage')
 
 
+    RESULTS:
+        PASS:
+            All services are configured correctly
+        WARNING:
+        FAIL:
+            One or more services are configured incorrectly
+        MANUAL:
+        NA:
 
-    PASS:    All services are configured correctly
-    WARNING:
-    FAIL:    One or more services are configured incorrectly
-    MANUAL:
-    NA:
-
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sys-04-services-not-stopped

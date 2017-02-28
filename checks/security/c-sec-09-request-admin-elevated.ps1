@@ -2,17 +2,29 @@
     DESCRIPTION: 
         Ensure the system is set to request administrative credentials before granting an application elevated privileges. 
         Default setting is either "(1):Prompt for credentials on the secure desktop" or "(3):Prompt for credentials"
+        Values and meanings can be seen here - https://msdn.microsoft.com/en-us/library/cc232761.aspx
 
+    REQUIRED-INPUTS:
+        ElevatePromptForAdminCredentials - "1,2,3,4,5" - List of settings to check for
 
-    PASS:    Prompt for credentials is enabled
-    WARNING:
-    FAIL:    System is not set to "Prompt for credentials" when launching an application with elevated privileges / Registry setting not found
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        ElevatePromptForAdminCredentials = ('1', '3')
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            Prompt for credentials is enabled
+        WARNING:
+        FAIL:
+            System is not set to "Prompt for credentials" when launching an application with elevated privileges
+            Registry setting not found
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sec-09-request-admin-elevated

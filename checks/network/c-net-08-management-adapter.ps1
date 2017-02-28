@@ -1,18 +1,27 @@
 ﻿<#
     DESCRIPTION: 
-        Check that a management network adapter exists.
-        This must always be present on a server and labelled correctly
+        Check that a management network adapter exists.  This must always be present on a server and labelled correctly.
 
+    REQUIRED-INPUTS:
+        ManagementAdapterNames - List of names or partial names of Management network adapters
 
-    PASS:    Management network adapter found
-    WARNING:
-    FAIL:    No management network adapter
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        ManagementAdapterNames = ('Management', 'MGMT', 'MGT')
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            Management network adapter found
+        WARNING:
+        FAIL:
+            No management network adapter
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-net-08-management-adapter

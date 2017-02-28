@@ -2,17 +2,30 @@
     DESCRIPTION: 
         If server is Domain Controller or a Terminal Server ensure RSA authentication manager is installed and PIN is required to access server.
 
+    REQUIRED-INPUTS:
+        ProductNames - List of product names to search for
 
+    DEFAULT-VALUES:
+        ProductNames = ('RSA Authentication Manager', 'RSA Authentication Agent')
 
-    PASS:    {0} found
-    WARNING:
-    FAIL:    RSA software not found
-    MANUAL:
-    NA:      Not a domain controller or terminal services server
+    RESULTS:
+        PASS:
+            {product} found
+        WARNING:
+        FAIL:
+            RSA software not found
+        MANUAL:
+        NA:
+            Not a domain controller or terminal services server
 
-    APPLIES: Domain Controllers
+    APPLIES:
+        Domain Controllers
+        Terminal Servers
 
-    REQUIRED-FUNCTIONS: Win32_Product, Check-DomainController, Check-TerminalServer
+    REQUIRED-FUNCTIONS:
+        Win32_Product
+        Check-DomainController
+        Check-TerminalServer
 #>
 
 Function c-sec-13-rsa-authentication

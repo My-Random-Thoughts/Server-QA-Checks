@@ -1,18 +1,27 @@
 ﻿<#
     DESCRIPTION: 
-        Checks to see if there are any addional firewall rules, and warns if there are any.
-        This ignores all default pre-configured rules, and netbackup ports rules (1556, 13724)
-        macmnsvc: McAfee Service;  nbwin: NetBackup Client
+        Checks to see if there are any addional firewall rules, and warns if there are any.  This ignores all default pre-configured rules, and netbackup ports rules (1556, 13724).
 
-    PASS:    No additional firewall rules exist
-    WARNING: One or more additional firewall rules exist, check they are required
-    FAIL:
-    MANUAL:
-    NA:
+    REQUIRED-INPUTS:
+        IgnoreTheseFirewallAppRules - List of known firewall rules to ignore
 
-    APPLIES: All
+    DEFAULT-VALUES:
+        IgnoreTheseFirewallAppRules = ('Microsoft', 'McAfee', 'macmnsvc', 'System Center', 'nbwin')
+
+    RESULTS:
+        PASS:
+            No additional firewall rules exist
+        WARNING:
+            One or more additional firewall rules exist, check they are required
+        FAIL:
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sec-14-firewall-rules

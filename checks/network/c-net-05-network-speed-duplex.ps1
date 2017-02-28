@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Check the network adapter speed and duplex settings.
-        Should be set to "Full Duplex" and "Auto"
+        Check the network adapter speed and duplex settings.  Should be set to "Full Duplex" and "Auto".
 
+    REQUIRED-INPUTS:
+        None
 
-    PASS:    All network adapters configured correctly
-    WARNING: One or more network adapters configured incorrectly
-    FAIL:    No network adapters found or enabled
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        None
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            All network adapters configured correctly
+        WARNING:
+            One or more network adapters configured incorrectly
+        FAIL:
+            No network adapters found or enabled
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-net-05-network-speed-duplex

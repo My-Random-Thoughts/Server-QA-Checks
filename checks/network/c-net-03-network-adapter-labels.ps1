@@ -1,18 +1,27 @@
 ﻿<#
     DESCRIPTION: 
-        Check network interfaces are labelled so their purpose is easily identifiable.
-        FAIL if any Adapter Names are "Local Area Connection x" or "Ethernet x"
+        Check network interfaces are labelled so their purpose is easily identifiable.  FAIL if any adapter names are "Local Area Connection x" or "Ethernet x".
 
+    REQUIRED-INPUTS:
+        None
 
-    PASS:    All adapters renamed from default
-    WARNING:
-    FAIL:    An adapter was found with the default name
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        None
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            All adapters renamed from default
+        WARNING:
+        FAIL:
+            An adapter was found with the default name
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-net-03-network-adapter-labels

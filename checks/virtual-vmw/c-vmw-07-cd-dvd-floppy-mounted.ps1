@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Checks for any mounted CD/DVD or floppy drives
+        Checks for any mounted CD/DVD or floppy drives.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    No CD/ROM or floppy drives are mounted
-    WARNING:
-    FAIL:    One or more CD/ROM or floppy drives are mounted
-    MANUAL:
-    NA:      Not a virtual machine
+    RESULTS:
+        PASS:
+            No CD/ROM or floppy drives are mounted
+        WARNING:
+        FAIL:
+            One or more CD/ROM or floppy drives are mounted
+        MANUAL:
+        NA:
+            Not a virtual machine
 
-    APPLIES: Virtuals
+    APPLIES:
+        Virtual Servers
 
-    REQUIRED-FUNCTIONS: Check-VMware
+    REQUIRED-FUNCTIONS:
+        Check-VMware
 #>
 
 Function c-vmw-07-cd-dvd-floppy-mounted

@@ -1,18 +1,27 @@
 <#
     DESCRIPTION: 
-        Checks to see if the local default accounts have been renamed.
-        The "Administrator" and "Guest" accounts should be.
+        Checks to see if the default local "Administrator" and "Guest" accounts have been renamed.
 
+    REQUIRED-INPUTS:
+        InvalidAdminNames - List of names that should not be used
 
-    PASS:    All local accounts have been renamed
-    WARNING:
-    FAIL:    A local account was found that needs to be renamed
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        InvalidAdminNames = ('Administrator', 'Admin', 'Guest', 'Guest1')
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            All local accounts have been renamed
+        WARNING:
+        FAIL:
+            A local account was found that needs to be renamed
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-acc-02-local-account-names

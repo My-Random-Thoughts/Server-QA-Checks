@@ -2,17 +2,26 @@
     DESCRIPTION: 
         Checks Device Manager to ensure there are no unknown devices, conflicts or errors.
         
+    REQUIRED-INPUTS:
+        IgnoreTheseDeviceNames - List of known devices that can be ignored
 
+    DEFAULT-VALUES:
+        IgnoreTheseDeviceNames = ('')
 
-    PASS:    No device errors found
-    WARNING:
-    FAIL:    Device errors found
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            No device errors found
+        WARNING:
+        FAIL:
+            Device errors found
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sys-07-devices-status

@@ -1,18 +1,30 @@
 ﻿<#
     DESCRIPTION: 
-        Ensure all drives have a minimum % of free space.  The default value is 17%
+        Ensure all drives have a minimum amount of free space.  Measured as a percentage.
 
+    REQUIRED-INPUTS:
+        IgnoreTheseDrives       - List of drive letters to ignore
+        MinimumDrivePercentFree - Minimum free space available on each drive as a percentage|Integer
 
+    DEFAULT-VALUES:
+        IgnoreTheseDrives       = ('A', 'B')
+        MinimumDrivePercentFree = '17'
 
-    PASS:    All drives have the required minimum free space of {0}%
-    WARNING:
-    FAIL:    One or more drives were found with less than {0}% free space
-    MANUAL:  Unable to get drive information, please check manually
-    NA:
+    RESULTS:
+        PASS:
+            All drives have the required minimum free space of {size}%
+        WARNING:
+        FAIL:
+            One or more drives were found with less than {size}% free space
+        MANUAL:
+            Unable to get drive information, please check manually
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-drv-02-min-drive-freespace

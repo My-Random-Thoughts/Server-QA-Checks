@@ -1,18 +1,32 @@
 <#
     DESCRIPTION: 
         Check that the server time is correct.  If a valid source is used, the time is also checked against that source.
-        Maximum time difference allowed is 10 seconds.  Any longer and the check fails
+        Maximum time difference allowed is 10 seconds, any longer and the check fails.
 
+    REQUIRED-INPUTS:
+        None
 
-    PASS:    Time source is set to a remote server, and is syncronsized correctly
-    WARNING:
-    FAIL:    Time source is set to a remote server, and is not syncronsized correctly / Time source is not set / Time source is not set correctly / Error getting required information / 
-    MANUAL:  Not a supported operating system for this check
-    NA:
+    DEFAULT-VALUES:
+        None
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            Time source is set to a remote server, and is syncronsized correctly
+        WARNING:
+        FAIL:
+            Time source is set to a remote server, and is not syncronsized correctly
+            Time source is not set
+            Time source is not set correctly
+            Error getting required information
+        MANUAL:
+            Not a supported operating system for this check
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-reg-01-local-time
@@ -72,13 +86,13 @@ Function c-reg-01-local-time
         {
             $result.result  = $script:lang['Fail']
             $result.message = 'Time source is not set correctly'
-            $result.data    = '{0},#Time is {1}' -f $source, $rdt
+            $result.data    = '{0},#Time is {1}' -f $source.ToLower(), $rdt
         }
         ElseIf ($source -like '*The following error*')
         {
             $result.result  = $script:lang['Fail']
             $result.message = 'Error getting required information'
-            $result.data    = '{0},#Time is {1}' -f $source, $rdt
+            $result.data    = '{0},#Time is {1}' -f $source.ToLower(), $rdt
         }
         ElseIf ($source -like '*The command /query is unknown*')    # Windows 2003 server
         {
@@ -99,13 +113,13 @@ Function c-reg-01-local-time
             {
                 $result.result   = $script:lang['Pass']
                 $result.message += 'Time source is set to a remote server, and is syncronsized correctly'
-                $result.data    += 'Source: {0},#Time is about {1} seconds adrift' -f $source.Trim(), $offSet
+                $result.data    += 'Source: {0},#Time is about {1} seconds adrift' -f $source.Trim().ToLower(), $offSet
             }
             Else
             {
                 $result.result   = $script:lang['Fail']
                 $result.message += 'Time source is set to a remote server, and is not syncronsized correctly'
-                $result.data    += 'Source: {0},#Time is about {1} seconds adrift' -f $source.Trim(), $offSet
+                $result.data    += 'Source: {0},#Time is about {1} seconds adrift' -f $source.Trim().ToLower(), $offSet
             }
         }
     }

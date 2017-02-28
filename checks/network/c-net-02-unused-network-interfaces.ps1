@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Check there are no unused Network interfaces on the server. We define "not in use" by showing any ENABLED NICs set to DHCP
+        Check there are no unused Network interfaces on the server.  We define "not in use" by showing any ENABLED NICs that are set to DHCP.
         All NICs should have a statically assigned IP address.
 
+    REQUIRED-INPUTS:
+        None
 
-    PASS:    No DHCP enabled adapters found
-    WARNING:
-    FAIL:    DHCP enabled adapters found
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        None
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            No DHCP enabled adapters found
+        WARNING:
+        FAIL:
+            DHCP enabled adapters found
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-net-02-unused-network-interfaces

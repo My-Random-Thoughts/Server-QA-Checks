@@ -220,26 +220,29 @@ ForEach ($qa In $qaChecks)
     # Generate the help text for from each check (taken from the header information)
     # ALSO, add any required additional script functions
     [string]  $xmlHelp    = "<xml>"
-    [string[]]$keyWords   = @('DESCRIPTION', 'PASS', 'WARNING', 'FAIL', 'MANUAL', 'NA', 'APPLIES', 'REQUIRED-FUNCTIONS')
+    [string[]]$keyWords   = @('DESCRIPTION', 'REQUIRED-INPUTS', 'PASS', 'WARNING', 'FAIL', 'MANUAL', 'NA', 'APPLIES', 'REQUIRED-FUNCTIONS')
     [string]  $getContent = ((Get-Content -Path ($qa.FullName)) -join "`n")
     ForEach ($keyWord In $KeyWords)
     {
         # Code from Reddit user "sgtoj"
         $regEx = [RegEx]::Match($getContent, "$($keyWord):((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))")
-        $sectionValue = $regEx.Groups[1].Value.Replace("`n", ' ').Replace('  ', '').Trim()
+        [string[]]$sectionValue = ($regEx.Groups[1].Value.Trim().Split("`n"))
 
-        If ([string]::IsNullOrEmpty($sectionValue) -eq $false)
+        If (([string]::IsNullOrEmpty($sectionValue) -eq $false) -and ($sectionValue.Trim() -ne 'None'))
         {
             # Add any required additional script functions
             If ($keyWord -eq 'REQUIRED-FUNCTIONS') {
-                ForEach ($function In ($sectionValue).Split(',')) {
+                ForEach ($function In ($sectionValue).Split("`n")) {
+                    #Write-Host ": $checkName    $($function.Trim())"
                     Out-File -FilePath $outPath -InputObject (Get-Content "$path\functions\$($function.Trim()).ps1")   -Encoding utf8 -Append
                 }
             }
             Else
             {
                 $keyWord  = $keyWord.ToLower()
-                $xmlHelp += "<$keyWord>$sectionValue</$keyWord>"
+                $xmlHelp += "<$($keyWord.Replace('-', ''))>"
+                ForEach ($item in $sectionValue) { $xmlHelp += "$($item.Trim())"; If ($keyWord -ne 'DESCRIPTION') { $xmlHelp += "!n" } }
+                $xmlHelp += "</$($keyWord.Replace('-', ''))>"
             }
         }
     }

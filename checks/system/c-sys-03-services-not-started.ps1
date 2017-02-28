@@ -1,18 +1,28 @@
 <#
     DESCRIPTION: 
         Check services and ensure all services set to start automatically are running (NetBackup Bare Metal Restore Boot Server, 
-        NetBackup SAN Client Fibre Transport Service and .NET4.0 are all expected to be Automatic but not running)
+        NetBackup SAN Client Fibre Transport Service and .NET4.0 are all expected to be Automatic but not running).
 
+    REQUIRED-INPUTS:
+        IgnoreTheseServices - List of known services that can ignored when set to automatic and not started
 
-    PASS:    All auto-start services are running
-    WARNING:
-    FAIL:    An auto-start service was found not running
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        IgnoreTheseServices = ('NetBackup Bare Metal Restore Boot Server', 'NetBackup SAN Client Fibre Transport Service', 'Microsoft .NET Framework NGEN', 'Software Protection', 'Volume Shadow Copy')
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            All auto-start services are running
+        WARNING:
+        FAIL:
+            An auto-start service was found not running
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sys-03-services-not-started
@@ -72,6 +82,6 @@ Function c-sys-03-services-not-started
         $result.message = 'All auto-start services are running'
         $result.data    = ''
     }
-
+    
     Return $result
 }

@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Check the system drive is a minimum of 50gb for Windows 2008+ servers (some are reporting 49gb)
+        Check the system drive is a minimum size of 50gb for Windows 2008+ servers (some are reporting 49gb).
         
+    REQUIRED-INPUTS:
+        MinimumSystemDriveSize - Minimum size of the system drive|Integer
 
+    DEFAULT-VALUES:
+        MinimumSystemDriveSize = '49'
 
-    PASS:    System drive ({0}) meets minimum required size
-    WARNING:
-    FAIL:    System drive ({0}) is too small, should be {1}gb
-    MANUAL:  Unable to get drive size, please check manually
-    NA:
+    RESULTS:
+        PASS:
+            System drive ({letter}) meets minimum required size
+        WARNING:
+        FAIL:
+            System drive ({letter}) is too small, should be {size}gb
+        MANUAL:
+            Unable to get drive size, please check manually
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-drv-01-system-drive-size

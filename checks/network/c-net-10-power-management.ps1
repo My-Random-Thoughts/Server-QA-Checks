@@ -2,17 +2,26 @@
     DESCRIPTION: 
         Check network interfaces have their power management switch disabled.
         
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    All adapters have power saving disabled
-    WARNING:
-    FAIL:    One or more adapters have power saving enabled
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            All adapters have power saving disabled
+        WARNING:
+        FAIL:
+            One or more adapters have power saving enabled
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-net-10-power-management

@@ -1,18 +1,31 @@
 ﻿<#
     DESCRIPTION: 
-        Check server is compliant with patch policy (must be patched to latest released patch level for this customer)
-        Check date of last patch and return WARNING if not within specified number of days, and FAIL if not within number of days *2
+        Check server is compliant with patch policy (must be patched to latest released patch level for this customer).
+        Check date of last patch and return WARNING if not within specified number of days, and FAIL if not within number of days *2.
 
+    REQUIRED-INPUTS:
+        MaximumLastPatchAgeAllowed - Mamimum number of days that patching is allowed to be out of date|Integer
 
-    PASS:    Windows patches applied
-    WARNING: Server not patched within the last {0} days / Operating system not supported by check
-    FAIL:    Server not patched within the last {0} days / No last patch date - server has never been updated
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        MaximumLastPatchAgeAllowed = '35'
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            Windows patches applied
+        WARNING:
+            Server not patched within the last {num} days
+            Operating system not supported by check
+        FAIL:
+            Server not patched within the last {num} days
+            No last patch date - server has never been updated
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-com-05-last-patch-date

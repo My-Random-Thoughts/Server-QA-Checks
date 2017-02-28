@@ -1,18 +1,31 @@
 ﻿<#
     DESCRIPTION: 
-        Check the page file is located on the system root drive and fixed size.  The default setting is 4096MB (4GB)
-        If the page file is larger a document detailing the tuning process 
-        used must exist and should follow Microsoft best tuning practices (http://support.microsoft.com/kb/2021748)
+        Check the page file is located on the system drive and is a fixed size.  The default setting is 4096MB (4GB).
+        If the page file is larger a document detailing the tuning process used must exist and should follow Microsoft best tuning practices (http://support.microsoft.com/kb/2021748).
 
-    PASS:    Pagefile is set correctly
-    WARNING: 
-    FAIL:    Pagefile is system managed, it should be set to a custom size of {0}mb / Pagefile should be set on the system drive, to Custom, with Initial and Maximum sizes set to {0}mb / Pagefile does not exist on {0} drive
-    MANUAL:  Unable to get page file information, please check manually
-    NA:
+    REQUIRED-INPUTS:
+        FixedPageFileSize - Fixed size in MB of the page file|Integer
 
-    APPLIES: All
+    DEFAULT-VALUES:
+        FixedPageFileSize = '4096'
+
+    RESULTS:
+        PASS:
+            Pagefile is set correctly
+        WARNING: 
+        FAIL:
+            Pagefile is system managed, it should be set to a custom size of {size}mb
+            Pagefile should be set on the system drive, to Custom, with Initial and Maximum sizes set to {size}mb
+            Pagefile does not exist on {letter} drive
+        MANUAL:
+            Unable to get page file information, please check manually
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-drv-03-pagefile-size-location

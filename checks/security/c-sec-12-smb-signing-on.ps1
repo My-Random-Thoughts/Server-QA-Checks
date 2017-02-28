@@ -2,17 +2,27 @@
     DESCRIPTION: 
         Ensure SMB signing is turned on. 
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    SMB Signing configured correctly
-    WARNING:
-    FAIL:    SMB Signing not configured correctly / Registry setting not found
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            SMB Signing configured correctly
+        WARNING:
+        FAIL:
+            SMB Signing not configured correctly
+            Registry setting not found
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sec-12-smb-signing-on
@@ -51,8 +61,8 @@ Function c-sec-12-smb-signing-on
     If (([string]::IsNullOrEmpty($keyVal1) -eq $false) -or ([string]::IsNullOrEmpty($keyVal2) -eq $false))
     {
         $missing = ''
-        If ($keyVal1 -eq $script:appSettings['RequireSMBSigning']) { $missing  = '' } Else { $missing  = 'LanmanServer,#'    }
-        If ($keyVal2 -eq $script:appSettings['RequireSMBSigning']) { $missing += '' } Else { $missing += 'LanmanWorkstation' }
+        If ($keyVal1 -eq '1') { $missing  = '' } Else { $missing  = 'LanmanServer,#'    }
+        If ($keyVal2 -eq '1') { $missing += '' } Else { $missing += 'LanmanWorkstation' }
 
         If ($missing -eq '')
         {

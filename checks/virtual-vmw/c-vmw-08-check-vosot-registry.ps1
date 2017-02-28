@@ -1,18 +1,31 @@
 ﻿<#
     DESCRIPTION: 
-        Checks against a specified VMware OS Optimisation Template
-        Registry setting specific checks only
+        Checks against a specified VMware OS Optimisation Template.  Registry setting specific checks only.
+        (Experimental Check)
 
+    REQUIRED-INPUTS:
+        vosotXmlFile - Local path to the confoguration XML file for VMware OSOT|File
 
-    PASS:    All mandatory and recommended settings configured
-    WARNING: All mandatory settings configured, recommended settings not configured
-    FAIL:    All mandatory and recommended settings not configured
-    MANUAL:  
-    NA:      Not a virtual machine / XML check file not applicable for this server
+    DEFAULT-VALUES:
+        vosotXmlFile = 'C:\ProgramData\VMware\OSOT\VMware Templates\636014.xml'
 
-    APPLIES: Virtuals
+    RESULTS:
+        PASS:
+            All mandatory and recommended settings configured
+        WARNING:
+            All mandatory settings configured, recommended settings not configured
+        FAIL:
+            All mandatory and recommended settings not configured
+        MANUAL:  
+        NA:
+            Not a virtual machine
+            XML check file not applicable for this server
 
-    REQUIRED-FUNCTIONS: Check-VMware
+    APPLIES:
+        Virtual Servers
+
+    REQUIRED-FUNCTIONS:
+        Check-VMware
 #>
 
 Function c-vmw-08-check-vosot-registry

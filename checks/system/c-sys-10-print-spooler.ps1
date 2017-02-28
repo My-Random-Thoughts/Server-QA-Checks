@@ -2,17 +2,28 @@
     DESCRIPTION: 
         Check to see if any printers exist on the server. If printers exist, ensure the spooler directory is not stored on the system drive.
 
-        
+    REQUIRED-INPUTS:
+        IgnoreThesePrinterNames - List of known printer names to ignore
 
-    PASS:    Printers found, and spool directory is not set to default path
-    WARNING:
-    FAIL:    Spool directory is set to the default path and needs to be changed, Registry setting not found
-    MANUAL:
-    NA:      No printers found / Print Spooler service is not running
+    DEFAULT-VALUES:
+        IgnoreThesePrinterNames = ('Send To OneNote', 'PDFCreator', 'Microsoft XPS Document Writer', 'Fax', 'WebEx Document Loader', 'Microsoft Print To PDF')
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            Printers found, and spool directory is not set to default path
+        WARNING:
+        FAIL:
+            Spool directory is set to the default path and needs to be changed, Registry setting not found
+        MANUAL:
+        NA:
+            No printers found
+            Print Spooler service is not running
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sys-10-print-spooler

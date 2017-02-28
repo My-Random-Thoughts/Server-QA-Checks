@@ -1,18 +1,27 @@
 ﻿<#
     DESCRIPTION: 
-        Check shared folders to ensure no additional shares are present.  Shared folders should be documented with a designated team specified as the owner
+        Check shared folders to ensure no additional shares are present.  Shared folders should be documented with a designated team specified as the owner.
 
+    REQUIRED-INPUTS:
+        IgnoreTheseShares - List of share names that can be ignored
 
+    DEFAULT-VALUES:
+        IgnoreTheseShares = ('NETLOGON', 'SYSVOL', 'CertEnroll')
 
-    PASS:    No additional shares found
-    WARNING: Shared folders found, check against documentation
-    FAIL:
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            No additional shares found
+        WARNING:
+            Shared folders found, check against documentation
+        FAIL:
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-drv-05-shared-folders

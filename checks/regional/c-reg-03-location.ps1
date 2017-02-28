@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Ensure the Region and Language > Location is set correctly.
-        Default setting is "United Kingdom"
+        Ensure the Region and Language > Location is set correctly.  Default setting is "United Kingdom".
 
+    REQUIRED-INPUTS:
+        DefaultLocation - Regional string name
 
-    PASS:    Regional location set correctly
-    WARNING:
-    FAIL:    Regional location incorrectly set to {0} / Registry setting not found
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        DefaultLocation = 'United Kingdom'
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            Regional location set correctly
+        WARNING:
+        FAIL:
+            Regional location incorrectly set to {string}
+            Registry setting not found
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-reg-03-location

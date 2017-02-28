@@ -1,18 +1,29 @@
-<#
+﻿<#
     DESCRIPTION: 
-        Returns a list of ports that are open, excluding anything lower than 1024 and higher than 49152.  Will also exclude other well known ports
-        IMPORTANT: THIS WORKS FOR LOCAL SERVERS ONLY
+        Returns a list of ports that are open, excluding anything lower than 1024 and within the dynamic port range.  Will also exclude other well known ports.
+        !nIMPORTANT: THIS WORKS FOR LOCAL SERVERS ONLY
 
+    REQUIRED-INPUTS:
+        IgnoreThesePorts - List of port numbers to ignore|Integer
 
-    PASS:    No extra ports are open
-    WARNING:
-    FAIL:    One or more extra ports are open
-    MANUAL:
-    NA:      This check is for local servers only
+    DEFAULT-VALUES:
+        IgnoreThesePorts = ('5985', '5986', '8192')
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            No extra ports are open
+        WARNING:
+        FAIL:
+            One or more extra ports are open
+        MANUAL:
+        NA:
+            This check is for local servers only
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sec-16-open-ports
@@ -31,12 +42,10 @@ Function c-sec-16-open-ports
     If ($serverName -like "$env:ComputerName*")
     {
         # List of well known exclusions
-        $script:appSettings['IgnoreThesePorts'] +=  '5985'    # WinRM HTTP          #
-        $script:appSettings['IgnoreThesePorts'] +=  '5986'    # WinRM HTTPS         # Microsoft
-        $script:appSettings['IgnoreThesePorts'] += '47001'    # WinRM Listener      #
-        #
-        $script:appSettings['IgnoreThesePorts'] +=  '4750'    # BladeLogic Agent    #
-        $script:appSettings['IgnoreThesePorts'] +=  '1556'    # NetBackup Agent     # Third Party
+        $script:appSettings['IgnoreThesePorts'] += '47001'    # WinRM Listener - 5985 and 5986 are in settings file
+        $script:appSettings['IgnoreThesePorts'] +=  '1556'    # NetBackup Agent
+        $script:appSettings['IgnoreThesePorts'] +=  '2381'    # HPE System Management Home Page
+        $script:appSettings['IgnoreThesePorts'] +=  '4750'    # BladeLogic Agent
 #       $script:appSettings['IgnoreThesePorts'] +=  '0000'    # 
 
         Try
@@ -44,10 +53,23 @@ Function c-sec-16-open-ports
             $TCPProperties = [System.Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties()
             [System.Net.IPEndPoint[]]$Connections = $TCPProperties.GetActiveTcpListeners() | Sort-Object -Property Port
 
+            [int]$portStart = -1; [int]$portCount = -1
+            [string[]]$dynPorts = Invoke-Command -ScriptBlock { &"netsh.exe" int ipv4 show dynamicportrange tcp } -ErrorAction SilentlyContinue
+
+            If ($dynPorts.Count -gt 0)
+            {
+                $portStart = ($dynPorts[3].Split(':')[1])
+                $portCount = ($dynPorts[4].Split(':')[1])
+            }
+
+            If ($portStart -eq -1) { $portStart = 49152 }    # Default values for
+            If ($portCount -eq -1) { $portCount = 16384 }    # dynamic port range
+            [int]$portEnd   = ($portStart + $portCount)
+
             [array]$PortList = @()
             ForEach ($Port In $Connections.Port)
             {
-                If (($script:appSettings['IgnoreThesePorts'] -notcontains $Port) -and ($Port -lt 49152) -and ($Port -gt 1024)) { $PortList += ($Port -as [string]) }
+                If (($script:appSettings['IgnoreThesePorts'] -notcontains $Port) -and ($Port -gt 1024) -and (($Port -lt $portStart) -or ($Port -gt $portEnd))) { $PortList += ($Port -as [string]) }
             }
 
             $PortList = ($PortList | Select-Object -Unique)    # Select Unique values only
@@ -74,9 +96,9 @@ Function c-sec-16-open-ports
     }
     Else
     {
-        $result.result  = $script:lang['Not-Applicable']
+        $result.result  = $script:lang['Manual']
         $result.message = 'This check is for local servers only'
-        $result.data    = ''
+        $result.data    = "Run 'NBTSTAT -A' on the remote server and check the results.  Ignoring the following ports: $script:appSettings['IgnoreThesePorts'], 0-1024, 49152-65535"
     }
 
     Return $result

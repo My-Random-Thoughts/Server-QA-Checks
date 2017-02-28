@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Ensure all drives are formatted as NTFS
+        Ensure all drives are formatted as NTFS.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    All drives are formatted as NTFS
-    WARNING:
-    FAIL:    One or more drives were found not formatted as NTFS
-    MANUAL:  Unable to get drive information, please check manually
-    NA:
+    RESULTS:
+        PASS:
+            All drives are formatted as NTFS
+        WARNING:
+        FAIL:
+            One or more drives were found not formatted as NTFS
+        MANUAL:
+            Unable to get drive information, please check manually
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-drv-08-drive-ntfs-format

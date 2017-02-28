@@ -3,16 +3,26 @@
         Check that the server timezone is correct.  Default setting is "(GMT) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London"
         For Windows 2003, check is "(UTC) Dublin, Edinburgh, Lisbon, London"
 
+    REQUIRED-INPUTS:
+        TimeZoneNames - List of time zone strings to check against.  Different OS versions use different strings.
 
-    PASS:    Server timezone set correctly
-    WARNING:
-    FAIL:    Server timezone is incorrect and should be set to {0}
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        TimeZoneNames = ('(UTC) Dublin, Edinburgh, Lisbon, London', '(GMT) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London', '(UTC+00:00) Dublin, Edinburgh, Lisbon, London')
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            Server timezone set correctly
+        WARNING:
+        FAIL:
+            Server timezone is incorrect and should be set to {string}
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-reg-02-timezone

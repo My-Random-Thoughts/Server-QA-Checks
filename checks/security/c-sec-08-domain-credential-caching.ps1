@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Check system is not caching domain credentials
+        Check system is not caching domain credentials.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    Domain credential caching is disabled
-    WARNING:
-    FAIL:    Domain credential caching is enabled / Registry setting not found
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            Domain credential caching is disabled
+        WARNING:
+        FAIL:
+            Domain credential caching is enabled
+            Registry setting not found
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sec-08-domain-credential-caching
@@ -46,7 +56,7 @@ Function c-sec-08-domain-credential-caching
     
     If ([string]::IsNullOrEmpty($keyVal) -eq $false)
     {
-        If ($keyVal -eq $script:appSettings['EnableDomainCredentialCaching'])
+        If ($keyVal -eq '0')
         {
             $result.result  = $script:lang['Pass']
             $result.message = 'Domain credential caching is disabled'

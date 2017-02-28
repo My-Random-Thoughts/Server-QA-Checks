@@ -3,16 +3,26 @@
         Check all local users to ensure that no non-standard accounts exist.  Unless the server is not in a domain, there should be no additional user accounts.
         Example standard accounts include "ASPNET", "__VMware"
 
+    REQUIRED-INPUTS:
+        IgnoreTheseUsers - List of know user or groups accounts to ignore
 
-    PASS:    No additional local accounts exist
-    WARNING:
-    FAIL:    One or more local accounts exist
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        IgnoreTheseUsers = ('Guest', 'ASPNET', '___VMware')
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            No additional local accounts exist
+        WARNING:
+        FAIL:
+            One or more local accounts exist
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-acc-01-local-users

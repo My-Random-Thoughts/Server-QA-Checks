@@ -1,18 +1,29 @@
-<#
+﻿<#
     DESCRIPTION: 
-        Check sentinel monitoring agent is installed, and that the correct port is open to the management server
+        Check sentinel monitoring agent is installed, and that the correct port is open to the management server.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    Sentinel agent found, Port {0} open to {1}
-    WARNING:
-    FAIL:    Sentinel agent not found, install required / Port {0} not open to {1}
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            Sentinel agent found, port {port} open to {server}
+        WARNING:
+        FAIL:
+            Sentinel agent found, port {port} not open to {server}
+            Sentinel agent not found, install required
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
-    REQUIRED-FUNCTIONS: Win32_Product, Test-Port
+    REQUIRED-FUNCTIONS:
+        Win32_Product
+        Test-Port
 #>
 
 Function c-com-07-sentinel-agent-installed
@@ -67,8 +78,8 @@ Function c-com-07-sentinel-agent-installed
             If ([string]::IsNullOrEmpty($($valCons[$key].host)) -eq $false)
             {
                 $portTest = Test-Port -serverName $($valCons[$key].host) -Port $($valCons[$key].port)
-                If ($portTest -eq $true) { $result.data += ('Port {0} open to {1}'     -f $($valCons[$key].port), $($valCons[$key].host))                                        }
-                Else                     { $result.data += ('Port {0} not open to {1}' -f $($valCons[$key].port), $($valCons[$key].host)); $result.result = $script:lang['Fail'] }
+                If ($portTest -eq $true) { $result.data += ('Port {0} open to {1}'     -f $($valCons[$key].port), $($valCons[$key].host.ToLower()))                                        }
+                Else                     { $result.data += ('Port {0} not open to {1}' -f $($valCons[$key].port), $($valCons[$key].host.ToLower())); $result.result = $script:lang['Fail'] }
             }
         }
     }

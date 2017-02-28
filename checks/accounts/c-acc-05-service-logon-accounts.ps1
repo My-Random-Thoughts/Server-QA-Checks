@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Checks all services to ensure no user accounts are assigned.  If specific application service accounts are required then they should be domain 
-        level accounts (not local) and restricted from interactice access by policy.
+        Checks all services to ensure no user accounts are assigned.
+        If specific application service accounts are required then they should be domain level accounts (not local) and restricted from interactice access by policy.
 
+    REQUIRED-INPUTS:
+        IgnoreTheseUsers - List of known user or groups accounts to ignore
 
-    PASS:    No services found running under a local accounts
-    WARNING:
-    FAIL:    One or more services was found to be running under local accounts
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        IgnoreTheseUsers = ('NT AUTHORITY\\NetworkService', 'NT AUTHORITY\\LocalService', 'LocalSystem')
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            No services found running under a local accounts
+        WARNING:
+        FAIL:
+            One or more services was found to be running under local accounts
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-acc-05-service-logon-accounts

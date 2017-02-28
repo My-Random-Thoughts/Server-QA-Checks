@@ -1,18 +1,30 @@
 ﻿<#
     DESCRIPTION: 
         Check local disk array management agent is installed on the server.
-        ** ONLY CHECKS IF SOFTWARE INSTALLED **
+        This only checks that known software is installed.  A manual check must be done to ensure it is configured correctly.
 
+    REQUIRED-INPUTS:
+        ProductNames - List of sofware to check if installed
 
-    PASS:
-    WARNING:
-    FAIL:    Disk management software not found, install required
-    MANUAL:  {0} found
-    NA:      Not a physical machine
+    DEFAULT-VALUES:
+        ProductNames = ('HP Array Configuration Utility', 'Dell OpenManage Server Administrator', 'Broadcom Drivers And Management Applications')
 
-    APPLIES: Physicals
+    RESULTS:
+        PASS:
+        WARNING:
+        FAIL:
+            Disk management software not found, install required
+        MANUAL:
+            {product} found
+        NA:
+            Not a physical machine
 
-    REQUIRED-FUNCTIONS: Win32_Product, Check-VMware
+    APPLIES:
+        Physical Servers
+
+    REQUIRED-FUNCTIONS:
+        Win32_Product
+        Check-VMware
 #>
 
 Function c-drv-07-disk-management-agent

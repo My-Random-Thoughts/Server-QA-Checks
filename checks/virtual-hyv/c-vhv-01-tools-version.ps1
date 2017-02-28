@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Check that the latest HyperV integration services are installed
+        Check that the latest HyperV integration services are installed.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    
-    WARNING:
-    FAIL:    Integration services not installed
-    MANUAL:  Integration services found
-    NA:      Not a virtual machine
+    RESULTS:
+        PASS:    
+        WARNING:
+        FAIL:
+            Integration services not installed
+        MANUAL:
+            Integration services found
+        NA:
+            Not a virtual machine
 
-    APPLIES: Virtuals
+    APPLIES:
+        Virtual Servers
 
-    REQUIRED-FUNCTIONS: Check-HyperV
+    REQUIRED-FUNCTIONS:
+        Check-HyperV
 #>
 
 Function c-vhv-01-tools-version

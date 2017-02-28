@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Checks to see if the total VM size is less than 1tb
+        Checks to see if the total VM size is less than 1TB.
 
-        
+    REQUIRED-INPUTS:
+        None
 
-    PASS:    VM is smaller than 1TB
-    WARNING: VM is larger than 1TB.  Make sure there is an engineering exception in place for this
-    FAIL:
-    MANUAL:
-    NA:      Not a virtual machine
+    DEFAULT-VALUES:
+        None
 
-    APPLIES: Virtuals
+    RESULTS:
+        PASS:
+            VM is smaller than 1TB
+        WARNING:
+            VM is larger than 1TB.  Make sure there is an engineering exception in place for this
+        FAIL:
+        MANUAL:
+        NA:
+            Not a virtual machine
 
-    REQUIRED-FUNCTIONS: Check-VMware
+    APPLIES:
+        Virtual Servers
+
+    REQUIRED-FUNCTIONS:
+        Check-VMware
 #>
 
 Function c-vmw-06-total-vm-size

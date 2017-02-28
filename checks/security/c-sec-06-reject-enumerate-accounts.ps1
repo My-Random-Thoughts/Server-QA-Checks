@@ -2,17 +2,27 @@
     DESCRIPTION: 
         Ensure the system is set to reject attempts to enumerate accounts in the SAM by anonymous users.
 
+    REQUIRED-INPUTS:
+        None
 
-    
-    PASS:    Reject annonymous account enumeration is enabled
-    WARNING:
-    FAIL:    Reject annonymous account enumeration is disabled / Registry setting not found
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        None
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            Reject annonymous account enumeration is enabled
+        WARNING:
+        FAIL:
+            Reject annonymous account enumeration is disabled
+            Registry setting not found
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sec-06-reject-enumerate-accounts
@@ -46,7 +56,7 @@ Function c-sec-06-reject-enumerate-accounts
 
     If ([string]::IsNullOrEmpty($keyVal) -eq $false)
     {
-        If ($keyVal -eq $script:appSettings['RejectAnnonymousAccountEnumeration'])
+        If ($keyVal -eq '1')
         {
             $result.result  = $script:lang['Pass']
             $result.message = 'Reject annonymous account enumeration is enabled'

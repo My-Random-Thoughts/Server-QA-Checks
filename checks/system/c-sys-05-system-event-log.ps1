@@ -1,18 +1,29 @@
 ﻿<#
     DESCRIPTION: 
-        Check System Event Log and ensure no errors or warnings are present in the last 14 days.  If found, will return the latest 15 entries
+        Check System Event Log and ensure no errors or warnings are present in the last 14 days.  If found, will return the latest y entries
 
+    REQUIRED-INPUTS:
+        GetLatestEntriesAge   - Return all entries for this number of days|Integer
+        GetLatestEntriesCount - Return this number of entries|Integer
 
+    DEFAULT-VALUES:
+        GetLatestEntriesAge   = '14'
+        GetLatestEntriesCount = '15'
 
-    PASS:    No errors found in system event log
-    WARNING: Errors were found in the system event log
-    FAIL:
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            No errors found in system event log
+        WARNING:
+            Errors were found in the system event log
+        FAIL:
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sys-05-system-event-log

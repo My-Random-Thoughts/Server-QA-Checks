@@ -1,18 +1,27 @@
 ﻿<#
     DESCRIPTION:
-        Ensure key exchange algorithms are set correctly.  Settings taken from https://www.nartac.com/Products/IISCrypto/Default.aspx using "Best Practices/FIPS 140-2" settings
+        Ensure key exchange algorithms are set correctly.  Settings taken from https://www.nartac.com/Products/IISCrypto/Default.aspx using "Best Practices/FIPS 140-2" settings.
 
+    REQUIRED-INPUTS:
+        KeyExchangeAlgorithms - List of Key Exchange Algorithms that should be used
 
+    DEFAULT-VALUES:
+        KeyExchangeAlgorithms = ('Diffie-Hellman', 'ECDH', 'PKCS')
 
-    PASS:    All key exchange algorithms set correctly
-    WARNING:
-    FAIL:    One or more key exchange algorithms set incorrectly
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            All key exchange algorithms set correctly
+        WARNING:
+        FAIL:
+            One or more key exchange algorithms set incorrectly
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sec-03-schannel-p3-keyexchangealgorithms

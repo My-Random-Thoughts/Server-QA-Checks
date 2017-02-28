@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Check IPv6 has been unbound on all active NICs, or globally
+        Check IPv6 has been unbound on all active NICs, or globally.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    IPv6 disabled globally / IPv6 enabled globally, but disabled on all NICs
-    WARNING:
-    FAIL:    IPv6 enabled globally, and NIC(s) found with IPv6 enabled
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            IPv6 disabled globally
+            IPv6 enabled globally, but disabled on all NICs
+        WARNING:
+        FAIL:
+            IPv6 enabled globally, and NIC(s) found with IPv6 enabled
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-net-01-no-ipv6

@@ -2,17 +2,27 @@
     DESCRIPTION: 
         Ensure the system is set to restrict anonymous access to named pipes
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    Restrict annonymous pipe/share access is enabled
-    WARNING:
-    FAIL:    Restrict annonymous pipe/share access is disabled / Registry setting not found
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            Restrict annonymous pipe/share access is enabled
+        WARNING:
+        FAIL:
+            Restrict annonymous pipe/share access is disabled
+            Registry setting not found
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sec-10-anonymous-pipe-share-access
@@ -46,7 +56,7 @@ Function c-sec-10-anonymous-pipe-share-access
 
     If ([string]::IsNullOrEmpty($keyVal) -eq $false)
     {
-        If ($keyVal -eq $script:appSettings['RejectAnnonymousShareAccess'])
+        If ($keyVal -eq '1')
         {
             $result.result  = $script:lang['Pass']
             $result.message = 'Restrict annonymous pipe/share access is enabled'

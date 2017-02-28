@@ -1,18 +1,31 @@
 ﻿<#
     DESCRIPTION: 
-        Check if Windows firewall is enabled or disabled
+        Check if Windows firewall is enabled or disabled for each of the three profiles.  Set to "0" for off, and "1" for on
 
+    REQUIRED-INPUTS:
+        DomainProfile   - "0|1" - Domain firewall state (enabled / disabled)
+        PublicProfile   - "0|1" - Public firewall state (enabled / disabled)
+        StandardProfile - "0|1" - Standard (Home) firewall state (enabled / disabled)
 
+    DEFAULT-VALUES:
+        DomainProfile   = '0'
+        PublicProfile   = '0'
+        StandardProfile = '0'
 
-    PASS:    Windows firewall is set correctly
-    WARNING: 
-    FAIL:    Windows firewall is not set correctly
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            Windows firewall is set correctly
+        WARNING: 
+        FAIL:
+            Windows firewall is not set correctly
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sec-15-firewall-state

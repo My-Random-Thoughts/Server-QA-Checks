@@ -1,18 +1,29 @@
 ﻿<#
     DESCRIPTION: 
-        Check that the latest vmware tools are installed
+        Check that the latest vmware tools are installed.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    VMware tools are up to date
-    WARNING:
-    FAIL:    VMware tools can be upgraded
-    MANUAL:  Unable to check the VMware Tools upgrade status
-    NA:      Not a virtual machine
+    RESULTS:
+        PASS:
+            VMware tools are up to date
+        WARNING:
+        FAIL:
+            VMware tools can be upgraded
+        MANUAL:
+            Unable to check the VMware Tools upgrade status
+        NA:
+            Not a virtual machine
 
-    APPLIES: Virtuals
+    APPLIES:
+        Virtual Servers
 
-    REQUIRED-FUNCTIONS: Check-VMware
+    REQUIRED-FUNCTIONS:
+        Check-VMware
 #>
 
 Function c-vmw-01-tools-version

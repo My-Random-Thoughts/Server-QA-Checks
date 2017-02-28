@@ -1,18 +1,29 @@
 ﻿<#
     DESCRIPTION: 
-        Check the local administrators group to ensure no non-standard accounts exist.  If there is a specific application requirement
-        for local administration access then these need to be well documented.
+        Check the local administrators group to ensure no non-standard accounts exist.
+        If there is a specific application requirement for local administration access then these need to be well documented.
 
+    REQUIRED-INPUTS:
+        IgnoreTheseUsers - List of know user or groups accounts to ignore
 
-    PASS:    No local administrators found
-    WARNING: This is a workgroup server, is this correct.?
-    FAIL:    One or more local administrator accounts exist
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        IgnoreTheseUsers = ('Domain Admins', 'Enterprise Admins')
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            No local administrators found
+        WARNING:
+            This is a workgroup server, is this correct.?
+        FAIL:
+            One or more local administrator accounts exist
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-acc-03-local-admins

@@ -655,8 +655,9 @@ Function Add-HoverHelp
             If ($xml.xml.ChildNodes.ToString() -like '*manual*' ) { $help += '<li><span>{0}</span><span>{1}</span></li>' -f $script:lang['Manual'],         ($xml.xml.manual)  }
             If ($xml.xml.ChildNodes.ToString() -like '*na*'     ) { $help += '<li><span>{0}</span><span>{1}</span></li>' -f $script:lang['Not-Applicable'], ($xml.xml.na)      }
             $help += '<br/><li><span>{0}</span><span>{1}</span></li>' -f $script:lang['Applies-To'], ($xml.xml.applies).Replace(', ','<br/>')
+            $help = $help.Replace('!n', '<br/>')
         }
-        Catch { $help = '' } # No help if XML is invalid
+        Catch { $help = $($_.Exception.Message) }    # No help if XML is invalid
     }
     Return $help
 }

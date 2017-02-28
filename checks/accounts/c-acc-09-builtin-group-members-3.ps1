@@ -1,18 +1,34 @@
-<#
+﻿<#
     DESCRIPTION: 
-        Checks the builtin group memberships to make sure specific users or groups are members.
-        If there is only one entry in "GroupMembers", then "AllMustExist" will be forced to "TRUE"
-        This is check 3 of 3 that can be used to check different groups.
+        Checks the builtin group memberships to make sure specific users or groups are members.  If there is only one entry in "GroupMembers", then "AllMustExist" will be set to "TRUE".
+        !nThis is check 3 of 3 that can be used to check different groups.
 
-    PASS:    No additional users exist / Additional users exist
-    WARNING: Invalid group name
-    FAIL:    Additional users exist
-    MANUAL:
-    NA:
+    REQUIRED-INPUTS:
+        AllMustExist - "True|False" - Do all group members need to exist for a "Pass"
+        GroupMembers - List of users or groups that should listed as a member
+        GroupName    - Local group name to check
 
-    APPLIES: All
+    DEFAULT-VALUES:
+        AllMustExist = 'False'
+        GroupMembers = ('')
+        GroupName    = ''
+
+    RESULTS:
+        PASS:
+            No additional users exist
+            Additional users exist
+        WARNING:
+            Invalid group name
+        FAIL:
+            Additional users exist
+        MANUAL:
+        NA:
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-acc-09-builtin-group-members-3

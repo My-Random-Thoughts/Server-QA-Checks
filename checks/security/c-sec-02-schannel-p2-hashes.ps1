@@ -1,18 +1,29 @@
 ﻿<#
     DESCRIPTION: 
-        Ensure hashes are set correctly.   Settings taken from https://www.nartac.com/Products/IISCrypto/Default.aspx using "Best Practices/FIPS 140-2" settings
+        Ensure hashes are set correctly.  Settings taken from https://www.nartac.com/Products/IISCrypto/Default.aspx using "Best Practices/FIPS 140-2" settings.
 
+    REQUIRED-INPUTS:
+        EnabledHashes  - List of hashes that should be enabled
+        DisabledHashes - List of hashes that should be disabled
 
+    DEFAULT-VALUES:
+        EnabledHashes  = ('SHA', 'SHA256', 'SHA384', 'SHA512')
+        DisabledHashes = ('MD5')
 
-    PASS:    All hashes set correctly
-    WARNING:
-    FAIL:    One or more hashes set incorrectly
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            All hashes set correctly
+        WARNING:
+        FAIL:
+            One or more hashes set incorrectly
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sec-02-schannel-p2-hashes

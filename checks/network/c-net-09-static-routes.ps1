@@ -1,18 +1,36 @@
 ﻿<#
     DESCRIPTION:
-        Checks to make sure the specified static routes have been added.
-        Add routes to check as: StaticRoute01 = ("source", "mask", "gateway").
-        To check for no extra persistent routes, use: StaticRoute01 = ("None", "", "").
+        Checks to make sure the specified static routes have been added.  Add routes to check as: StaticRoute01 = ("source", "mask", "gateway").
+        To check for no extra persistent routes, use: StaticRoute01 = ("None", "", "").  Up to 99 routes can be checked.
+        You must edit the settings file manually for more than the currently configured.
 
-    PASS:    All static routes are present
-    WARNING:
-    FAIL:    One or more static routes are missing or incorrect
-    MANUAL:
-    NA:      No static routes to check
+    REQUIRED-INPUTS:
+        StaticRoute01 - Single static route to check.  Order is: Source, Mask, Gateway|IPv4
+        StaticRoute02 - Single static route to check.  Order is: Source, Mask, Gateway|IPv4
+        StaticRoute03 - Single static route to check.  Order is: Source, Mask, Gateway|IPv4
+        StaticRoute04 - Single static route to check.  Order is: Source, Mask, Gateway|IPv4
 
-    APPLIES: All
+    DEFAULT-VALUES:
+        StaticRoute01 = ('', '', '')
+        StaticRoute02 = ('', '', '')
+        StaticRoute03 = ('', '', '')
+        StaticRoute04 = ('', '', '')
+
+    RESULTS:
+        PASS:
+            All static routes are present
+        WARNING:
+        FAIL:
+            One or more static routes are missing or incorrect
+        MANUAL:
+        NA:
+            No static routes to check
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-net-09-static-routes

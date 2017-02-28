@@ -2,17 +2,27 @@
     DESCRIPTION: 
         Ensure the system is set to reject attempts to enumerate shares in the SAM by anonymous users. 
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    Reject annonymous share enumeration is enabled
-    WARNING:
-    FAIL:    Reject annonymous share enumeration is disabled / Registry setting not found
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            Reject annonymous share enumeration is enabled
+        WARNING:
+        FAIL:
+            Reject annonymous share enumeration is disabled
+            Registry setting not found
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sec-07-reject-enumerate-shares
@@ -46,7 +56,7 @@ Function c-sec-07-reject-enumerate-shares
  
     If ([string]::IsNullOrEmpty($keyVal) -eq $false)
     {
-        If ($keyVal -eq $script:appSettings['RejectAnnonymousShareEnumeration'])
+        If ($keyVal -eq '1')
         {
             $result.result  = $script:lang['Pass']
             $result.message = 'Reject annonymous share enumeration is enabled'

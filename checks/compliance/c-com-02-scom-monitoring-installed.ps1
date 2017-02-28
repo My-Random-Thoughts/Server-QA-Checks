@@ -1,18 +1,30 @@
 <#
     DESCRIPTION: 
-        Check relevant monitoring tool agent is installed and that the correct port is open to the management server
+        Check relevant monitoring tool agent is installed and that the correct port is open to the management server.
 
+    REQUIRED-INPUTS:
+        ProductNames - List of SCOM agent product names to search for
 
+    DEFAULT-VALUES:
+        ProductNames = ('Microsoft Monitoring Agent', 'System Center Operations Manager', 'Operations Manager Agent')
 
-    PASS:    {0} found, Port {1} open to {2}
-    WARNING:
-    FAIL:    Monitoring software not found, install required / {0} found, Agent not configured with port and/or servername / {0} found, Port {1} not open to {2}
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            {product} found, Port {port} open to {server}
+        WARNING:
+        FAIL:
+            Monitoring software not found, install required
+            {product} found, agent not configured with port and/or servername
+            {product} found, port {port} not open to {server}
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
-    REQUIRED-FUNCTIONS: Win32_Product, Test-Port
+    REQUIRED-FUNCTIONS:
+        Test-Port
+        Win32_Product
 #>
 
 Function c-com-02-scom-monitoring-installed
@@ -84,13 +96,13 @@ Function c-com-02-scom-monitoring-installed
             {
                 $result.result  = $script:lang['Pass']
                 $result.message = '{0} found' -f $prodName
-                $result.data    = 'Version {0},#Port {1} open to {2}' -f $prodVer, $valPort, $valName
+                $result.data    = 'Version {0},#Port {1} open to {2}' -f $prodVer, $valPort, $valName.ToLower()
             }
             Else
             {
                 $result.result  = $script:lang['Fail']
                 $result.message = '{0} found' -f $prodName
-                $result.data    = 'Version {0},#Port {1} not open to {2}' -f $prodVer, $valPort, $valName
+                $result.data    = 'Version {0},#Port {1} not open to {2}' -f $prodVer, $valPort, $valName.ToLower()
             }
         }
         Else

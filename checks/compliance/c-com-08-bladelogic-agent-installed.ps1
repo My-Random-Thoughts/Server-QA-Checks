@@ -1,18 +1,35 @@
-<#
+﻿<#
     DESCRIPTION: 
         Check BladeLogic monitoring agent is installed, and that the correct port is listening.
-        Also checks that the USERS.LOCAL file is configured correctly.
+        Also check that the USERS.LOCAL file is configured correctly.
 
+    REQUIRED-INPUTS:
+        ListeningPort - Port number that the agent listens on|Integer
+        CustomerCode  - Customer name found in USERS.LOCAL: ACME_L3AdminW:* rw,map=Administrator
+        LocalAccount  - Mapped account name found in USERS.LOCAL: ACME_L3AdminW:* rw,map=Administrator
 
-    PASS:    BladeLogic agent found, and file confgiured
-    WARNING:
-    FAIL:    BladeLogic agent not found, install required / Required port not listening / USERS.LOCAL not configured / USERS.LOCAL not found
-    MANUAL:
-    NA:
+    DEFAULT-VALUES:
+        ListeningPort = '4750'
+        CustomerCode  = 'ACME'
+        LocalAccount  = 'Administrator'
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            BladeLogic agent found, and file confgiured
+        WARNING:
+        FAIL:
+            BladeLogic agent not found, install required
+            Required port not listening
+            USERS.LOCAL not configured
+            USERS.LOCAL not found
+        MANUAL:
+        NA:
 
-    REQUIRED-FUNCTIONS: Win32_Product
+    APPLIES:
+        All Servers
+
+    REQUIRED-FUNCTIONS:
+        Win32_Product
 #>
 
 Function c-com-08-bladelogic-agent-installed
@@ -73,7 +90,7 @@ Function c-com-08-bladelogic-agent-installed
             Else
             {
                 $result.result  = $script:lang['Fail']
-                $result.data   += 'USERS.LOCAL not found'
+                $result.data   += 'USERS.LOCAL not found, or ADMIN$ share not enabled'
             }
         }
         Catch

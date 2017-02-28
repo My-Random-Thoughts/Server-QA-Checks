@@ -1,18 +1,27 @@
 ﻿<#
     DESCRIPTION: 
-        Check for a pending reboot
+        Check for a pending reboot.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    Server is not waiting for a reboot
-    WARNING:
-    FAIL:    Server is waiting for a reboot
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            Server is not waiting for a reboot
+        WARNING:
+        FAIL:
+            Server is waiting for a reboot
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sys-01-pending-reboot

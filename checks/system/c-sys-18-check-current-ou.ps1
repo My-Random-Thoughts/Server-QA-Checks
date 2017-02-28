@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Check that the current server OU path is not in the default location(s).
+        Check that the current server OU path is not in the default location(s).  The list of OUs should contain at least the default "Computers" OU, and must be the full distinguished name of the locations.
 
+    REQUIRED-INPUTS:
+        NoInTheseOUs - List of full-path OU names that the servers should not be located in.
 
+    DEFAULT-VALUES:
+        NoInTheseOUs = ('ou=Computers,dc=ACME,dc=LAN', 'ou=Quarantine,dc=ACME,dc=LAN')
 
-    PASS:    Server not in default location
-    WARNING:
-    FAIL:    Server is in default location
-    MANUAL:
-    NA:      Not a domain joined server
+    RESULTS:
+        PASS:
+            Server not in default location
+        WARNING:
+        FAIL:
+            Server is in default location
+        MANUAL:
+        NA:
+            Not a domain joined server
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
-    REQUIRED-FUNCTIONS: 
+    REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sys-18-check-current-ou

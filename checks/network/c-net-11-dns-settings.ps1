@@ -1,18 +1,32 @@
 ﻿<#
     DESCRIPTION: 
-        Checks that all DNS servers are configured, and if required, in the right order
+        Checks that all DNS servers are configured, and if required, in the right order.
 
+    REQUIRED-INPUTS:
+        DNSServers    - "True|False" - Should the DNS order match exactly for a Pass.?
+        OrderSpecific - List of DNS IP addresses that you want to check|IPv4
 
+    DEFAULT-VALUES:
+        DNSServers    = 'True'
+        OrderSpecific = ('')
 
-    PASS:    All DNS servers configured (and in the right order)
-    WARNING:
-    FAIL:    DNS Server count mismatch / Mismatched DNS servers / No DNS servers are configured / DNS Server list is not in the required order
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            All DNS servers configured (and in the right order)
+        WARNING: 
+        FAIL:
+            DNS Server count mismatch
+            Mismatched DNS servers
+            DNS Server list is not in the required order
+            No DNS servers are configured
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-net-11-dns-settings

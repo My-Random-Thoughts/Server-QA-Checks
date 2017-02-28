@@ -2,17 +2,26 @@
     DESCRIPTION: 
         Ensure autorun is disabled.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    Autorun is disabled
-    WARNING:
-    FAIL:    Autorun is enabled
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            Autorun is disabled
+        WARNING:
+        FAIL:
+            Autorun is enabled
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sys-11-autorun-disabled

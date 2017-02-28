@@ -1,18 +1,28 @@
 <#
     DESCRIPTION: 
-        Ensure all drives types are set to BASIC and with a partition style of MBR
+        Ensure all drives types are set to BASIC and with a partition style of MBR.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    All drive types are BASIC, with partition styles of MBR
-    WARNING:
-    FAIL:    One or more partition styles are not MBR / One or more drives types are not BASIC
-    MANUAL:  Unable to get drive information, please check manually
-    NA:
+    RESULTS:
+        PASS:
+            All drive types are BASIC, with partition styles of MBR
+        WARNING:
+        FAIL:
+            One or more partition styles are not MBR
+            One or more drives types are not BASIC
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-drv-09-partition-type

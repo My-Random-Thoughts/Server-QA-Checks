@@ -2,17 +2,26 @@
     DESCRIPTION: 
         Check power plan is set to High Performance.
         
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    Power plan is set correctly
-    WARNING:
-    FAIL:    Power plan is not set correctly
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            Power plan is set correctly
+        WARNING:
+        FAIL:
+            Power plan is not set correctly
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
-    REQUIRED-FUNCTIONS: Check-NameSpace
+    REQUIRED-FUNCTIONS:
+        Check-NameSpace
 #>
 
 Function c-sys-14-power-plan

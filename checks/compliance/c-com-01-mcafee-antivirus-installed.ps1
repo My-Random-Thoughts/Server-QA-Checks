@@ -1,18 +1,33 @@
 ﻿<#
     DESCRIPTION: 
-        Check McAfee anti virus is installed and updating automatically, also checks that virus definitions are up to date.
+        Check that McAfee anti-virus is installed and virus definitions are up to date.
 
+    REQUIRED-INPUTS:
+        MaximumDATAgeAllowed - Maximum number of days that DATs are allowed to be out of date|Integer
+        ProductName          - Full name of the McAfee product
+        ProductVersion       - Current version of the product that you are using|Decimal
 
+    DEFAULT-VALUES:
+        MaximumDATAgeAllowed = '7'
+        ProductName          = 'McAfee VirusScan Enterprise'
+        ProductVersion       = '8.8'
 
-    PASS:    McAfee product found, DATs are OK
-    WARNING:
-    FAIL:    McAfee product not found, install required / DATs are not up-to-date / No DAT version found
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            McAfee product found, DATs are OK
+        WARNING:
+        FAIL:
+            McAfee product not found, install required
+            DATs are not up-to-date
+            No DAT version found
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
-    REQUIRED-FUNCTIONS: Win32_Product
+    REQUIRED-FUNCTIONS:
+        Win32_Product
 #>
 
 Function c-com-01-mcafee-antivirus-installed

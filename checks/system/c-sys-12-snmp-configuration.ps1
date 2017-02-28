@@ -2,17 +2,28 @@
     DESCRIPTION: 
         Check if SNMP role is install on the server.  If so, ensure the SNMP community strings follow the secure password policy.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    SNMP Service installed, but disabled
-    WARNING:
-    FAIL:    SNMP Service installed, no communities configured
-    MANUAL:  SNMP Service installed, communities listed
-    NA:      SNMP Service not installed
+    RESULTS:
+        PASS:
+            SNMP Service installed, but disabled
+        WARNING:
+        FAIL:
+            SNMP Service installed, no communities configured
+        MANUAL:
+            SNMP Service installed, communities listed
+        NA:
+            SNMP Service not installed
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sys-12-snmp-configuration

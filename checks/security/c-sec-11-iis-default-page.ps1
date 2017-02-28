@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Checks to see if the default webpage is present in IIS
+        Checks to see if the default webpage is present in IIS, it should be removed.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    IIS Installed, "iisstart.htm" not listed in default documents
-    WARNING:
-    FAIL:    IIS Installed, default document "iisstart.htm" configured
-    MANUAL:
-    NA:      IIS not Installed
+    RESULTS:
+        PASS:
+            IIS Installed, "iisstart.htm" not listed in default documents
+        WARNING:
+        FAIL:
+            IIS Installed, default document "iisstart.htm" configured
+        MANUAL:
+        NA:
+            IIS not Installed
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
-    REQUIRED-FUNCTIONS: Check-NameSpace
+    REQUIRED-FUNCTIONS:
+        Check-NameSpace
 #>
 
 Function c-sec-11-iis-default-page

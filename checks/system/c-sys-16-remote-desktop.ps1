@@ -1,18 +1,28 @@
 ﻿<#
     DESCRIPTION: 
-        Check that remote desktop is enabled and that Network Level Authentication (NLA) is set
+        Check that remote desktop is enabled and that Network Level Authentication (NLA) is set.
 
+    REQUIRED-INPUTS:
+        None
 
+    DEFAULT-VALUES:
+        None
 
-    PASS:    Secure remote desktop and NLA enabled
-    WARNING: Network Level Authentication is not set
-    FAIL:    Secure remote desktop disabled
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            Secure remote desktop and NLA enabled
+        WARNING:
+            Network Level Authentication is not set
+        FAIL:
+            Secure remote desktop disabled
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
-    REQUIRED-FUNCTIONS: Check-NameSpace
+    REQUIRED-FUNCTIONS:
+        Check-NameSpace
 #>
 
 Function c-sys-16-remote-desktop

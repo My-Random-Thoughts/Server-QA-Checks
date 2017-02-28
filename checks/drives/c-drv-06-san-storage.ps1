@@ -1,18 +1,30 @@
 ﻿<#
     DESCRIPTION: 
         Where SAN storage is used, ensure multipathing software is installed and Dual Paths are present and functioning.
-        ** ONLY CHECKS IF SOFTWARE INSTALLED **
+        This only checks that known software is installed.  A manual check must be done to ensure it is configured correctly.
 
+    REQUIRED-INPUTS:
+        ProductNames - List of software to check if installed
 
-    PASS:
-    WARNING:
-    FAIL:    SAN storage software not found, install required
-    MANUAL:  {0} found
-    NA:      Not a physical machine
+    DEFAULT-VALUES:
+        ProductNames = ('HDLM GUI', 'SANsurfer', 'Emulex FC')
 
-    APPLIES: Physicals
+    RESULTS:
+        PASS:
+        WARNING:
+        FAIL:
+            SAN storage software not found, install required
+        MANUAL:
+            {product} found
+        NA:
+            Not a physical machine
 
-    REQUIRED-FUNCTIONS: Win32_Product, Check-VMware
+    APPLIES:
+        Physical Servers
+
+    REQUIRED-FUNCTIONS:
+        Win32_Product
+        Check-VMware
 #>
 
 Function c-drv-06-san-storage
@@ -30,37 +42,48 @@ Function c-drv-06-san-storage
 
     If ((Check-VMware $serverName) -eq $false)
     {
-        Try
-        {
-            [boolean]$found = $false
-            $script:appSettings['ProductNames'] | ForEach {
-                [string]$verCheck = Win32_Product -serverName $serverName -displayName $_
-                If ([string]::IsNullOrEmpty($verCheck) -eq $false)
-                {
-                    $found            = $true
-                    [string]$prodName = $_
-                    [string]$prodVer  = $verCheck
-                }
-            }
-        }
-        Catch
-        {
-            $result.result  = $script:lang['Error']
-            $result.message = $script:lang['Script-Error']
-            $result.data    = $_.Exception.Message
-            Return $result
-        }        
+        [string]$query = 'SELECT Caption FROM Win32_OperatingSystem'
+        [string]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Caption
 
-        If ($found -eq $true)
+        If ($check -like '*201*')
         {
-            $result.result  = $script:lang['Manual']
-            $result.message = '{0} found'   -f $prodName
-            $result.data    = 'Version {0}' -f $prodVer
+            $result.result  = $script:lang['Not-Applicable']
+            $result.message = 'Windows 2012 and above use native multipathing'
         }
         Else
         {
-            $result.result  = $script:lang['Fail']
-            $result.message = 'SAN storage software not found, install required'
+            Try
+            {
+                [boolean]$found = $false
+                $script:appSettings['ProductNames'] | ForEach {
+                    [string]$verCheck = Win32_Product -serverName $serverName -displayName $_
+                    If ([string]::IsNullOrEmpty($verCheck) -eq $false)
+                    {
+                        $found            = $true
+                        [string]$prodName = $_
+                        [string]$prodVer  = $verCheck
+                    }
+                }
+            }
+            Catch
+            {
+                $result.result  = $script:lang['Error']
+                $result.message = $script:lang['Script-Error']
+                $result.data    = $_.Exception.Message
+                Return $result
+            }        
+
+            If ($found -eq $true)
+            {
+                $result.result  = $script:lang['Manual']
+                $result.message = '{0} found'   -f $prodName
+                $result.data    = 'Version {0}' -f $prodVer
+            }
+            Else
+            {
+                $result.result  = $script:lang['Fail']
+                $result.message = 'SAN storage software not found, install required'
+            }
         }
     }
     Else

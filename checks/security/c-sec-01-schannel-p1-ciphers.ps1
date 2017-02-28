@@ -1,18 +1,29 @@
 ﻿<#
     DESCRIPTION: 
-        Ensure security ciphers are set correctly.  Settings taken from https://www.nartac.com/Products/IISCrypto/Default.aspx using "Best Practices/FIPS 140-2" settings
+        Ensure security ciphers are set correctly.  Settings taken from https://www.nartac.com/Products/IISCrypto/Default.aspx using "Best Practices/FIPS 140-2" settings.
 
+    REQUIRED-INPUTS:
+        EnabledCiphers  - List of Ciphers that should be enabled
+        DisabledCiphers - List of Ciphers that should be disabled
 
+    DEFAULT-VALUES:
+        EnabledCiphers  = ('AES 128/128', 'AES 256/256', 'Triple DES 168/168')
+        DisabledCiphers = ('DES 56/56', 'NULL', 'RC2 128/128', 'RC2 40/128', 'RC2 56/128', 'RC2 56/56', 'RC4 128/128', 'RC4 40/128', 'RC4 56/128', 'RC4 64/128')
 
-    PASS:    All ciphers set correctly
-    WARNING:
-    FAIL:    One or more ciphers set incorrectly
-    MANUAL:
-    NA:
+    RESULTS:
+        PASS:
+            All ciphers set correctly
+        WARNING:
+        FAIL:
+            One or more ciphers set incorrectly
+        MANUAL:
+        NA:
 
-    APPLIES: All
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-sec-01-schannel-p1-ciphers

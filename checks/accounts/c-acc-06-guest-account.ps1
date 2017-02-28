@@ -2,16 +2,27 @@
     DESCRIPTION: 
         Checks to make sure that the guest user account has been disabled.  The guest account is located via the well known SID.
 
+    REQUIRED-INPUTS:
+        None
 
-    PASS:    Guest account is disabled
-    WARNING:
-    FAIL:    Guest account has not been disabled
-    MANUAL:
-    NA:      Guest account does not exist
+    DEFAULT-VALUES:
+        None
 
-    APPLIES: All
+    RESULTS:
+        PASS:
+            Guest account is disabled
+        WARNING:
+        FAIL:
+            Guest account has not been disabled
+        MANUAL:
+        NA:
+            Guest account does not exist
+
+    APPLIES:
+        All Servers
 
     REQUIRED-FUNCTIONS:
+        None
 #>
 
 Function c-acc-06-guest-account

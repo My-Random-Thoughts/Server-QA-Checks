@@ -1,18 +1,34 @@
 ﻿<#
     DESCRIPTION: 
-        Check network interfaces for known teaming names, manually check they are configured correctly.
-        Fail if no teams found or if server is a virtual.  Checked configuration is:
-        Teaming Mode: "Static Independent";  Load Balancing Mode: "Address Hash";  Standby Adapter: (set)
+        Check network interfaces for known teaming names, manually check they are configured correctly.  Fail if no teams found or if server is a virtual.  Checked configuration is:
+        Teaming Mode: "Static Independent";  Load Balancing Mode: "Address Hash";  Standby Adapter: (set).
 
-    PASS:    Network team count: {0}
-    WARNING:
-    FAIL:    No teamed network adapter(s) found / There are no network teams configured on this server / Native teaming enabled on virtual machine / Team configuration is not set correctly
-    MANUAL:  Teamed network adpater(s) found, check they are configured correctly
-    NA:      Not a physical server / Operating system not supported
+    REQUIRED-INPUTS:
+        NetworkTeamNames - List of network teaming adapters
 
-    APPLIES: Physicals
+    DEFAULT-VALUES:
+        NetworkTeamNames = ('HP Network Teaming', 'BASP Virtual Adapter')
 
-    REQUIRED-FUNCTIONS: Check-VMware
+    RESULTS:
+        PASS:
+            Network team count: {number}
+        WARNING:
+        FAIL:
+            No teamed network adapter(s) found
+            There are no network teams configured on this server
+            Native teaming enabled on virtual machine
+            Team configuration is not set correctly
+        MANUAL:
+            Teamed network adpater(s) found, check they are configured correctly
+        NA:
+            Not a physical server
+            Operating system not supported
+
+    APPLIES:
+        Physical Servers
+
+    REQUIRED-FUNCTIONS:
+        Check-VMware
 #>
 
 Function c-net-07-network-teaming
