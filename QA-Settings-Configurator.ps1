@@ -801,7 +801,7 @@ Function Display-MainForm
             $newLVW.GridLines      = $False
             $newLVW.LabelWrap      = $False
             $newLVW.MultiSelect    = $False
-            $newLVW.Location       = '  3,  3'
+            $newLVW.Location       = '  3,   3'
             $newLVW.Size           = '730, 498'
             $newLVW.View           = 'Details'
             $newLVW.SmallImageList = $img_ListImages
@@ -841,7 +841,7 @@ Function Display-MainForm
                     {
                         [xml]$xmlHelp = New-Object 'System.Xml.XmlDataDocument'
                         $xmlHelp.LoadXml($script:qahelp[$checkCode])
-                        If ($xmlHelp.xml.Applies)     { $checkDesc  = "Applies To: $($xmlHelp.xml.Applies)`n`n" }
+                        If ($xmlHelp.xml.Applies)     { $checkDesc  = "Applies To: $($xmlHelp.xml.Applies)"     }
                         If ($xmlHelp.xml.Description) { $checkDesc +=             "$($xmlHelp.xml.Description)" }
                     }
                     Catch { }
@@ -850,12 +850,13 @@ Function Display-MainForm
                 # Default back to the scripts description of help if required
                 If ($checkDesc -eq '')
                 {
-                    [string]$content   = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script.ps1") -TotalCount 30) -join "`n")
+                    [string]$content   = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script.ps1") -TotalCount 40) -join "`n")
                     $regEx = [RegEx]::Match($content, "DESCRIPTION:((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))")
                     [string]$checkDesc = ($regEx.Groups[1].Value.Trim().Split("`n"))
                 }
 
-                Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', '')) -Group $guid -ImageIndex 1 -Enabled $True
+                $checkDesc = $checkDesc.Replace('.  ', '.').Replace('.', '.  ')
+                Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', "`n`n")) -Group $guid -ImageIndex 1 -Enabled $True
                 If ($settingsINI.ContainsKey($checkCode) -eq $true) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True }
             }
         }
@@ -955,14 +956,8 @@ Function Display-MainForm
                             $desc = ($desc.Split('-')[1]).Trim()
                             Break
                         }
-                        'List of'           # List
-                        {
-                            $type = 'LIST'
-                        }
-                        Default
-                        {
-                            $type = 'SIMPLE'
-                        }
+                        'List of' { $type = 'LIST'   }
+                        Default   { $type = 'SIMPLE' }
                     }
 
                     If ($desc.Contains('|') -eq $True)
@@ -970,11 +965,7 @@ Function Display-MainForm
                         [string]$vali = ($desc.Split('|')[1])
                         [string]$desc = ($desc.Split('|')[0])
                     }
-                    Else
-                    {
-                        [string]$vali = 'None'
-                    }
-                    
+                    Else { [string]$vali = 'None' }
                     Add-ListViewItem -ListView $lvwObject -Items $item -SubItems ($value, $type, $desc, $vali) -Group $guid -ImageIndex 1 -Enabled $($listItem.Checked)
                 }
 
