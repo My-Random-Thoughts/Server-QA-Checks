@@ -5,10 +5,10 @@
         You must edit the settings file manually for more than the currently configured.
 
     REQUIRED-INPUTS:
-        StaticRoute01 - Single static route to check.  Order is: Source, Mask, Gateway|IPv4
-        StaticRoute02 - Single static route to check.  Order is: Source, Mask, Gateway|IPv4
-        StaticRoute03 - Single static route to check.  Order is: Source, Mask, Gateway|IPv4
-        StaticRoute04 - Single static route to check.  Order is: Source, Mask, Gateway|IPv4
+        StaticRoute01 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
+        StaticRoute02 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
+        StaticRoute03 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
+        StaticRoute04 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
 
     DEFAULT-VALUES:
         StaticRoute01 = ('', '', '')
