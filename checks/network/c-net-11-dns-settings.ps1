@@ -3,12 +3,12 @@
         Checks that all DNS servers are configured, and if required, in the right order.
 
     REQUIRED-INPUTS:
-        DNSServers    - "True|False" - Should the DNS order match exactly for a Pass.?
-        OrderSpecific - List of DNS IP addresses that you want to check|IPv4
+        DNSServers    - List of DNS IP addresses that you want to check|IPv4
+        OrderSpecific - "True|False" - Should the DNS order match exactly for a Pass.?
 
     DEFAULT-VALUES:
-        DNSServers    = 'True'
-        OrderSpecific = ('')
+        DNSServers    = ('')
+        OrderSpecific = 'True'
 
     RESULTS:
         PASS:
