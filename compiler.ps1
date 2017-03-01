@@ -37,6 +37,7 @@ Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width, '─') }
 Function Load-IniFile
 {
     Param ([string]$InputFile)
+    If ($InputFile.ToLower().EndsWith('.ini') -eq $false) { $InputFile += '.ini' }
     If ((Test-Path -Path $InputFile) -eq $false)
     {
         Switch (Split-Path -Path (Split-Path -Path $InputFile -Parent) -Leaf)
