@@ -1,5 +1,6 @@
 #Requires -version 4
 Remove-Variable * -ErrorAction SilentlyContinue
+Set-StrictMode    -Version 2
 Clear-Host
 
 [Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')    | Out-Null
@@ -629,7 +630,6 @@ Function Display-MainForm
     }
 
     $Form_Cleanup_FormClosed   = {
-        $tab_Pages.Remove_SelectedIndexChanged($tab_Pages_SelectedIndexChanged)
         $btn_t4_Save.Add_Click($btn_t4_Save_Click)
         $btn_t1_Search.Remove_Click($btn_t1_Search_Click)
         $btn_t1_Import.Remove_Click($btn_t1_Import_Click)
@@ -650,7 +650,6 @@ Function Display-MainForm
         $MainFORM.Remove_FormClosing($MainFORM_FormClosing)
         $MainFORM.Remove_Load($MainFORM_Load)
         $MainFORM.Remove_Load($MainFORM_StateCorrection_Load)
-        $MainFORM.Remove_FormClosed($MainFORM_Cleanup_FormClosed)
     }
 #endregion
 ###################################################################################################
@@ -664,6 +663,7 @@ Function Display-MainForm
     Function ListView_SelectedIndexChanged ( [System.Windows.Forms.ListView]$SourceControl )
     {
         If ( $SourceControl.SelectedItems                -eq $null) { Return }
+        If ( $SourceControl.SelectedItems.Count          -eq  0   ) { Return }
         If (($SourceControl.SelectedItems[0].ImageIndex) -eq -1   ) { Return }
     }
 
@@ -801,7 +801,7 @@ Function Display-MainForm
             $newLVW.GridLines      = $False
             $newLVW.LabelWrap      = $False
             $newLVW.MultiSelect    = $False
-            $newLVW.Location       = '  3,   3'
+            $newLVW.Location       = '  3,  3'
             $newLVW.Size           = '730, 498'
             $newLVW.View           = 'Details'
             $newLVW.SmallImageList = $img_ListImages
@@ -841,7 +841,7 @@ Function Display-MainForm
                     {
                         [xml]$xmlHelp = New-Object 'System.Xml.XmlDataDocument'
                         $xmlHelp.LoadXml($script:qahelp[$checkCode])
-                        If ($xmlHelp.xml.Applies)     { $checkDesc  = "Applies To: $($xmlHelp.xml.Applies)"     }
+                        If ($xmlHelp.xml.Applies)     { $checkDesc  = "Applies To: $($xmlHelp.xml.Applies)`n`n" }
                         If ($xmlHelp.xml.Description) { $checkDesc +=             "$($xmlHelp.xml.Description)" }
                     }
                     Catch { }
@@ -850,13 +850,12 @@ Function Display-MainForm
                 # Default back to the scripts description of help if required
                 If ($checkDesc -eq '')
                 {
-                    [string]$content   = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script.ps1") -TotalCount 40) -join "`n")
+                    [string]$content   = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script.ps1") -TotalCount 30) -join "`n")
                     $regEx = [RegEx]::Match($content, "DESCRIPTION:((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))")
                     [string]$checkDesc = ($regEx.Groups[1].Value.Trim().Split("`n"))
                 }
 
-                $checkDesc = $checkDesc.Replace('.  ', '.').Replace('.', '.  ')
-                Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', "`n`n")) -Group $guid -ImageIndex 1 -Enabled $True
+                Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', '')) -Group $guid -ImageIndex 1 -Enabled $True
                 If ($settingsINI.ContainsKey($checkCode) -eq $true) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True }
             }
         }
@@ -895,7 +894,8 @@ Function Display-MainForm
 
         $MainFORM.Cursor         = 'WaitCursor'
         $lbl_ChangesMade.Visible = $False
-        [System.Collections.Hashtable]$settingsINI = (Load-IniFile -Inputfile "$script:scriptLocation\settings\$($cmo_t1_SettingsFile.Text).ini")
+        [System.Collections.Hashtable]$settingsINI   = (Load-IniFile -Inputfile "$script:scriptLocation\settings\$($cmo_t1_SettingsFile.Text).ini")
+        $SkippedChecks = ($SettingsINI.Keys | Where-Object { $_.EndsWith('-skip') })
 
         ForEach ($folder In $lst_t2_SelectChecks.Groups)
         {
@@ -916,7 +916,7 @@ Function Display-MainForm
                 # Create each item
                 [System.Collections.Hashtable]$iniKeys = $null
 
-                If (($settingsINI.$("$($listItem.Text)-skip").Keys).Count -gt 0) { $iniKeys = ($settingsINI.$("$($listItem.Text)-skip")) } Else { $iniKeys = ($settingsINI.$($listItem.Text)) }
+                If ($SkippedChecks.Contains($("$($listItem.Text)-skip"))) { $iniKeys = ($settingsINI.$("$($listItem.Text)-skip")) } Else { $iniKeys = ($settingsINI.$($listItem.Text)) }
                 ForEach ($item In (($iniKeys.Keys) | Sort-Object))
                 {
                     [string]$value = ($iniKeys.$item)
@@ -956,8 +956,14 @@ Function Display-MainForm
                             $desc = ($desc.Split('-')[1]).Trim()
                             Break
                         }
-                        'List of' { $type = 'LIST'   }
-                        Default   { $type = 'SIMPLE' }
+                        'List of'           # List
+                        {
+                            $type = 'LIST'
+                        }
+                        Default
+                        {
+                            $type = 'SIMPLE'
+                        }
                     }
 
                     If ($desc.Contains('|') -eq $True)
@@ -965,12 +971,16 @@ Function Display-MainForm
                         [string]$vali = ($desc.Split('|')[1])
                         [string]$desc = ($desc.Split('|')[0])
                     }
-                    Else { [string]$vali = 'None' }
+                    Else
+                    {
+                        [string]$vali = 'None'
+                    }
+
                     Add-ListViewItem -ListView $lvwObject -Items $item -SubItems ($value, $type, $desc, $vali) -Group $guid -ImageIndex 1 -Enabled $($listItem.Checked)
                 }
 
                 # Add 'spacing' gap between groups
-                If ($lvwObject.Groups[$guid].Items.Count -gt 0) { Add-ListViewItem -ListView $lvwObject -Items ' ' -Group $guid -ImageIndex -1 -Enabled $false }
+                If ($lvwObject.Groups[$guid].Items.Count -gt 0) { Add-ListViewItem -ListView $lvwObject -Items ' ' -SubItems ('','','','') -Group $guid -ImageIndex -1 -Enabled $false }
             }
         }
 
@@ -1031,9 +1041,15 @@ Function Display-MainForm
                     {
                         ForEach ($item In $group.Items)
                         {
-                            If (($item.SubItems[2].Text) -eq 'LIST') { [string]$out = "$(($item.SubItems[1].Text).Replace(';', ','))" }
-                            Else                                     { [string]$out = "$($item.SubItems[1].Text)" }
-
+                            Switch -Wildcard ($item.SubItems[2].Text)
+                            {
+                                'COMBO*' { [string]$out =  "$($item.SubItems[1].Text)" }
+                                'CHECK*' { [string]$out = "$(($item.SubItems[1].Text).Replace(';', ','))" }
+                                'LARGE'  { [string]$out =  "$($item.SubItems[1].Text)" }
+                                'LIST'   { [string]$out = "$(($item.SubItems[1].Text).Replace(';', ','))" }
+                                'SIMPLE' { [string]$out =  "$($item.SubItems[1].Text)" }
+                                Default  { }
+                            }
                             If ([string]::IsNullOrEmpty($($item.Text).Trim(' ')) -eq $False) { $outputFile.AppendLine("$(($item.Text).Trim().PadRight(34)) = $out") }
                         }
                         If (($group.Items.Count) -eq 0) { $outputFile.AppendLine('; No Settings') }
@@ -1251,7 +1267,6 @@ Function Display-MainForm
     $tab_Pages.Controls.Add($tab_Page2)    # Select Required Checks
     $tab_Pages.Controls.Add($tab_Page3)    # Specific QA Values
     $tab_Pages.Controls.Add($tab_Page4)    # Generate QA
-    $tab_Pages.Add_SelectedIndexChanged($tab_Pages_SelectedIndexChanged)
     $MainFORM.Controls.Add($tab_Pages)
 
     # tabpage1
@@ -1630,7 +1645,6 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
 ###################################################################################################
     $InitialFormWindowState = $MainFORM.WindowState
     $MainFORM.Add_Load($MainFORM_StateCorrection_Load)
-    $MainFORM.Add_FormClosed($MainFORM_Cleanup_FormClosed)
     Return $MainFORM.ShowDialog()
 }
 ###################################################################################################
