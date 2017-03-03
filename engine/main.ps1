@@ -55,10 +55,18 @@ Function Check-CommandLine
         $ws.Height =  $wh; $gh.UI.RawUI.Set_WindowSize($ws)
     }
     $script:screenwidth = ($ws.Width - 2)
-    Remove-Variable wh, ws, gh
 
     Clear-Host
     Write-Header -Message $script:lang['Header'] -Width $script:screenwidth
+
+    [array]$serverFilter = @()
+    If (Test-Path variable:ComputerName) { If ($ComputerName -ne $null) { $ComputerName | ForEach { If ($_.Length -gt 0) { $script:servers += $_.Trim() } } } }
+    $script:servers | ForEach {
+        If ($_ -eq '.') { $serverFilter += ${env:ComputerName}.ToLower() }
+        Else { If ($_.Trim() -eq '-ComputerName') { $_ = '' }; If ($_.Trim().Length -gt 2) { $serverFilter += $_.Trim().ToLower() } }
+    }
+    $script:servers = ($serverFilter | Select-Object -Unique | Sort-Object)
+    If ([string]::IsNullOrEmpty($script:servers) -eq $true) { Show-HelpScreen; Exit }
 
     # Check admin status
     If (-not ([Security.Principal.WindowsPrincipal] `
@@ -70,15 +78,6 @@ Function Check-CommandLine
         Write-Host ('')
         Break
     }
-
-    [array]$serverFilter = @()
-    If (Test-Path variable:ComputerName) { If ($ComputerName -ne $null) { $ComputerName | ForEach { If ($_.Length -gt 0) { $script:servers += $_.Trim() } } } }
-    $script:servers | ForEach {
-        If ($_ -eq '.') { $serverFilter += ${env:ComputerName}.ToLower() }
-        Else { If ($_.Trim() -eq '-ComputerName') { $_ = '' }; If ($_.Trim().Length -gt 2) { $serverFilter += $_.Trim().ToLower() } }
-    }
-    $script:servers = ($serverFilter | Select-Object -Unique | Sort-Object)
-    If ([string]::IsNullOrEmpty($script:servers) -eq $true) { Show-HelpScreen; Exit }
 }
 
 Function Start-QAProcess
