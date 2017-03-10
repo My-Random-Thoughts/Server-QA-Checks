@@ -23,7 +23,7 @@
         All Servers
 
     REQUIRED-FUNCTIONS:
-        Test-Port
+        Check-Port
 #>
 
 Function c-com-03-sccm-installed
@@ -81,7 +81,7 @@ Function c-com-03-sccm-installed
     {
         If (([string]::IsNullOrEmpty($valName) -eq $false) -and ([string]::IsNullOrEmpty($valPort) -eq $false))
         {
-            [boolean]$portTest = (Test-Port -serverName $valName -Port $valPort)
+            [boolean]$portTest = (Check-Port -serverName $valName -Port $valPort)
             If ($portTest -eq $true)
             {
                 $result.result  = $script:lang['Pass']

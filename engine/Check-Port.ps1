@@ -1,8 +1,7 @@
-Function Test-Port
+Function Check-Port
 {
-    Param ([string] $serverName, [string] $Port)
-    Try
-    {
+    Param ([string]$serverName, [string]$Port)
+    Try {
         $tcp  = New-Object System.Net.Sockets.TcpClient
         $con  = $tcp.BeginConnect($serverName, $port, $null, $null)
         $wait = $con.AsyncWaitHandle.WaitOne(3000, $false)
@@ -13,7 +12,5 @@ Function Test-Port
             Try { $tcp.EndConnect($con) } Catch {}
             If (!$?) { $failed = $true }; $tcp.Close()
             If ($failed -eq $true) { Return $false } Else { Return $true }
-        }
-    }
-    Catch { Return $false }
+    } } Catch { Return $false }
 }

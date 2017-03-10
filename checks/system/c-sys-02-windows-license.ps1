@@ -23,7 +23,7 @@
         All Servers
 
     REQUIRED-FUNCTIONS:
-        Test-Port
+        Check-Port
 #>
 
 Function c-sys-02-windows-license
@@ -86,7 +86,7 @@ Function c-sys-02-windows-license
 
     If ($kms -ne '')
     {
-        [boolean]$portTest = Test-Port -serverName $kms -Port 1688
+        [boolean]$portTest = Check-Port -serverName $kms -Port 1688
         If ($portTest -eq $true)
         {
             $result.result  = $script:lang['Pass']

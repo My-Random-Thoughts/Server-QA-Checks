@@ -22,7 +22,6 @@
         Hyper-V Host Servers
 
     REQUIRED-FUNCTIONS:
-        Check-NameSpace
         Check-HyperV
 #>
 

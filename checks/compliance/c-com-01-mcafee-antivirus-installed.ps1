@@ -27,7 +27,7 @@
         All Servers
 
     REQUIRED-FUNCTIONS:
-        Win32_Product
+        Check-Software
 #>
 
 Function c-com-01-mcafee-antivirus-installed
@@ -43,7 +43,19 @@ Function c-com-01-mcafee-antivirus-installed
 
     #... CHECK STARTS HERE ...#
 
-    [string]$verCheck = Win32_Product -serverName $serverName -displayName $script:appSettings['ProductName']
+    Try
+    {
+        [string]$verCheck = Check-Software -serverName $serverName -displayName $script:appSettings['ProductName']
+        If ($verCheck -eq '-1') { Throw 'Error opening registry key' }
+    }
+    Catch
+    {
+        $result.result  = $script:lang['Error']
+        $result.message = $script:lang['Script-Error']
+        $result.data    = $_.Exception.Message
+        Return $result
+    }
+
     If ([string]::IsNullOrEmpty($verCheck) -eq $false)
     {
         [string]$verNeed  = $script:appSettings['ProductVersion']

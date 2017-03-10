@@ -29,7 +29,7 @@
         All Servers
 
     REQUIRED-FUNCTIONS:
-        Win32_Product
+        Check-Software
 #>
 
 Function c-com-08-bladelogic-agent-installed
@@ -45,7 +45,8 @@ Function c-com-08-bladelogic-agent-installed
 
     #... CHECK STARTS HERE ...#
 
-    [string]$verCheck = Win32_Product -serverName $serverName -displayName 'BMC BladeLogic Server Automation RSCD Agent'
+    [string]$verCheck = Check-Software -serverName $serverName -displayName 'BMC BladeLogic Server Automation RSCD Agent'
+    If ($verCheck -eq '-1') { Throw 'Error opening registry key' }
     If ([string]::IsNullOrEmpty($verCheck) -eq $false)
     {
         $result.result  = $script:lang['Pass']

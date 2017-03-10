@@ -22,7 +22,7 @@
         All Servers
 
     REQUIRED-FUNCTIONS:
-        Test-Port
+        Check-Port
 #>
 
 Function c-com-06-wsus-server
@@ -64,7 +64,7 @@ Function c-com-06-wsus-server
         If ($keyVal.Contains(':') -eq $true) { [string]$name = ($keyVal.Split(':')[0]); [string]$port = $keyVal.Split(':')[1] }
         Else {                                 [string]$name =  $keyVal;                [string]$port = 80                    }
 
-        [boolean]$portTest = (Test-Port -serverName $name -Port $port)
+        [boolean]$portTest = (Check-Port -serverName $name -Port $port)
         If   ($portTest -eq $true) {                   $result.data += (',#Port {0} open to {1}'     -f $port, $name.ToLower()) }
         Else { $result.result = $script:lang['Fail'];  $result.data += (',#Port {0} not open to {1}' -f $port, $name.ToLower()) }
     }

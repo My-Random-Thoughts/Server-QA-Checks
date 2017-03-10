@@ -1,14 +1,12 @@
 $script:appSettings['Win32_Product'] = 'Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
-Function Win32_Product
+Function Check-Software
 {
-    Param ( [string] $serverName, [string] $displayName )
-    Try
-    {
+    Param ([string]$ServerName, [string]$DisplayName)
+    Try {
         $reg = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
         $regKey = $reg.OpenSubKey($script:appSettings['Win32_Product'])
-        If ($regKey) { [array]$keyVal = $regKey.GetSubKeyNames() }
-    }
-    Catch { Return $null }
+        If ($regKey) { [array]$keyVal = $regKey.GetSubKeyNames() } }
+    Catch { Return '-1' }
 
     $found = $false
     If (($regKey) -and ($keyVal.Count -gt 0)) {
@@ -17,15 +15,12 @@ Function Win32_Product
             If ($appKey -like ("*$displayName*")) {
                 $found = $true
                 [string]$verCheck = $regKey.OpenSubKey($app).GetValue('DisplayVersion')
-                If (-not $verCheck) { $verCheck = '0.1' } }
-        }
+                If (-not $verCheck) { $verCheck = '0.1' } } }
         If ($found -eq $false) {
             If ($script:appSettings['Win32_Product'] -like '*Wow6432Node*') {
                 $script:appSettings['Win32_Product'] = $script:appSettings['Win32_Product'].Replace('Wow6432Node', '')
-                $verCheck = Win32_Product -serverName $serverName -displayName $displayName
-            }
-            Else { $verCheck = $null } }
-    }
+                $verCheck = Check-Software -ServerName $serverName -DisplayName $displayName }
+            Else { $verCheck = $null } } }
     Else { $verCheck = $null }
     Try { $regKey.Close() } Catch { }
     $reg.Close()

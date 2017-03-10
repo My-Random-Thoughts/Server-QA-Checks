@@ -23,7 +23,7 @@
         Physical Servers
 
     REQUIRED-FUNCTIONS:
-        Win32_Product
+        Check-Software
         Check-VMware
 #>
 
@@ -46,7 +46,8 @@ Function c-drv-07-disk-management-agent
         {
             [boolean]$found = $false
             $script:appSettings['ProductNames'] | ForEach {
-                [string]$verCheck = Win32_Product -serverName $serverName -displayName $_
+                [string]$verCheck = Check-Software -serverName $serverName -displayName $_
+                If ($verCheck -eq '-1') { Throw 'Error opening registry key' }
                 If ([string]::IsNullOrEmpty($verCheck) -eq $false)
                 {
                     $found            = $true

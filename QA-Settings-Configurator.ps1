@@ -123,15 +123,16 @@ Function Show-InputForm
 {
     Param
     (
-        [parameter(Mandatory=$true )] [ValidateSet('Simple', 'Check', 'Option', 'List', 'Large')]
-                                        [string]  $Type,
-        [parameter(Mandatory=$true )]   [string]  $Title,
-        [parameter(Mandatory=$true )]   [string]  $Description,
-        [parameter(Mandatory=$false)] [ValidateSet('None', 'AZ', 'Numeric', 'Integer', 'Decimal', 'Symbol', 'File', 'URL', 'Email', 'IPv4', 'IPv6')]
-                                        [string]  $Validation = 'None',
-        [parameter(Mandatory=$false)]   [string[]]$InputList,
-        [parameter(Mandatory=$false)]   [string[]]$CurrentValue
+        [parameter(Mandatory=$true )] [string]  $Type,
+        [parameter(Mandatory=$true )] [string]  $Title,
+        [parameter(Mandatory=$true )] [string]  $Description,
+        [parameter(Mandatory=$false)] [string]  $Validation = 'None',
+        [parameter(Mandatory=$false)] [string[]]$InputList,
+        [parameter(Mandatory=$false)] [string[]]$CurrentValue
     )
+
+    # [ValidateSet('Simple', 'Check', 'Option', 'List', 'Large')]
+    # [ValidateSet('None', 'AZ', 'Numeric', 'Integer', 'Decimal', 'Symbol', 'File', 'URL', 'Email', 'IPv4', 'IPv6')]
 
     [Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null
     [Reflection.Assembly]::LoadWithPartialName('System.Data')          | Out-Null
@@ -737,21 +738,29 @@ Function Display-MainForm
         If ([string]::IsNullOrEmpty($script:scriptLocation) -eq $True) { $btn_t1_Search.Enabled = $True; $MainFORM.Cursor = 'Default'; Return }
         If ($script:scriptLocation.EndsWith('\scripts')) { $script:scriptLocation = $script:scriptLocation.TrimEnd('\scripts') }
 
-        $btn_t1_Search.Enabled       = $True
-        $btn_t1_Import.Enabled       = $True
-        $lbl_t1_Language.Enabled     = $True
-        $cmo_t1_Language.Enabled     = $True
-        $lbl_t1_SettingsFile.Enabled = $True
-        $cmo_t1_SettingsFile.Enabled = $True
+        $btn_t1_Search.Enabled = $True
+        [boolean]$iniLoadOK    = $False
+        Try
+        {
+            [string[]]$langList    = (Get-ChildItem -Path "$script:scriptLocation\i18n"     -Filter '*_text.ini' -ErrorAction Stop | Select-Object -ExpandProperty Name | Sort-Object Name | ForEach { $_.Replace('_text.ini','') } )
+            [string[]]$settingList = (Get-ChildItem -Path "$script:scriptLocation\settings" -Filter '*.ini'      -ErrorAction Stop | Select-Object -ExpandProperty Name | Sort-Object Name | ForEach { $_.Replace(     '.ini','') } )
+            Load-ComboBox -ComboBox $cmo_t1_Language     -Items ($langList    | Sort-Object Name) -SelectedItem 'en-gb'            -Clear
+            Load-ComboBox -ComboBox $cmo_t1_SettingsFile -Items ($settingList | Sort-Object Name) -SelectedItem 'default-settings' -Clear
+            $iniLoadOK = $True
+        }
+        Catch
+        {
+            Load-ComboBox -ComboBox $cmo_t1_Language     -Items ('Unknown') -SelectedItem 'Unknown' -Clear
+            Load-ComboBox -ComboBox $cmo_t1_SettingsFile -Items ('Unknown') -SelectedItem 'Unknown' -Clear
+            $iniLoadOK = $False
+        }
+
+        $btn_t1_Import.Enabled       = $iniLoadOK
+        $lbl_t1_Language.Enabled     = $iniLoadOK
+        $cmo_t1_Language.Enabled     = $iniLoadOK
+        $lbl_t1_SettingsFile.Enabled = $iniLoadOK
+        $cmo_t1_SettingsFile.Enabled = $iniLoadOK
         $btn_t1_Import.Focus()
-
-        # Get list of languages
-        [string[]]$langList = (Get-ChildItem -Path "$script:scriptLocation\i18n" -Filter '*_text.ini' | Select-Object -ExpandProperty Name | Sort-Object Name | ForEach { $_.Replace('_text.ini','') } )
-        Load-ComboBox -ComboBox $cmo_t1_Language -Items ($langList | Sort-Object Name) -SelectedItem 'en-gb' -Clear
-
-        # Get list of custom settings
-        [string[]]$settingList = (Get-ChildItem -Path "$script:scriptLocation\settings" -Filter '*.ini' | Select-Object -ExpandProperty Name | Sort-Object Name | ForEach { $_.Replace('.ini','') } )
-        Load-ComboBox -ComboBox $cmo_t1_SettingsFile -Items ($settingList | Sort-Object Name) -SelectedItem 'default-settings' -Clear
 
         $MainFORM.Cursor = 'Default'
     }

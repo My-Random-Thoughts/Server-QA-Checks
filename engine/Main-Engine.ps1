@@ -83,7 +83,9 @@ Function Check-CommandLine
 Function Start-QAProcess
 {
     # Verbose information output
-    If ($PSCmdlet.MyInvocation.BoundParameters.ContainsKey('Verbose') -eq $true) { $script:ccTasks = 1 }
+    [boolean]$verbose = ($PSCmdlet.MyInvocation.BoundParameters.ContainsKey('Verbose'))
+    [boolean]$debug   = ($PSCmdlet.MyInvocation.BoundParameters.ContainsKey('Debug'))
+    If ($verbose -eq $true) { $script:ccTasks = 1 }
 
     # Write job information
     [int]$count = $script:qaChecks.Count
@@ -93,31 +95,28 @@ Function Start-QAProcess
     # Progress bar legend
     [string]$lP = $script:lang['Passed']; [string]$lW = $script:lang['Warning']       ; [string]$lF = $script:lang['Failed']
     [string]$lM = $script:lang['Manual']; [string]$lN = $script:lang['Not-Applicable']; [string]$lE = $script:lang['Error']
-    Write-Host ('    ▄▄▄' + ''.PadLeft($lP.Length)) -NoNewline -ForegroundColor DarkGray; Write-Host ('    ▄▄▄' + ''.PadLeft($lW.Length)) -NoNewline -ForegroundColor DarkGray
-    Write-Host ('    ▄▄▄' + ''.PadLeft($lF.Length)) -NoNewline -ForegroundColor DarkGray; Write-Host ('    ▄▄▄' + ''.PadLeft($lM.Length)) -NoNewline -ForegroundColor DarkGray
-    Write-Host ('    ▄▄▄' + ''.PadLeft($lN.Length)) -NoNewline -ForegroundColor DarkGray; Write-Host ('    ▄▄▄' + ''.PadLeft($lE.Length))            -ForegroundColor DarkGray
-    Write-Host ('     ▀ ' + $lP)                    -NoNewline -ForegroundColor Green   ; Write-Host ('     ▀ ' + $lW)                    -NoNewline -ForegroundColor Yellow
-    Write-Host ('     ▀ ' + $lF)                    -NoNewline -ForegroundColor Red     ; Write-Host ('     ▀ ' + $lM)                    -NoNewline -ForegroundColor Cyan
-    Write-Host ('     ▀ ' + $lN)                    -NoNewline -ForegroundColor Gray    ; Write-Host ('     ▀ ' + $lE)                               -ForegroundColor Magenta
-    Write-Host (DivLine -Width $script:screenwidth)                                                    -ForegroundColor Yellow
+    Write-Host ('')
+    Write-Host ('     ■ ' + $lP) -NoNewline -ForegroundColor Green; Write-Host ('     ■ ' + $lW) -NoNewline -ForegroundColor Yellow
+    Write-Host ('     ■ ' + $lF) -NoNewline -ForegroundColor Red  ; Write-Host ('     ■ ' + $lM) -NoNewline -ForegroundColor Cyan
+    Write-Host ('     ■ ' + $lN) -NoNewline -ForegroundColor Gray ; Write-Host ('     ■ ' + $lE)            -ForegroundColor Magenta
+    Write-Host (DivLine -Width $script:screenwidth)                                                         -ForegroundColor Yellow
 
-    If ($script:servers.Count -gt 1)
+    [string]$ServerCounts = ''
+    [string]$DebugMessage = ''
+    If ($script:servers.Count -gt 1) { $ServerCounts = '  '+($($script:lang['ServerCount']) -f $($script:servers.Count)) }
+    If ($debug -eq $true)            { $DebugMessage = 'Debug Mode - Ignoring Server Connection Checks'                   }
+
+    If (($ServerCounts -ne '') -and ($DebugMessage -ne ''))
     {
-        Write-Host ($('  {0}' -f $script:lang['ServerCount']) -f $($script:servers.Count)) -ForegroundColor White
-        Write-Host (DivLine -Width $script:screenwidth)                                    -ForegroundColor Yellow
+        Write-Host ('{0}{1}' -f $ServerCounts, $DebugMessage.PadLeft($script:screenwidth - $ServerCounts.Length)) -ForegroundColor White
+        Write-Host (DivLine -Width $script:screenwidth)                                                           -ForegroundColor Yellow
     }
 
     # Create required output folders
     New-Item -ItemType Directory -Force -Path ($script:qaOutput) | Out-Null
-    If ($PSCmdlet.MyInvocation.BoundParameters.ContainsKey('Verbose') -eq $true) { $pBlock = '■' } Else { $pBlock = '▀' }
-    If ($GenerateCSV -eq $true)
-        { If (Test-Path -Path ($script:qaOutput + 'QA_Results.csv')) {
-            Try { Remove-Item ($script:qaOutput + 'QA_Results.csv') -Force } Catch {}
-    } }
-    If ($GenerateXML -eq $true)
-        { If (Test-Path -Path ($script:qaOutput + 'QA_Results.xml')) {
-            Try { Remove-Item ($script:qaOutput + 'QA_Results.xml') -Force } Catch {}
-    } }
+    If ($verbose -eq $true) { $pBlock = '■' } Else { $pBlock = '▀' }
+    If ($GenerateCSV -eq $true) { If (Test-Path -Path ($script:qaOutput + 'QA_Results.csv')) { Try { Remove-Item ($script:qaOutput + 'QA_Results.csv') -Force } Catch {} } }
+    If ($GenerateXML -eq $true) { If (Test-Path -Path ($script:qaOutput + 'QA_Results.xml')) { Try { Remove-Item ($script:qaOutput + 'QA_Results.xml') -Force } Catch {} } }
 
     # Master job loop
     [int]$CurrentServerNumber = 0
@@ -132,17 +131,13 @@ Function Start-QAProcess
         Write-Host '   ' -NoNewline
 
         # Make sure the computer is reachable
-        If ((Test-Connection -ComputerName $server -Quiet -Count 1) -eq $true)
+        If (($debug -eq $true) -or ((Test-Connection -ComputerName $server -Quiet -Count 1) -eq $true))
         {
             # Use the test-port function to make sure that the RPC port is listening
-            If ((Test-Port $server) -eq $true)
+            If (($debug -eq $true) -or ((Test-Port $server) -eq $true))
             {
-                If ($PSCmdlet.MyInvocation.BoundParameters.ContainsKey('Verbose') -eq $true)
-                {
-                    Write-Host $script:lang['Verbose-Info'] -ForegroundColor Yellow -NoNewline
-                }
-                Else {
-                    For ([int]$i = 0; $i -lt $count; $i++) { Write-Host '▄' -ForegroundColor DarkGray -NoNewline }
+                If ($verbose -eq $true) { Write-Host $script:lang['Verbose-Info'] -ForegroundColor Yellow -NoNewline }
+                Else {  For ([int]$i = 0; $i -lt $count; $i++) { Write-Host '▄' -ForegroundColor DarkGray -NoNewline }
                     Write-Host ''
                     Write-Host '   ' -ForegroundColor DarkGray -NoNewline
                 }
@@ -254,7 +249,7 @@ Function Start-QAProcess
                         [string]$funcName        =  $jobs[$jobIndex]
                         [object]$initScript      =  Invoke-Expression "`$$job"
 
-                        If ($PSCmdlet.MyInvocation.BoundParameters.ContainsKey('Verbose') -eq $true)
+                        If ($verbose -eq $true)
                         {
                             Write-Host ''
                             Write-Host '   '$jobs[$jobIndex].ToString().PadRight($script:screenwidth - 9, '.')': ' -ForegroundColor Gray -NoNewline
@@ -313,14 +308,12 @@ Function Start-QAProcess
             $resultsplit = Get-ResultsSplit -serverName $server
             [int]$padding = ($script:qaChecks).Count - 19
             If ($padding -lt 3) { $padding = 3 }
-            If ($PSCmdlet.MyInvocation.BoundParameters.ContainsKey('Verbose') -eq $true) { $padding = ($script:screenwidth - 23) }
+            If ($verbose -eq $true) { $padding = ($script:screenwidth - 23) }
             Write-Colr ''.PadLeft($padding), $resultsplit.p.PadLeft(2), ', ', $resultsplit.w.PadLeft(2), ', ', $resultsplit.f.PadLeft(2), ', ', `
                                              $resultsplit.m.PadLeft(2), ', ', $resultsplit.n.PadLeft(2), ', ', $resultsplit.e.PadLeft(2) `
                          -Colour White, Green, White, Yellow, White, Red, White, Cyan, White, Gray, White, Magenta
         }
     }
-
-    Remove-Variable server, i, jobs, jobIndex, workItems, jobTimer, workComplete, key, elapsed, result, job, jobOn, numJobs, funcName, initScript, stopwatch -ErrorAction SilentlyContinue
 }
 
 Function Get-ResultsSplit
@@ -489,8 +482,6 @@ Function Export-Results
         $cnvXML | ForEach-Object { $outXML += $_.Replace(',#',', ') }
         $outXML | Out-File -FilePath $path -Encoding utf8 -Force -Append
     }
-
-    Remove-Variable resultsplit, Head, Body, serversOut, server, serverResults, outHTML, outCSV, cnvCSV, outXML, cnvXML, path -ErrorAction SilentlyContinue
 }
 
 ###################################################################################################
@@ -633,9 +624,6 @@ Function Set-CellColour
             Write-Output $line
         }
     }
-
-    End
-    { Remove-Variable line, check, index, func, search, match -ErrorAction SilentlyContinue }
 }
 
 Function Add-HoverHelp
@@ -681,12 +669,10 @@ Function Test-Port
     {
         # Close the connection and report the error if there is one
         $error.Clear()
-        $tcp.EndConnect($iar) | Out-Null
+        Try { $tcp.EndConnect($iar) | Out-Null } Catch {}
         If (!$?) { $failed = $true }
         $tcp.Close()
     }
-
-    Remove-Variable tcp, iar, wait -ErrorAction SilentlyContinue
     If ($failed -eq $true) { Return $false } Else { Return $true }
 }
 

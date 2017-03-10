@@ -23,8 +23,8 @@
         All Servers
 
     REQUIRED-FUNCTIONS:
-        Test-Port
-        Win32_Product
+        Check-Port
+        Check-Software
 #>
 
 Function c-com-02-scom-monitoring-installed
@@ -44,7 +44,8 @@ Function c-com-02-scom-monitoring-installed
     {
         [boolean]$found = $false
         $script:appSettings['ProductNames'] | ForEach {
-            [string]$verCheck = Win32_Product -serverName $serverName -displayName $_
+            [string]$verCheck = Check-Software -serverName $serverName -displayName $_
+            If ($verCheck -eq '-1') { Throw 'Error open registry key' }
             If ([string]::IsNullOrEmpty($verCheck) -eq $false)
             {
                 $found            = $true
@@ -91,7 +92,7 @@ Function c-com-02-scom-monitoring-installed
     {
         If (([string]::IsNullOrEmpty($valName) -eq $false) -and ([string]::IsNullOrEmpty($valPort) -eq $false))
         {
-            [boolean]$portTest = (Test-Port -serverName $valName -Port $valPort)
+            [boolean]$portTest = (Check-Port -serverName $valName -Port $valPort)
             If ($portTest -eq $true)
             {
                 $result.result  = $script:lang['Pass']

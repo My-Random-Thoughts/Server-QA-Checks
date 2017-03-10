@@ -22,8 +22,8 @@
         All Servers
 
     REQUIRED-FUNCTIONS:
-        Win32_Product
-        Test-Port
+        Check-Software
+        Check-Port
 #>
 
 Function c-com-07-sentinel-agent-installed
@@ -39,7 +39,8 @@ Function c-com-07-sentinel-agent-installed
 
     #... CHECK STARTS HERE ...#
 
-    [string]$verCheck = Win32_Product -serverName $serverName -displayName 'NetIQ Sentinel Agent'
+    [string]$verCheck = Check-Software -serverName $serverName -displayName 'NetIQ Sentinel Agent'
+    If ($verCheck -eq '-1') { Throw 'Error opening registry key' }
     If ([string]::IsNullOrEmpty($verCheck) -eq $false)
     {
         $result.result  = $script:lang['Pass']
@@ -77,7 +78,7 @@ Function c-com-07-sentinel-agent-installed
         {
             If ([string]::IsNullOrEmpty($($valCons[$key].host)) -eq $false)
             {
-                $portTest = Test-Port -serverName $($valCons[$key].host) -Port $($valCons[$key].port)
+                $portTest = Check-Port -serverName $($valCons[$key].host) -Port $($valCons[$key].port)
                 If ($portTest -eq $true) { $result.data += ('Port {0} open to {1}'     -f $($valCons[$key].port), $($valCons[$key].host.ToLower()))                                        }
                 Else                     { $result.data += ('Port {0} not open to {1}' -f $($valCons[$key].port), $($valCons[$key].host.ToLower())); $result.result = $script:lang['Fail'] }
             }

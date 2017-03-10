@@ -30,8 +30,8 @@
     REQUIRED-FUNCTIONS:
         Check-DomainController
         Check-VMware
-        Test-Port
-        Win32_Product
+        Check-Port
+        Check-Software
 #>
 
 Function c-com-04-netbackup-agent-installed
@@ -47,12 +47,13 @@ Function c-com-04-netbackup-agent-installed
     
     #... CHECK STARTS HERE ...#
 
-    [string]$verCheck = Win32_Product -serverName $serverName -displayName $script:appSettings['ProductName']
+    [string]$verCheck = Check-Software -serverName $serverName -displayName $script:appSettings['ProductName']
+    If ($verCheck -eq '-1') { Throw 'Error opening registry key' }
     If ([string]::IsNullOrEmpty($verCheck) -eq $false)
     {
         $result.result  = $script:lang['Pass']
-        $result.message = '{0} found,#' -f $script:appSettings['ProductName']
-        $result.data    = 'Version {0}' -f $verCheck
+        $result.message = '{0} found'     -f $script:appSettings['ProductName']
+        $result.data    = 'Version {0},#' -f $verCheck
 
         Try
         {
@@ -72,9 +73,9 @@ Function c-com-04-netbackup-agent-installed
 
         ForEach ($server In $valNames)
         {
-            [boolean]$portTest = (Test-Port -serverName $server -Port 1556)
-            If   ($portTest -eq $true)                   { $result.message += ('Port 1556 open to {0},#'     -f $server.ToLower()) }
-            Else { $result.result = $script:lang['Fail'];  $result.message += ('Port 1556 not open to {0},#' -f $server.ToLower()) }
+            [boolean]$portTest = (Check-Port -serverName $server -Port 1556)
+            If   ($portTest -eq $true)                   { $result.data += ('Port 1556 open to {0},#'     -f $server.ToLower()) }
+            Else { $result.result = $script:lang['Fail'];  $result.data += ('Port 1556 not open to {0},#' -f $server.ToLower()) }
         }
     }
     Else
@@ -84,7 +85,8 @@ Function c-com-04-netbackup-agent-installed
             # If backup software not installed, and is a VM, then check for additional software to see if it should be installed
             $found = $false
             $script:appSettings['RequiredServerRoles'] | ForEach {
-                [string]$verExist = Win32_Product -serverName $serverName -displayName $_
+                [string]$verExist = Check-Software -serverName $serverName -displayName $_
+                If ($verCheck -eq '-1') { Throw 'Error opening registry key' }
                 If ([string]::IsNullOrEmpty($verCheck) -eq $false)
                 {
                     $result.result  = $script:lang['Fail']
