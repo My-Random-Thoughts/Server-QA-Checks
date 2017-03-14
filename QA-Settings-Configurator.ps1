@@ -850,7 +850,7 @@ Function Display-MainForm
                     {
                         [xml]$xmlHelp = New-Object 'System.Xml.XmlDataDocument'
                         $xmlHelp.LoadXml($script:qahelp[$checkCode])
-                        If ($xmlHelp.xml.Applies)     { $checkDesc  = "Applies To: $($xmlHelp.xml.Applies)`n`n" }
+                        If ($xmlHelp.xml.Applies)     { $checkDesc  = "Applies To: $($xmlHelp.xml.Applies)"     }
                         If ($xmlHelp.xml.Description) { $checkDesc +=             "$($xmlHelp.xml.Description)" }
                     }
                     Catch { }
@@ -859,12 +859,15 @@ Function Display-MainForm
                 # Default back to the scripts description of help if required
                 If ($checkDesc -eq '')
                 {
-                    [string]$content   = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script.ps1") -TotalCount 30) -join "`n")
-                    $regEx = [RegEx]::Match($content, "DESCRIPTION:((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))")
-                    [string]$checkDesc = ($regEx.Groups[1].Value.Trim().Split("`n"))
+                    [string]$content   = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script.ps1") -TotalCount 50) -join "`n")
+                    $regExA = [RegEx]::Match($content,     "APPLIES:((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))")
+                    $regExD = [RegEx]::Match($content, "DESCRIPTION:((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))")
+
+                    [string]$checkDesc = "Applies To: $($regExA.Groups[1].Value.Trim())!n"
+                    ($regExD.Groups[1].Value.Trim().Split("`n")) | ForEach { $checkDesc += $_.Trim() + '  ' }
                 }
 
-                Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', '')) -Group $guid -ImageIndex 1 -Enabled $True
+                Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', "`n`n")) -Group $guid -ImageIndex 1 -Enabled $True
                 If ($settingsINI.ContainsKey($checkCode) -eq $true) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True }
             }
         }
