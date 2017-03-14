@@ -1,6 +1,6 @@
 ﻿<#
     DESCRIPTION: 
-        Check Application Event Log and ensure no errors or warnings are present in the last 14 days.  If found, will return the latest y entries
+        Check Application Event Log and ensure no errors are present in the last x days.  If found, will return the latest y entries
 
     REQUIRED-INPUTS:
         GetLatestEntriesAge   - Return all entries for this number of days|Integer
