@@ -907,7 +907,7 @@ Function Display-MainForm
         $MainFORM.Cursor         = 'WaitCursor'
         $lbl_ChangesMade.Visible = $False
         [System.Collections.Hashtable]$settingsINI   = (Load-IniFile -Inputfile "$script:scriptLocation\settings\$($cmo_t1_SettingsFile.Text).ini")
-        $SkippedChecks = ($SettingsINI.Keys | Where-Object { $_.EndsWith('-skip') })
+        [string]                      $SkippedChecks = ($SettingsINI.Keys | Where-Object { $_.EndsWith('-skip') })
 
         ForEach ($folder In $lst_t2_SelectChecks.Groups)
         {
@@ -1419,7 +1419,7 @@ To start, click the 'Set Check Location' button below...
     # lbl_Description
     $lbl_t2_Description.BackColor   = 'Window'
     $lbl_t2_Description.Location    = '475,  36'
-    $lbl_t2_Description.Size        = '277, 490'
+    $lbl_t2_Description.Size        = '277, 448'
     $lbl_t2_Description.Padding     = '3, 3, 3, 3'
     $lbl_t2_Description.Text        = ''
     $lbl_t2_Description.TextAlign   = 'TopLeft'
@@ -1461,12 +1461,13 @@ To start, click the 'Set Check Location' button below...
     $tab_Page2.Controls.Add($btn_t2_SelectNone)
 
     # btn_t2_NextPage
-    $btn_t2_NextPage.Location = '678, 542'
-    $btn_t2_NextPage.Size     = ' 75,  25'
+    $btn_t2_NextPage.Location = '641, 490'
+    $btn_t2_NextPage.Size     = '105,  30'
     $btn_t2_NextPage.Text     = 'Next  >'
     $btn_t2_NextPage.Enabled  = $False
     $btn_t2_NextPage.Add_Click($btn_t2_NextPage_Click)
     $tab_Page2.Controls.Add($btn_t2_NextPage)
+    $btn_t2_NextPage.BringToFront()
 
     # pic_Background
     $pic_t2_Background.Location    = '474,  35'
