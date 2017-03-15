@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Returns a list of ports that are open, excluding anything lower than 1024 and within the dynamic port range.  Will also exclude other well known ports.
         !nIMPORTANT: THIS WORKS FOR LOCAL SERVERS ONLY
@@ -39,15 +39,15 @@ Function c-sec-16-open-ports
 
     #... CHECK STARTS HERE ...#
 
-    If ($serverName -like "$env:ComputerName*")
-    {
-        # List of well known exclusions
-        $script:appSettings['IgnoreThesePorts'] += '47001'    # WinRM Listener - 5985 and 5986 are in settings file
-        $script:appSettings['IgnoreThesePorts'] +=  '1556'    # NetBackup Agent
-        $script:appSettings['IgnoreThesePorts'] +=  '2381'    # HPE System Management Home Page
-        $script:appSettings['IgnoreThesePorts'] +=  '4750'    # BladeLogic Agent
-#       $script:appSettings['IgnoreThesePorts'] +=  '0000'    # 
+    # List of well known exclusions
+    $script:appSettings['IgnoreThesePorts'] += '47001'    # WinRM Listener - 5985 and 5986 are in settings file
+    $script:appSettings['IgnoreThesePorts'] +=  '1556'    # NetBackup Agent
+    $script:appSettings['IgnoreThesePorts'] +=  '2381'    # HPE System Management Home Page
+    $script:appSettings['IgnoreThesePorts'] +=  '4750'    # BladeLogic Agent
+#   $script:appSettings['IgnoreThesePorts'] +=  '0000'    # 
 
+If ($serverName -like "$env:ComputerName*")
+    {
         Try
         {
             $TCPProperties = [System.Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties()
@@ -98,7 +98,9 @@ Function c-sec-16-open-ports
     {
         $result.result  = $script:lang['Manual']
         $result.message = 'This check is for local servers only'
-        $result.data    = "Run 'NBTSTAT -A' on the remote server and check the results.  Ignoring the following ports: $script:appSettings['IgnoreThesePorts'], 0-1024, 49152-65535"
+        $result.data    = "Run 'NBTSTAT -A' on the remote server and check the results.  Ignoring the following ports:,#0-1024, "
+        $script:appSettings['IgnoreThesePorts'] | Sort-Object | ForEach { $result.data += "$_, " }
+        $result.data   += "49152-65535"
     }
 
     Return $result
