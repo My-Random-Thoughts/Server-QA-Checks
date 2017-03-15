@@ -173,7 +173,7 @@ Function Start-QAProcess
                     {
                         If ($Runspace.Handle.isCompleted)
                         {
-                            $result   = ($Runspace.PowerShell.EndInvoke($RunSpace.Handle))
+                            $result = ($Runspace.PowerShell.EndInvoke($RunSpace.Handle))
                             $Runspace.PowerShell.Dispose()
                             $Runspace.Handle     = $null
                             $Runspace.StartTime  = $null
@@ -186,8 +186,8 @@ Function Start-QAProcess
                                 $serverresults  += $result
 
                                 # provide some pretty output on the console
-                                If ($verbose -eq $true) { Write-Host '   '$($Result.check).ToString().PadRight($script:screenwidth - 9, '.')': ' -ForegroundColor Gray -NoNewline }
-                                Switch ($Result.Result)
+                                If ($verbose -eq $true) { Write-Host '   '$($Result).check.ToString().PadRight($script:screenwidth - 9, '.')': ' -ForegroundColor Gray -NoNewline }
+                                Switch ($($result).result)
                                 {
                                     $script:lang['Pass']           { Write-Host $pBlock -ForegroundColor Green  -NoNewline; Break }
                                     $script:lang['Warning']        { Write-Host $pBlock -ForegroundColor Yellow -NoNewline; Break }
@@ -286,7 +286,7 @@ Function Start-QAProcess
         Export-Results -results_input $serverresults
         $host.UI.RawUI.CursorPosition = $origpos; Write-Host ''.PadRight(30, ' ') -NoNewline    # then clear message
 
-        If ($result.result -ne 'Error')
+        If (($($result).result) -ne 'Error')
         {
             $resultsplit = Get-ResultsSplit -serverName $server
             [int]$padding = ($script:qaChecks).Count - 19 - 30    # 19:??; 30:Message clearing above

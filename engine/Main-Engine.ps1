@@ -133,8 +133,8 @@ Function Start-QAProcess
         # Make sure the computer is reachable
         If (($debug -eq $true) -or ((Test-Connection -ComputerName $server -Quiet -Count 1) -eq $true))
         {
-            # Use the test-port function to make sure that the RPC port is listening
-            If (($debug -eq $true) -or ((Test-Port $server) -eq $true))
+            # Use the Check-Port function to make sure that the RPC port is listening
+            If (($debug -eq $true) -or ((Check-Port -ServerName $server -Port 135) -eq $true))
             {
                 If ($verbose -eq $true) { Write-Host $script:lang['Verbose-Info'] -ForegroundColor Yellow -NoNewline }
                 Else {  For ([int]$i = 0; $i -lt $count; $i++) { Write-Host '▄' -ForegroundColor DarkGray -NoNewline }
@@ -302,13 +302,17 @@ Function Start-QAProcess
         }
 
         Write-Host ''
+        $origpos = $host.UI.RawUI.CursorPosition                                                # Set cursor position
+        Write-Host '   Saving Check Results...' -ForegroundColor White -NoNewline               # and display message
         Export-Results -results_input $serverresults
-        If ($result.result -ne 'Error')
+        $host.UI.RawUI.CursorPosition = $origpos; Write-Host ''.PadRight(30, ' ') -NoNewline    # then clear message
+
+        If (($($result).result) -ne 'Error')
         {
             $resultsplit = Get-ResultsSplit -serverName $server
-            [int]$padding = ($script:qaChecks).Count - 19
-            If ($padding -lt 3) { $padding = 3 }
-            If ($verbose -eq $true) { $padding = ($script:screenwidth - 23) }
+            [int]$padding = ($script:qaChecks).Count - 19 - 30    # 19:??; 30:Message clearing above
+            If ($padding -lt     3) { $padding = 3 }
+            If ($verbose -eq $true) { $padding = ($script:screenwidth - 23) }    # 23: Length of results counters + 1
             Write-Colr ''.PadLeft($padding), $resultsplit.p.PadLeft(2), ', ', $resultsplit.w.PadLeft(2), ', ', $resultsplit.f.PadLeft(2), ', ', `
                                              $resultsplit.m.PadLeft(2), ', ', $resultsplit.n.PadLeft(2), ', ', $resultsplit.e.PadLeft(2) `
                          -Colour White, Green, White, Yellow, White, Red, White, Cyan, White, Gray, White, Magenta
@@ -651,29 +655,21 @@ Function Add-HoverHelp
 
 ###################################################################################################
 
-Function Test-Port
+Function Check-Port
 {
-    Param ( [string]$serverName )
-    $tcp  = New-Object System.Net.Sockets.TcpClient
-    $iar  = $tcp.BeginConnect($serverName, 135, $null, $null)
-    $wait = $iar.AsyncWaitHandle.WaitOne(3000, $false)
+    Param ([string]$ServerName, [string]$Port)
+    Try {
+        $tcp  = New-Object System.Net.Sockets.TcpClient
+        $con  = $tcp.BeginConnect($ServerName, $port, $null, $null)
+        $wait = $con.AsyncWaitHandle.WaitOne(3000, $false)
 
-    $failed = $false
-    If (-not $wait)
-    {
-        # Connection timeout
-        $tcp.Close()
-        Return $false
-    }
-    Else
-    {
-        # Close the connection and report the error if there is one
-        $error.Clear()
-        Try { $tcp.EndConnect($iar) | Out-Null } Catch {}
-        If (!$?) { $failed = $true }
-        $tcp.Close()
-    }
-    If ($failed -eq $true) { Return $false } Else { Return $true }
+        If (-not $wait) { $tcp.Close(); Return $false }
+        Else {
+            $failed = $false; $error.Clear()
+            Try { $tcp.EndConnect($con) } Catch {}
+            If (!$?) { $failed = $true }; $tcp.Close()
+            If ($failed -eq $true) { Return $false } Else { Return $true }
+    } } Catch { Return $false }
 }
 
 Function Write-Colr

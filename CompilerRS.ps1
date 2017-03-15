@@ -228,13 +228,13 @@ ForEach ($qa In $qaChecks)
     {
         # Code from Reddit user "sgtoj"
         $regEx = [RegEx]::Match($getContent, "$($keyWord):((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))")
-        [string[]]$sectionValue = ($regEx.Groups[1].Value.Trim().Split("`n"))
+        [string[]]$sectionValue = ($regEx.Groups[1].Value.Trim()).Split("`n")
 
-        If (([string]::IsNullOrEmpty($sectionValue) -eq $false) -and ($sectionValue.Trim() -ne 'None'))
+        If (([string]::IsNullOrEmpty($sectionValue) -eq $false) -and ($sectionValue -notlike '*None*'))
         {
             # Add any required additional script functions
             If ($keyWord -eq 'REQUIRED-FUNCTIONS') {
-                ForEach ($function In ($sectionValue).Split("`n")) {
+                ForEach ($function In $sectionValue) {
                     Out-File -FilePath $outPath -InputObject (Get-Content "$path\engine\$($function.Trim()).ps1")   -Encoding utf8 -Append
                 }
             }
