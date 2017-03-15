@@ -6,7 +6,7 @@
         NoInTheseOUs - List of full-path OU names that the servers should not be located in.
 
     DEFAULT-VALUES:
-        NoInTheseOUs = ('ou=Computers,dc=ACME,dc=LAN', 'ou=Quarantine,dc=ACME,dc=LAN')
+        NoInTheseOUs = ('cn=Computers', 'ou=Quarantine')
 
     RESULTS:
         PASS:
@@ -55,11 +55,13 @@ Function c-sys-18-check-current-ou
             $objSearcher.Filter     = $strFilter
             [string]$strPath = ($objSearcher.FindOne().Path).ToLower()
             If ([string]::IsNullOrEmpty($strPath) -eq $true) { Throw 'Failed to get OU path from Active Directory' }
-            $strPath = ($strPath.TrimStart("ldap://cn=$($env:ComputerName.ToLower()),"))
+
+                    $strPath   = ($strPath -split "ldap://cn=$($serverName.ToLower()),")[1]    # Remove Computer Name
+            [string]$CurrentOU = ($strPath -split ',DC=')[0]                                   # Remove Domain Name
 
             ForEach ($OU In $script:appSettings['NoInTheseOUs'])
             {
-                If ($strPath -like "*$OU")
+                If ($CurrentOU -like "*$OU")
                 {
                     $result.result  = $script:lang['Fail']
                     $result.message = 'Server found in a default OU location'
