@@ -307,16 +307,14 @@ Function Start-QAProcess
         Export-Results -results_input $serverresults
         $host.UI.RawUI.CursorPosition = $origpos; Write-Host ''.PadRight(30, ' ') -NoNewline    # then clear message
 
-        If (($($result).result) -ne 'Error')
-        {
-            $resultsplit = Get-ResultsSplit -serverName $server
-            [int]$padding = ($script:qaChecks).Count - 19 - 30    # 19:??; 30:Message clearing above
-            If ($padding -lt     3) { $padding = 3 }
-            If ($verbose -eq $true) { $padding = ($script:screenwidth - 23) }    # 23: Length of results counters + 1
-            Write-Colr ''.PadLeft($padding), $resultsplit.p.PadLeft(2), ', ', $resultsplit.w.PadLeft(2), ', ', $resultsplit.f.PadLeft(2), ', ', `
-                                             $resultsplit.m.PadLeft(2), ', ', $resultsplit.n.PadLeft(2), ', ', $resultsplit.e.PadLeft(2) `
-                         -Colour White, Green, White, Yellow, White, Red, White, Cyan, White, Gray, White, Magenta
-        }
+        # Show results counts
+        $resultsplit = Get-ResultsSplit -serverName $server
+        [int]$padding = ($script:qaChecks).Count - 19 - 30    # 19:??; 30:Message clearing above
+        If ($padding -lt     3) { $padding = 3 }
+        If ($verbose -eq $true) { $padding = ($script:screenwidth - 23) }    # 23: Length of results counters + 1
+        Write-Colr ''.PadLeft($padding), $resultsplit.p.PadLeft(2), ', ', $resultsplit.w.PadLeft(2), ', ', $resultsplit.f.PadLeft(2), ', ', `
+                                         $resultsplit.m.PadLeft(2), ', ', $resultsplit.n.PadLeft(2), ', ', $resultsplit.e.PadLeft(2) `
+                     -Colour White, Green, White, Yellow, White, Red, White, Cyan, White, Gray, White, Magenta
     }
 }
 
