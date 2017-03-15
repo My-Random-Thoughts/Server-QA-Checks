@@ -41,7 +41,7 @@ Function c-sys-10-print-spooler
 
     Try
     {
-        $svc = Get-Service -DisplayName 'Print Spooler' | Select-Object -ExpandProperty Status
+        $svc = Get-Service -ComputerName $serverName -DisplayName 'Print Spooler' | Select-Object -ExpandProperty Status
         If ($svc -eq 'Running')
         {
             [string]$query = 'SELECT Name FROM Win32_Printer WHERE NOT Name="null"'
