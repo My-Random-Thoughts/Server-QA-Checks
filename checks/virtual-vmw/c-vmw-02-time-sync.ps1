@@ -45,21 +45,23 @@ Function c-vmw-02-time-sync
         {
             [string]$check = ''
 
-            If ($serverName -eq $env:ComputerName) {
+            If ($serverName -eq $env:ComputerName)
+            {
                 $check = Invoke-Command                           -ScriptBlock { &"$env:ProgramFiles\VMware\VMware Tools\VMwareToolBoxCmd.exe" timesync status } -ErrorAction SilentlyContinue
             }
-            Else {
+            Else
+            {
                 $check = Invoke-Command -ComputerName $serverName -ScriptBlock { &"$env:ProgramFiles\VMware\VMware Tools\VMwareToolBoxCmd.exe" timesync status } -ErrorAction SilentlyContinue
             }
         }
         Catch { }
 
-        If ($check -eq 'Disabled')
+        If ($check -like '*Disabled*')
         {
             $result.result  = $script:lang['Pass']
             $result.message = 'VMware tools time sync is disabled'
         }
-        ElseIf ($check -eq 'Enabled')
+        ElseIf ($check -like '*Enabled*')
         {
             $result.result  = $script:lang['Fail']
             $result.message = 'VMware tools time sync is enabled'

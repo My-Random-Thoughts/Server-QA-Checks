@@ -46,7 +46,7 @@ Function c-sec-16-open-ports
     $script:appSettings['IgnoreThesePorts'] +=  '4750'    # BladeLogic Agent
 #   $script:appSettings['IgnoreThesePorts'] +=  '0000'    # 
 
-If ($serverName -like "$env:ComputerName*")
+    If ($serverName -like "$env:ComputerName*")
     {
         Try
         {
@@ -85,6 +85,10 @@ If ($serverName -like "$env:ComputerName*")
                 $result.result   = $script:lang['Pass']
                 $result.message += 'No extra ports are open'
             }
+
+            $result.data += ',#Ignoring: 0-1024, '
+            $script:appSettings['IgnoreThesePorts'] | Sort-Object | ForEach { $result.data += "$_, " }
+            $result.data += "$portStart-$portEnd"
         }
         Catch
         {
@@ -98,7 +102,7 @@ If ($serverName -like "$env:ComputerName*")
     {
         $result.result  = $script:lang['Manual']
         $result.message = 'This check is for local servers only'
-        $result.data    = "Run 'NBTSTAT -A' on the remote server and check the results.  Ignoring the following ports:,#0-1024, "
+        $result.data    = "Run 'NBTSTAT -A' on the remote server and check the results.  Ignore the following ports:,#0-1024, "
         $script:appSettings['IgnoreThesePorts'] | Sort-Object | ForEach { $result.data += "$_, " }
         $result.data   += "49152-65535"
     }

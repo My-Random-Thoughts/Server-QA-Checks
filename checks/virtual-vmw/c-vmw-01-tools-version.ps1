@@ -45,18 +45,21 @@ Function c-vmw-01-tools-version
         {
             [string]$versi = ''
             [string]$check = ''
-            If ($serverName -eq $env:ComputerName) {
+            If ($serverName -eq $env:ComputerName)
+            {
                 $versi = Invoke-Command                           -ScriptBlock { &"$env:ProgramFiles\VMware\VMware Tools\VMwareToolBoxCmd.exe" -v   } -ErrorAction SilentlyContinue
-                $check = Invoke-Command                           -ScriptBlock { &"$env:ProgramFiles\VMware\VMware Tools\VMwareToolBoxCmd.exe" help } -ErrorAction SilentlyContinue }
-            Else {
+                $check = Invoke-Command                           -ScriptBlock { &"$env:ProgramFiles\VMware\VMware Tools\VMwareToolBoxCmd.exe" help } -ErrorAction SilentlyContinue
+            }
+            Else
+            {
                 $versi = Invoke-Command -ComputerName $serverName -ScriptBlock { &"$env:ProgramFiles\VMware\VMware Tools\VMwareToolBoxCmd.exe" -v   } -ErrorAction SilentlyContinue
-                $check = Invoke-Command -ComputerName $serverName -ScriptBlock { &"$env:ProgramFiles\VMware\VMware Tools\VMwareToolBoxCmd.exe" help } -ErrorAction SilentlyContinue }
+                $check = Invoke-Command -ComputerName $serverName -ScriptBlock { &"$env:ProgramFiles\VMware\VMware Tools\VMwareToolBoxCmd.exe" help } -ErrorAction SilentlyContinue
+            }
 
             If ($check -like '*upgrade*')
             {
-                If ($serverName -eq $env:ComputerName)
-                {      $check = Invoke-Command                           -ScriptBlock { &"$env:ProgramFiles\VMware\VMware Tools\VMwareToolBoxCmd.exe" upgrade status } -ErrorAction SilentlyContinue }
-                Else { $check = Invoke-Command -ComputerName $serverName -ScriptBlock { &"$env:ProgramFiles\VMware\VMware Tools\VMwareToolBoxCmd.exe" upgrade status } -ErrorAction SilentlyContinue }
+                If ($serverName -eq $env:ComputerName) { $check = Invoke-Command                           -ScriptBlock { &"$env:ProgramFiles\VMware\VMware Tools\VMwareToolBoxCmd.exe" upgrade status } -ErrorAction SilentlyContinue }
+                Else                                   { $check = Invoke-Command -ComputerName $serverName -ScriptBlock { &"$env:ProgramFiles\VMware\VMware Tools\VMwareToolBoxCmd.exe" upgrade status } -ErrorAction SilentlyContinue }
             }
         }
         Catch { }
