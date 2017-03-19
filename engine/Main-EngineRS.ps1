@@ -104,9 +104,9 @@ Function Start-QAProcess
     [string]$ServerCounts = ''
     [string]$DebugMessage = ''
     If ($script:servers.Count -gt 1) { $ServerCounts = '  '+($($script:lang['ServerCount']) -f $($script:servers.Count)) }
-    If ($debug -eq $true)            { $DebugMessage = 'Debug Mode - Ignoring Server Connection Checks'                   }
+    If ($debug -eq $true)            { $DebugMessage = 'Debug Mode - Ignoring Server Connection Checks'                  }
 
-    If (($ServerCounts -ne '') -and ($DebugMessage -ne ''))
+    If (($ServerCounts -ne '') -or ($DebugMessage -ne ''))
     {
         Write-Host ('{0}{1}' -f $ServerCounts, $DebugMessage.PadLeft($script:screenwidth - $ServerCounts.Length)) -ForegroundColor White
         Write-Host (DivLine -Width $script:screenwidth)                                                           -ForegroundColor Yellow
