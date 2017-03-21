@@ -632,6 +632,7 @@ Function Display-MainForm
     }
 
     $Form_Cleanup_FormClosed   = {
+        $tab_Pages.Remove_SelectedIndexChanged($tab_Pages_SelectedIndexChanged)
         $btn_t4_Save.Add_Click($btn_t4_Save_Click)
         $btn_t1_Search.Remove_Click($btn_t1_Search_Click)
         $btn_t1_Import.Remove_Click($btn_t1_Import_Click)
@@ -656,19 +657,13 @@ Function Display-MainForm
 #endregion
 ###################################################################################################
 #region FORM Scripts
-    Function Update-SelectedCount
-    {
-        $lbl_t2_SelectedCount.Text = "$($lst_t2_SelectChecks.CheckedItems.Count) of $($lst_t2_SelectChecks.Items.Count) selected"
-        If ($tab_Pages.SelectedIndex -eq 1) { $lbl_ChangesMade.Visible = $True }
-    }
-
+    Function Update-SelectedCount { $lbl_t2_SelectedCount.Text = "$($lst_t2_SelectChecks.CheckedItems.Count) of $($lst_t2_SelectChecks.Items.Count) checks selected" }
     Function ListView_SelectedIndexChanged ( [System.Windows.Forms.ListView]$SourceControl )
     {
         If ( $SourceControl.SelectedItems                -eq $null) { Return }
         If ( $SourceControl.SelectedItems.Count          -eq  0   ) { Return }
         If (($SourceControl.SelectedItems[0].ImageIndex) -eq -1   ) { Return }
     }
-
     Function ListView_DoubleClick ( [System.Windows.Forms.ListView]$SourceControl )
     {
         If ([string]::IsNullOrEmpty(($SourceControl.SelectedItems[0].Text).Trim()) -eq $True) { Return }
@@ -723,6 +718,8 @@ Function Display-MainForm
         }
         $MainFORM.Cursor = 'Default'
     }
+
+    $tab_Pages_SelectedIndexChanged = { If ($tab_Pages.SelectedIndex -eq 1) { $lbl_ChangesMade.Visible = $True } Else { $lbl_ChangesMade.Visible = $False } }
 
     $btn_t1_Search_Click = {
         # Search location and read in scripts
@@ -875,11 +872,13 @@ Function Display-MainForm
         Update-SelectedCount
 
         $tab_Pages.SelectedIndex        = 1
-        $lbl_ChangesMade.Visible        = $False
         $lbl_t1_ScanningScripts.Visible = $False
         $btn_t1_Search.Enabled          = $True
         $btn_t1_Import.Enabled          = $True
         $btn_t2_NextPage.Enabled        = $True
+        $btn_t2_SelectAll.Enabled       = $True
+        $btn_t2_SelectInv.Enabled       = $True
+        $btn_t2_SelectNone.Enabled      = $True
         $lst_t2_SelectChecks.Items[0].Selected = $True
         $MainFORM.Cursor                = 'Default'
     }
@@ -906,7 +905,6 @@ Function Display-MainForm
         }
 
         $MainFORM.Cursor         = 'WaitCursor'
-        $lbl_ChangesMade.Visible = $False
         [System.Collections.Hashtable]$settingsINI   = (Load-IniFile -Inputfile "$script:scriptLocation\settings\$($cmo_t1_SettingsFile.Text).ini")
         [string]                      $SkippedChecks = ($SettingsINI.Keys | Where-Object { $_.EndsWith('-skip') })
 
@@ -1280,6 +1278,7 @@ Function Display-MainForm
     $tab_Pages.Controls.Add($tab_Page2)    # Select Required Checks
     $tab_Pages.Controls.Add($tab_Page3)    # Specific QA Values
     $tab_Pages.Controls.Add($tab_Page4)    # Generate QA
+    $tab_Pages.Add_SelectedIndexChanged($tab_Pages_SelectedIndexChanged)
     $MainFORM.Controls.Add($tab_Pages)
 
     # tabpage1
@@ -1420,8 +1419,8 @@ To start, click the 'Set Check Location' button below...
     # lbl_Description
     $lbl_t2_Description.BackColor   = 'Window'
     $lbl_t2_Description.Location    = '475,  36'
-    $lbl_t2_Description.Size        = '277, 448'
-    $lbl_t2_Description.Padding     = '3, 3, 3, 3'
+    $lbl_t2_Description.Size        = '277, 449'
+    $lbl_t2_Description.Padding     = '3, 3, 3, 3'    # Internal padding
     $lbl_t2_Description.Text        = ''
     $lbl_t2_Description.TextAlign   = 'TopLeft'
     $tab_Page2.Controls.Add($lbl_t2_Description)
@@ -1429,7 +1428,7 @@ To start, click the 'Set Check Location' button below...
     # lbl_t2_SelectedCount
     $lbl_t2_SelectedCount.Location  = '  9, 542'
     $lbl_t2_SelectedCount.Size      = '227,  25'
-    $lbl_t2_SelectedCount.Text      = '0 of 0 selected :'
+    $lbl_t2_SelectedCount.Text      = '0 of 0 checks selected'
     $lbl_t2_SelectedCount.TextAlign = 'MiddleLeft'
     $tab_Page2.Controls.Add($lbl_t2_SelectedCount)
 
@@ -1444,6 +1443,7 @@ To start, click the 'Set Check Location' button below...
     $btn_t2_SelectAll.Location = '298, 542'
     $btn_t2_SelectAll.Size     = ' 50,  25'
     $btn_t2_SelectAll.Text     = 'All'
+    $btn_t2_SelectAll.Enabled  = $False
     $btn_t2_SelectAll.Add_Click($btn_t2_SelectAll_Click)
     $tab_Page2.Controls.Add($btn_t2_SelectAll)
 
@@ -1451,6 +1451,7 @@ To start, click the 'Set Check Location' button below...
     $btn_t2_SelectInv.Location = '354, 542'
     $btn_t2_SelectInv.Size     = ' 50,  25'
     $btn_t2_SelectInv.Text     = 'Invert'
+    $btn_t2_SelectInv.Enabled  = $False
     $btn_t2_SelectInv.Add_Click($btn_t2_SelectInv_Click)
     $tab_Page2.Controls.Add($btn_t2_SelectInv)
 
@@ -1458,11 +1459,12 @@ To start, click the 'Set Check Location' button below...
     $btn_t2_SelectNone.Location = '410, 542'
     $btn_t2_SelectNone.Size     = ' 50,  25'
     $btn_t2_SelectNone.Text     = 'None'
+    $btn_t2_SelectNone.Enabled  = $False
     $btn_t2_SelectNone.Add_Click($btn_t2_SelectNone_Click)
     $tab_Page2.Controls.Add($btn_t2_SelectNone)
 
     # btn_t2_NextPage
-    $btn_t2_NextPage.Location = '641, 490'
+    $btn_t2_NextPage.Location = '642, 491'
     $btn_t2_NextPage.Size     = '105,  30'
     $btn_t2_NextPage.Text     = 'Next  >'
     $btn_t2_NextPage.Enabled  = $False
@@ -1598,7 +1600,7 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
 
     $lbl_ChangesMade.Location  = '174, 630'
     $lbl_ChangesMade.Size      = '527,  35'
-    $lbl_ChangesMade.Text      = "If you make any selection changes, click the 'Next >' button to update the Details tab; any unsaved changes will be lost"
+    $lbl_ChangesMade.Text      = "NOTE: If you make any selection changes and click 'Next', any unsaved changes will be lost."
     $lbl_ChangesMade.TextAlign = 'MiddleLeft'
     $lbl_ChangesMade.Visible   = $False
     $MainFORM.Controls.Add($lbl_ChangesMade)
