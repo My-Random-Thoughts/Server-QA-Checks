@@ -322,8 +322,9 @@ Function Show-InputForm
             'Integer' { $ValidateResult = ($StringToCheck -match '^(-)?[\d]+$');            Break }              # Integer numbers only
             'Decimal' { $ValidateResult = ($StringToCheck -match '^(-)?[\d]+\.[\d]+$');     Break }              # Decimal numbers only
             'Symbol'  { $ValidateResult = ($StringToCheck -match '^[^A-Za-z0-9]+$');        Break }              # Any symbol (not numbers or letters)
-            'File'    {                                                                                          # File name with 3 letter extension
-                Try { [System.IO.Path]::GetFullPath($StringToCheck); $ValidateResult = $true } Catch { $ValidateResult = $false }
+            'File'    {                                                                                # Valid file or folder name
+                $StringToCheck  = $StringToCheck.TrimEnd('\')
+                $ValidateResult = ($StringToCheck -match "^(?:[a-zA-Z]\:|\\\\[\w\.]+\\[\w.$]+)\\(?:[\w]+\\)*\w([\w.])+$")
                 Break
             }
             'URL'     {                                                                                          # URL
