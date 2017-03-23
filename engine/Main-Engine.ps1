@@ -1,4 +1,4 @@
-﻿Function Show-HelpScreen
+Function Show-HelpScreen
 {
     Clear-Host
     Write-Header -Message $($script:lang['Help_01']) -Width $script:screenwidth
@@ -69,9 +69,7 @@ Function Check-CommandLine
     If ([string]::IsNullOrEmpty($script:servers) -eq $true) { Show-HelpScreen; Exit }
 
     # Check admin status
-    If (-not ([Security.Principal.WindowsPrincipal] `
-              [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole( `
-              [Security.Principal.WindowsBuiltInRole] 'Administrator'))
+    If (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator'))
     {
         Write-Host ('  {0}' -f $script:lang['Admin-Warn_1']) -ForegroundColor Red
         Write-Host ('  {0}' -f $script:lang['Admin-Warn_2']) -ForegroundColor Red
@@ -192,13 +190,14 @@ Function Start-QAProcess
                                 # Job returned no data
                                 $result          = newResult
                                 $result.server   = $server
-                                $result.name     = $script:lang['ND-Name']    # NO DATA
-                                $result.check    = $workItems[$key].name
+                                $result.name     = $workItems[$key].Name
+                                $result.check    = $workItems[$key].Name
                                 $result.result   = 'Error'
-                                $result.message  = $script:lang['ND-Message']
+                                $result.message  = $script:lang['ND-Message']    # NO DATA
+                                $result.data     = $script:lang['ND-Message']
                                 $script:results += $result
                                 $serverresults  += $result
-                                Write-Host '■' -ForegroundColor Magenta -NoNewline
+                                Write-Host '█' -ForegroundColor Magenta -NoNewline
                             }
                             $workItems.Remove($key)
                         
@@ -208,10 +207,11 @@ Function Start-QAProcess
                         {
                             $result          = newResult
                             $result.server   = $server
-                            $result.name     = $workItems[$key].State.ToUpper()
-                            $result.check    = $workItems[$key].name
+                            $result.name     = $workItems[$key].Name
+                            $result.check    = $workItems[$key].Name
                             $result.result   = 'Error'
                             $result.message  = $script:lang['FD-Message']    # FAILED / DISCONNECTED
+                            $result.data     = $script:lang['FD-Message']
                             $script:results += $result
                             $serverresults  += $result
                             Write-Host ('■ ' + $script:lang['FD-Write-Host']) -ForegroundColor Magenta -NoNewline
@@ -227,10 +227,11 @@ Function Start-QAProcess
                             {
                                 $result          = newResult
                                 $result.server   = $server
-                                $result.name     = $script:lang['TO-Name']    # TIMEOUT
-                                $result.check    = $workItems[$key].name
+                                $result.name     = $workItems[$key].Name
+                                $result.check    = $workItems[$key].Name
                                 $result.result   = 'Error'
-                                $result.message  = $script:lang['TO-Message']
+                                $result.message  = $script:lang['TO-Message']    # TIMEOUT
+                                $result.data     = $script:lang['TO-Message']
                                 $script:results += $result
                                 $serverresults  += $result
                                 Try { Stop-Job -Job $workItems[$key]; Remove-Job -Job $workItems[$key] } Catch { }
