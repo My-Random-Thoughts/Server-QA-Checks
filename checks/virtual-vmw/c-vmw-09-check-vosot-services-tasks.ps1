@@ -1,7 +1,7 @@
 ﻿<#
     DESCRIPTION: 
         Checks against a specified VMware OS Optimisation Template.  Services and scheduled task setting specific checks only.
-        (Experimental Check)
+        !nNote: This is an experimental check
 
     REQUIRED-INPUTS:
         vosotXmlFile - Local path to the confoguration XML file for VMware OSOT|File

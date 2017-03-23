@@ -6,7 +6,7 @@
     THIS FILE IS AUTO-COMPILED FROM SEVERAL SOURCE FILES
 
     VERSION : v3.17.0323
-    COMPILED: 2017/03/23 12:13
+    COMPILED: 2017/03/23 20:25
 #> 
 
 [CmdletBinding(DefaultParameterSetName = 'HLP')]
@@ -141,7 +141,6 @@ Function c-acc-01-local-users
         $result.message = $script:lang['C']
     }
 
-    Start-Sleep -Seconds 120
     Return $result
 }
 c-acc-01-local-users -serverName $serverName -resultPath $resultPath
@@ -235,7 +234,7 @@ Function c-acc-02-local-account-names
         $result.message = 'Local accounts have been renamed'
     }
     
-    Return $null
+    Return $result
 }
 c-acc-02-local-account-names -serverName $serverName -resultPath $resultPath
 }
@@ -1423,8 +1422,10 @@ Function c-com-03-sccm-installed
             If ($valName -eq '') { $valName = $regKey.GetValue('SMSSLP')    }    # SCCM 2010+
 
             # Fall back check for hostname check
-            If ($valName -eq '') { $regKey  = $reg.OpenSubKey('Software\Microsoft\CCM\FSP');
-                                   $valName = $regKey.GetValue('HostName'); }
+            If ($valName -eq '') {
+                $regKey  = $reg.OpenSubKey('Software\Microsoft\CCM\FSP')
+                If ($regKey) { $valName = $regKey.GetValue('HostName') }
+            }
         }
         Try {$regKey.Close() } Catch {}
         $reg.Close()

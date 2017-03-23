@@ -1,4 +1,4 @@
-Function Show-HelpScreen
+﻿Function Show-HelpScreen
 {
     Clear-Host
     Write-Header -Message $($script:lang['Help_01']) -Width $script:screenwidth
