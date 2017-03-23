@@ -1,4 +1,4 @@
-﻿Function Show-HelpScreen
+Function Show-HelpScreen
 {
     Clear-Host
     Write-Header -Message $($script:lang['Help_01']) -Width $script:screenwidth
@@ -69,9 +69,7 @@ Function Check-CommandLine
     If ([string]::IsNullOrEmpty($script:servers) -eq $true) { Show-HelpScreen; Exit }
 
     # Check admin status
-    If (-not ([Security.Principal.WindowsPrincipal] `
-              [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole( `
-              [Security.Principal.WindowsBuiltInRole] 'Administrator'))
+    If (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator'))
     {
         Write-Host ('  {0}' -f $script:lang['Admin-Warn_1']) -ForegroundColor Red
         Write-Host ('  {0}' -f $script:lang['Admin-Warn_2']) -ForegroundColor Red
@@ -175,9 +173,6 @@ Function Start-QAProcess
                         {
                             $result = ($Runspace.PowerShell.EndInvoke($RunSpace.Handle))
                             $Runspace.PowerShell.Dispose()
-                            $Runspace.Handle     = $null
-                            $Runspace.StartTime  = $null
-                            $Runspace.PowerShell = $null
 
                             If ($result -ne $null)
                             {
@@ -209,33 +204,41 @@ Function Start-QAProcess
                                 # Job returned no data
                                 $result          = newResult
                                 $result.server   = $server
-                                $result.name     = $script:lang['ND-Name']    # NO DATA
-                                $result.check    = 'UNKNOWN'
+                                $result.name     = $($Runspace.CheckTitle)
+                                $result.check    = $($Runspace.CheckTitle).Substring(0, 8)
                                 $result.result   = 'Error'
-                                $result.message  = $script:lang['ND-Message']
+                                $result.message  = $script:lang['ND-Message']    # NO DATA
+                                $result.data     = $script:lang['ND-Message']
                                 $script:results += $result
                                 $serverresults  += $result
-                                Write-Host '■' -ForegroundColor Magenta -NoNewline
+                                Write-Host '█' -ForegroundColor Magenta -NoNewline
                             }
+
+                            $Runspace.Handle     = $null
+                            $Runspace.StartTime  = $null
+                            $Runspace.PowerShell = $null
+                            $Runspace.CheckTitle = $null
                         }
                         ElseIf (($($Runspace.StartTime).AddSeconds($script:checkTimeout)) -lt (Get-Date))
                         {
                             $Runspace.PowerShell.Stop()
                             $Runspace.PowerShell.Dispose()
+
+                            $result          = newResult
+                            $result.server   = $server
+                            $result.name     = $($Runspace.CheckTitle)
+                            $result.check    = $($Runspace.CheckTitle).Substring(0, 8)
+                            $result.result   = 'Error'
+                            $result.message  = $script:lang['TO-Message']    # TIMEOUT
+                            $result.data     = $script:lang['TO-Message']
+                            $script:results += $result
+                            $serverresults  += $result
+                            Write-Host '█' -ForegroundColor Magenta -NoNewline
+
                             $Runspace.Handle     = $null
                             $Runspace.StartTime  = $null
                             $Runspace.PowerShell = $null
                             $Runspace.CheckTitle = $null
-
-                            $result          = newResult
-                            $result.server   = $server
-                            $result.name     = $script:lang['TO-Name']    # TIMEOUT
-                            $result.check    = 'UNKNOWN'
-                            $result.result   = 'Error'
-                            $result.message  = $script:lang['TO-Message']
-                            $script:results += $result
-                            $serverresults  += $result
-                            Write-Host '█' -ForegroundColor Magenta -NoNewline
                         }
                         ElseIf ($Runspace.Handle -ne $null) { $StillWorking = $true }
                     }
