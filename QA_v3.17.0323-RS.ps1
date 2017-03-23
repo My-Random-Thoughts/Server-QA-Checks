@@ -141,7 +141,6 @@ Function c-acc-01-local-users
         $result.message = $script:lang['C']
     }
 
-    Start-Sleep -Seconds 120
     Return $result
 }
 c-acc-01-local-users -serverName $serverName -resultPath $resultPath
@@ -235,7 +234,7 @@ Function c-acc-02-local-account-names
         $result.message = 'Local accounts have been renamed'
     }
     
-    Return $null
+    Return $result
 }
 c-acc-02-local-account-names -serverName $serverName -resultPath $resultPath
 }
