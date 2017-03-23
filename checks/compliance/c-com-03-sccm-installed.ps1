@@ -63,8 +63,10 @@ Function c-com-03-sccm-installed
             If ($valName -eq '') { $valName = $regKey.GetValue('SMSSLP')    }    # SCCM 2010+
 
             # Fall back check for hostname check
-            If ($valName -eq '') { $regKey  = $reg.OpenSubKey('Software\Microsoft\CCM\FSP');
-                                   $valName = $regKey.GetValue('HostName'); }
+            If ($valName -eq '') {
+                $regKey  = $reg.OpenSubKey('Software\Microsoft\CCM\FSP')
+                If ($regKey) { $valName = $regKey.GetValue('HostName') }
+            }
         }
         Try {$regKey.Close() } Catch {}
         $reg.Close()
