@@ -29,6 +29,7 @@
 
     REQUIRED-FUNCTIONS:
         Check-VMware
+        Check-HyperV
 #>
 
 Function c-net-07-network-teaming
@@ -89,7 +90,7 @@ Function c-net-07-network-teaming
 
     If ($check -like '*200*')    # 2003, 2008
     {
-        If ((Check-VMware $serverName) -eq $false)
+        If (((Check-VMware $serverName) -eq $false) -or ((Check-HyperV $serverName) -eq $false))
         {
             If ($check1.Count -gt 0)
             {
@@ -113,7 +114,7 @@ Function c-net-07-network-teaming
     {
         If ($check1 -eq 'NOTEAMS')
         {
-            If ((Check-VMware $serverName) -eq $true)
+            If (((Check-VMware $serverName) -eq $true) -or ((Check-HyperV $serverName) -eq $true))
             {
                 $result.result  = $script:lang['Not-Applicable']
                 $result.message = 'Not a phsical server'
@@ -128,7 +129,7 @@ Function c-net-07-network-teaming
         }
         Else
         {
-            If ((Check-VMware $serverName) -eq $true)
+            If (((Check-VMware $serverName) -eq $true) -or ((Check-HyperV $serverName) -eq $true))
             {
                 $result.result  = $script:lang['Fail']
                 $result.message = 'Native teaming enabled on virtual machine'

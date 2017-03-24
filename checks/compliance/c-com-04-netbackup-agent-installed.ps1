@@ -30,6 +30,7 @@
     REQUIRED-FUNCTIONS:
         Check-DomainController
         Check-VMware
+        Check-HyperV
         Check-Port
         Check-Software
 #>
@@ -47,7 +48,7 @@ Function c-com-04-netbackup-agent-installed
     
     #... CHECK STARTS HERE ...#
 
-    [string]$verCheck = Check-Software -serverName $serverName -displayName $script:appSettings['ProductName']
+    [string]$verCheck = (Check-Software -serverName $serverName -displayName $script:appSettings['ProductName'])
     If ($verCheck -eq '-1') { Throw 'Error opening registry key' }
     If ([string]::IsNullOrEmpty($verCheck) -eq $false)
     {
@@ -80,7 +81,7 @@ Function c-com-04-netbackup-agent-installed
     }
     Else
     {
-        If ((Check-VMware $serverName) -eq $true)
+        If (((Check-VMware $serverName) -eq $true) -or ((Check-HyperV $serverName) -eq $true))
         {
             # If backup software not installed, and is a VM, then check for additional software to see if it should be installed
             $found = $false

@@ -24,6 +24,7 @@
     REQUIRED-FUNCTIONS:
         Check-Software
         Check-VMware
+        Check-HyperV
 #>
 
 Function c-net-06-network-agent
@@ -39,7 +40,7 @@ Function c-net-06-network-agent
 
     #... CHECK STARTS HERE ...#
 
-    If ((Check-VMware $serverName) -eq $false)
+    If (((Check-VMware $serverName) -eq $false) -or ((Check-HyperV $serverName) -eq $false))
     {
         Try
         {

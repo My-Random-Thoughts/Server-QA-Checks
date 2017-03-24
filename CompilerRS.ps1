@@ -276,8 +276,11 @@ Try
 }
 Catch { }
 Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('[string]$reportCompanyName = "' + ($iniSettings['settings']['reportCompanyName']) + '"') -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('[string]$script:qaOutput   = "' + ($iniSettings['settings']['outputLocation'])    + '"') -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('[string]$reportCompanyName   = "' + ($iniSettings['settings']['reportCompanyName']) + '"') -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('[string]$script:qaOutput     = "' + ($iniSettings['settings']['outputLocation'])    + '"') -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('[int]   $script:ccTasks      = "' + ($iniSettings['settings']['concurrent'])        + '"') -Encoding utf8 -Append
+Out-File -FilePath $outPath -InputObject ('[int]   $script:checkTimeout = "' + ($iniSettings['settings']['timeout'])           + '"') -Encoding utf8 -Append
+
 Out-File -FilePath $outPath -InputObject (Get-Content ($path + '\engine\Main-EngineRS.ps1'))                           -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Cyan
 Write-Host ''
 

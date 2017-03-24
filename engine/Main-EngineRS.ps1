@@ -240,7 +240,11 @@ Function Start-QAProcess
                             $Runspace.PowerShell = $null
                             $Runspace.CheckTitle = $null
                         }
-                        ElseIf ($Runspace.Handle -ne $null) { $StillWorking = $true }
+                        ElseIf ($Runspace.Handle -ne $null)
+                        {
+                            $Runspace.StartTime = (Get-Date)    # Reset start time on checks not yet running
+                            $StillWorking = $true
+                        }
                     }
 
                     If ($StillWorking) { Start-Sleep -Milliseconds 100 }
@@ -250,6 +254,8 @@ Function Start-QAProcess
                     $rsClone | Where { $_.Handle -eq $Null } | ForEach { $RSCollection.Remove($_) }
                 }
                 While ($StillWorking)
+
+                $RSCollection.Clear()
                 $RSCollection = $null
                 # RunspacePool Complete
             }
@@ -674,9 +680,7 @@ Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width + 1, '─') }
 
 ###################################################################################################
 
-[int]      $script:ccTasks        =  10    # Number of concurrent tasks to perform
 [int]      $script:waitTime       = 100    # Time to wait between starting new tasks (milliseconds)
-[int]      $script:checkTimeout   =  60    # Time to wait for each task to complete (seconds)
 [int]      $script:screenwidth    = 120    #
 [int]      $script:failurecount   =   0    #
 [array]    $script:results        = @()    #

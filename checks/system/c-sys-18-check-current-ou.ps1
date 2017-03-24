@@ -69,7 +69,8 @@ Function c-sys-18-check-current-ou
                 }
             }
 
-            $result.data    += $strPath
+            [string]$splitPath1, $splitPath2 = ($strPath -split ',dc=', 2)
+            $result.data   += "$splitPath1,#dc=$splitPath2"
         }
         Else
         {

@@ -25,6 +25,7 @@
     REQUIRED-FUNCTIONS:
         Check-Software
         Check-VMware
+        Check-HyperV
 #>
 
 Function c-drv-07-disk-management-agent
@@ -40,7 +41,7 @@ Function c-drv-07-disk-management-agent
     
     #... CHECK STARTS HERE ...#
 
-    If ((Check-VMware $serverName) -eq $false)
+    If (((Check-VMware $serverName) -eq $false) -or ((Check-HyperV $serverName) -eq $false))
     {
         Try
         {

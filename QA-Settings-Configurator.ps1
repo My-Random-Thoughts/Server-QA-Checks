@@ -384,7 +384,7 @@ Function Show-InputForm
     $frm_Main.AutoScaleDimensions  = '6, 13'
     $frm_Main.AutoScaleMode        = 'Font'
     $frm_Main.ClientSize           = '394, 147'    # 400 x 175
-    $frm_Main.StartPosition        = 'CenterScreen'
+    $frm_Main.StartPosition        = 'CenterParent'
 
     $ToolTip                       = New-Object 'System.Windows.Forms.ToolTip'
 
@@ -595,6 +595,185 @@ Function Show-InputForm
     ElseIf ($result -eq [System.Windows.Forms.DialogResult]::Cancel) { Return '!!-CANCELLED-!!' }
 #endregion
 }
+
+Function Show-ExtraSettingsForm
+{
+    Param
+    (
+        [parameter(Mandatory=$false)][string]$Timeout,
+        [parameter(Mandatory=$false)][string]$ccTasks,
+        [parameter(Mandatory=$false)][string]$ResultsPath
+    )
+
+    [Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null
+    [Reflection.Assembly]::LoadWithPartialName('System.Data')          | Out-Null
+    [Reflection.Assembly]::LoadWithPartialName('System.Drawing')       | Out-Null
+    [System.Drawing.Font]$sysFont = [System.Drawing.SystemFonts]::MessageBoxFont
+    [System.Windows.Forms.Application]::EnableVisualStyles()
+
+# ##########
+# ##########
+# ##########
+
+#    $ComboxCustomDraw = {
+#        [System.Windows.Forms.DrawItemEventArgs]$e   = $_
+#        [System.Windows.Forms.ComboBox]         $cbx = $sender
+#
+#        If ($e.Index -ge 0)
+#        {
+#            $sf = New-Object 'System.Drawing.StringFormat'
+#            $sf.Alignment     = [System.Drawing.StringAlignment]::Center
+#            $sf.LineAlignment = [System.Drawing.StringAlignment]::Center
+#
+#            $br = New-Object System.Drawing.SolidBrush($cbx.ForeColor)
+#            If ($e.State -eq 'Selected') { $br = [System.Drawing.SystemBrushes]::HighlightText }
+#
+#            $e.Graphics.DrawString($cbx.Items[$e.Index].ToString(), $cbx.Font, $br, $e.Bounds, $sf)
+#        }
+#    }
+
+# ##########
+# ##########
+# ##########
+
+#region MAIN FORM
+    $frm_Main = New-Object 'System.Windows.Forms.Form'
+    $frm_Main.FormBorderStyle      = 'FixedDialog'
+    $frm_Main.MaximizeBox          = $False
+    $frm_Main.MinimizeBox          = $False
+    $frm_Main.ControlBox           = $False
+    $frm_Main.Text                 = ' Additional Settings'
+    $frm_Main.ShowInTaskbar        = $False
+    $frm_Main.AutoScaleDimensions  = '6, 13'
+    $frm_Main.AutoScaleMode        = 'Font'
+    $frm_Main.ClientSize           = '444, 222'    # 450 x 300
+    $frm_Main.StartPosition        = 'CenterParent'
+
+    $lbl_Description               = New-Object 'System.Windows.Forms.Label'
+    $lbl_Description.Location      = ' 12,  12'
+    $lbl_Description.Size          = '420,  33'
+    $lbl_Description.Text          = 'This form allows you to set any additional settings that help control the QA scripts and its output.  Do not change these settings if you are unsure.'
+    $frm_Main.Controls.Add($lbl_Description)
+
+    $btn_Reset                     = New-Object 'System.Windows.Forms.Button'
+    $btn_Reset.Location           = ' 12, 185'
+    $btn_Reset.Size               = ' 75,  25'
+    $btn_Reset.Font               = $sysFont
+    $btn_Reset.Text               = 'Reset'
+    $btn_Reset.TabIndex           = '96'
+    $btn_Reset.Add_Click({ $cmo_TimeOut.SelectedItem = '60'; $cmo_CCTasks.SelectedItem = '5'; $txt_Location.Text = '$env:SystemDrive\QA\Results\' })
+    $frm_Main.Controls.Add($btn_Reset)
+
+    $btn_Accept                    = New-Object 'System.Windows.Forms.Button'
+    $btn_Accept.Location           = '357, 185'
+    $btn_Accept.Size               = ' 75,  25'
+    $btn_Accept.Font               = $sysFont
+    $btn_Accept.Text               = 'Save'
+    $btn_Accept.TabIndex           = '97'
+    $btn_Accept.DialogResult       = [System.Windows.Forms.DialogResult]::OK
+    $frm_Main.AcceptButton         = $btn_Accept
+    $frm_Main.Controls.Add($btn_Accept)
+
+    $btn_Cancel                    = New-Object 'System.Windows.Forms.Button'
+    $btn_Cancel.Location           = '267, 185'
+    $btn_Cancel.Size               = ' 75,  25'
+    $btn_Cancel.Font               = $sysFont
+    $btn_Cancel.Text               = 'Cancel'
+    $btn_Cancel.TabIndex           = '98'
+    $btn_Cancel.DialogResult       = [System.Windows.Forms.DialogResult]::Cancel
+    $frm_Main.CancelButton         = $btn_Cancel
+    $frm_Main.Controls.Add($btn_Cancel)
+#endregion
+#region OPTIONS
+    # Option 1
+    $lbl_CheckTimeOut1             = New-Object 'System.Windows.Forms.Label'
+    $lbl_CheckTimeOut1.Location    = ' 12,  66'
+    $lbl_CheckTimeOut1.Size        = '150,  21'
+    $lbl_CheckTimeOut1.Text        = 'Check Timeout :'
+    $lbl_CheckTimeOut1.TextAlign   = 'MiddleRight'
+    $frm_Main.Controls.Add($lbl_CheckTimeOut1)
+
+    $cmo_TimeOut                   = New-Object 'System.Windows.Forms.ComboBox'
+    $cmo_TimeOut.Location          = '168,  66'
+    $cmo_TimeOut.Size              = ' 50,  21'
+    $cmo_TimeOut.DropDownStyle     = 'DropDownList'
+#    $cmo_TimeOut.DrawMode          = 'OwnerDrawFixed'
+#    $cmo_TimeOut.Add_DrawItem($ComboxCustomDraw)
+    $frm_Main.Controls.Add($cmo_TimeOut)
+    [string[]]$TimeOutList         = @('30','45','60','75','90','120')
+    $cmo_TimeOut.Items.AddRange($TimeOutList) | Out-Null
+    $cmo_TimeOut.SelectedItem      = '60'
+    If ($Timeout -ne '') { $cmo_TimeOut.SelectedItem = $Timeout }
+
+    $lbl_CheckTimeOut2             = New-Object 'System.Windows.Forms.Label'
+    $lbl_CheckTimeOut2.Location    = '224,  66'
+    $lbl_CheckTimeOut2.Size        = '208,  21'
+    $lbl_CheckTimeOut2.Text        = 'Seconds'
+    $lbl_CheckTimeOut2.TextAlign   = 'MiddleLeft'
+    $frm_Main.Controls.Add($lbl_CheckTimeOut2)
+
+    # Option 2
+    $lbl_CCTasks1                  = New-Object 'System.Windows.Forms.Label'
+    $lbl_CCTasks1.Location         = ' 12, 102'
+    $lbl_CCTasks1.Size             = '150,  21'
+    $lbl_CCTasks1.Text             = 'Concurrent Tasks :'
+    $lbl_CCTasks1.TextAlign        = 'MiddleRight'
+    $frm_Main.Controls.Add($lbl_CCTasks1)
+
+    $cmo_CCTasks                   = New-Object 'System.Windows.Forms.ComboBox'
+    $cmo_CCTasks.Location          = '168, 102'
+    $cmo_CCTasks.Size              = ' 50,  21'
+    $cmo_CCTasks.DropDownStyle     = 'DropDownList'
+#    $cmo_CCTasks.DrawMode          = 'OwnerDrawFixed'
+#    $cmo_CCTasks.Add_DrawItem($ComboxCustomDraw)
+    $frm_Main.Controls.Add($cmo_CCTasks)
+    [string[]]$TasksList           = @('2', '3', '4', '5', '7', '10', '15')
+    $cmo_CCTasks.Items.AddRange($TasksList) | Out-Null
+    $cmo_CCTasks.SelectedItem      = '5'
+    If ($ccTasks -ne '') { $cmo_CCTasks.SelectedItem = $ccTasks }
+
+    $lbl_CCTasks2                  = New-Object 'System.Windows.Forms.Label'
+    $lbl_CCTasks2.Location         = '225, 102'
+    $lbl_CCTasks2.Size             = '208,  21'
+    $lbl_CCTasks2.Text             = 'Higher values = more resources'
+    $lbl_CCTasks2.TextAlign        = 'MiddleLeft'
+    $frm_Main.Controls.Add($lbl_CCTasks2)
+
+    # Option 3
+    $lbl_Location                  = New-Object 'System.Windows.Forms.Label'
+    $lbl_Location.Location         = ' 12, 138'
+    $lbl_Location.Size             = '150,  20'
+    $lbl_Location.Text             = 'Report Location :'
+    $lbl_Location.TextAlign        = 'MiddleRight'
+    $frm_Main.Controls.Add($lbl_Location)
+
+    $txt_Location                  = New-Object 'System.Windows.Forms.Textbox'
+    $txt_Location.Location         = '168, 138'
+    $txt_Location.Size             = '264,  20'
+    $txt_Location.TextAlign        = 'Left'
+    If ($ResultsPath -ne '') { $txt_Location.Text = $ResultsPath } Else { $txt_Location.Text = '$env:SystemDrive\QA\Results\' }
+    $frm_Main.Controls.Add($txt_Location)
+    
+#endregion
+#region FORM STARTUP / SHUTDOWN
+    $InitialFormWindowState        = New-Object 'System.Windows.Forms.FormWindowState'
+    $frm_Main_StateCorrection_Load = { $frm_Main.WindowState = $InitialFormWindowState }
+
+    ForEach ($control In $frm_Main.Controls) { $control.Font = $sysFont; Try { $control.FlatStyle = 'Standard' } Catch {} }
+    $result = $frm_Main.ShowDialog()
+
+    If ($result -eq [System.Windows.Forms.DialogResult]::OK)
+    {
+        [psobject]$return = New-Object -TypeName PSObject -Property @{
+            'Timeout'     = $cmo_TimeOut.Text.Trim();
+            'ccTasks'     = $cmo_CCTasks.Text.Trim();
+            'ResultsPath' = $txt_Location.Text.Trim();
+        }
+        Return $return
+    }
+    Else { Return $null }
+#endregion
+}
 #endregion
 ###################################################################################################
 ##                                                                                               ##
@@ -719,7 +898,10 @@ Function Display-MainForm
         $MainFORM.Cursor = 'Default'
     }
 
-    $tab_Pages_SelectedIndexChanged = { If ($tab_Pages.SelectedIndex -eq 1) { $lbl_ChangesMade.Visible = $True } Else { $lbl_ChangesMade.Visible = $False } }
+    $tab_Pages_SelectedIndexChanged = {
+        If ($tab_Pages.SelectedIndex -eq 1) { $lbl_ChangesMade.Visible = $True                } Else { $lbl_ChangesMade.Visible = $False }
+        If ($tab_Pages.SelectedIndex -eq 3) { $btn_Settings.Visible    = $btn_t4_Save.Enabled } Else { $btn_Settings.Visible    = $False }
+    }
 
     $btn_t1_Search_Click = {
         # Search location and read in scripts
@@ -1025,9 +1207,12 @@ Function Display-MainForm
         # Write out header information
         $outputFile.AppendLine('[settings]')
         $outputFile.AppendLine("shortcode         = $($txt_t4_ShortCode.Text)")
-        $outputFile.AppendLine("language          = $($cmo_t1_Language.Text)")
         $outputFile.AppendLine("reportCompanyName = $($txt_t4_ReportTitle.Text)")
-        $outputFile.AppendLine('outputLocation    = $env:SystemDrive\QA\Results\')
+        $outputFile.AppendLine('')
+        $outputFile.AppendLine("language          = $($cmo_t1_Language.Text)")
+        $outputFile.AppendLine("outputLocation    = $($script:settings.ResultsPath)")
+        $outputFile.AppendLine("timeout           = $($script:settings.TimeOut)")
+        $outputFile.AppendLine("concurrent        = $($script:settings.ccTasks)")
         $outputFile.AppendLine('')
 
         # Loop through all checks saving as required, hiding others
@@ -1157,6 +1342,13 @@ Function Display-MainForm
         $MainFORM.Cursor = 'Default'
         [System.Windows.Forms.MessageBox]::Show($MainFORM, "Restore Complete`nThe file is called 'RESTORED.ini'`n`nIt is located in the same folder as the QA script you selected.`nRemember to move this to the Settings folder.", 'Restore Settings File', 'OK', 'Information')
     }
+
+    $btn_Settings_Click = {
+        $MainFORM.Cursor = 'WaitCursor'
+        [object]$settings = Show-ExtraSettingsForm -Timeout ($script:settings.Timeout) -ccTasks ($script:settings.ccTasks) -ResultsPath ($script:settings.ResultsPath)
+        If ([string]::IsNullOrEmpty($settings) -eq $false) { [psobject]$script:settings = $settings }
+        $MainFORM.Cursor = 'Default'
+    }
 #endregion
 ###################################################################################################
 #region FORM ITEMS
@@ -1173,6 +1365,7 @@ Function Display-MainForm
     $lbl_ChangesMade              = New-Object 'System.Windows.Forms.Label'
     $btn_RestoreINI               = New-Object 'System.Windows.Forms.Button'
     $btn_Exit                     = New-Object 'System.Windows.Forms.Button'
+    $btn_Settings                 = New-Object 'System.Windows.Forms.Button'
 
     # TAB 1
     $lbl_t1_Welcome               = New-Object 'System.Windows.Forms.Label'
@@ -1598,6 +1791,16 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
     $btn_Exit.DialogResult = [System.Windows.Forms.DialogResult]::Cancel    # Use this instead of a "Click" event
     $MainFORM.Controls.Add($btn_Exit)
 
+    # $tn_Settings
+    $btn_Settings.Location = '322, 635'
+    $btn_Settings.Size     = '150,  25'
+    $btn_Settings.TabIndex = 97
+    $btn_Settings.Text     = 'Additonal Settings'
+    $btn_Settings.Visible  = $False
+    $btn_Settings.Add_Click($btn_Settings_Click)
+    $MainFORM.Controls.Add($btn_Settings)
+
+    # lbl_ChangesMade
     $lbl_ChangesMade.Location  = '174, 630'
     $lbl_ChangesMade.Size      = '527,  35'
     $lbl_ChangesMade.Text      = "NOTE: If you make any selection changes and click 'Next', any unsaved changes will be lost."
@@ -1664,8 +1867,13 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
     Return $MainFORM.ShowDialog()
 }
 ###################################################################################################
-        [string]$script:saveFile        = ''
-Try   { [string]$script:ExecutionFolder = (Split-Path -Path ((Get-Variable MyInvocation -ValueOnly -ErrorAction SilentlyContinue).MyCommand.Path) -ErrorAction SilentlyContinue) }
-Catch { [string]$script:ExecutionFolder = '' }
+        [string]  $script:saveFile        = ''
+        [psobject]$script:settings        = New-Object -TypeName PSObject -Property @{
+            'Timeout'     = '60';
+            'ccTasks'     = '5';
+            'ResultsPath' = '$env:SystemDrive\QA\Results\';
+        }
+Try   { [string]  $script:ExecutionFolder = (Split-Path -Path ((Get-Variable MyInvocation -ValueOnly -ErrorAction SilentlyContinue).MyCommand.Path) -ErrorAction SilentlyContinue) }
+Catch { [string]  $script:ExecutionFolder = '' }
 ###################################################################################################
 Display-MainForm | Out-Null

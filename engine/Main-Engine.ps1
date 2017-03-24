@@ -693,9 +693,7 @@ Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width + 1, '─') }
 
 ###################################################################################################
 
-[int]      $script:ccTasks        =   5    # Number of concurrent tasks to perform (the higher the number the more resources you need)
 [int]      $script:waitTime       = 100    # Time to wait between starting new tasks (milliseconds)
-[int]      $script:checkTimeout   =  60    # Time to wait for each task to complete (seconds)
 [int]      $script:screenwidth    = 120    #
 [int]      $script:failurecount   =   0    #
 [array]    $script:results        = @()    #

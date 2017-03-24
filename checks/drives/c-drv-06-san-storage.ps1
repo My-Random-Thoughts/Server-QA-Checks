@@ -25,6 +25,7 @@
     REQUIRED-FUNCTIONS:
         Check-Software
         Check-VMware
+        Check-HyperV
 #>
 
 Function c-drv-06-san-storage
@@ -40,7 +41,7 @@ Function c-drv-06-san-storage
     
     #... CHECK STARTS HERE ...#
 
-    If ((Check-VMware $serverName) -eq $false)
+    If (((Check-VMware $serverName) -eq $false) -or ((Check-HyperV $serverName) -eq $false))
     {
         [string]$query = 'SELECT Caption FROM Win32_OperatingSystem'
         [string]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Caption

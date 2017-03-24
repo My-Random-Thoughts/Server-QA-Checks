@@ -4,11 +4,13 @@
 
     REQUIRED-INPUTS:
         DNSServers    - List of DNS IP addresses that you want to check|IPv4
-        OrderSpecific - "True|False" - Should the DNS order match exactly for a Pass.?
+        OrderSpecific - "True|False" - Should the DNS order match exactly for a Pass.?  If the number of entries does not match the input list, this is set to "FALSE"
+        AllMustExist  - "True|False" - Should all DNS entries exist for a Pass.?
 
     DEFAULT-VALUES:
         DNSServers    = ('')
         OrderSpecific = 'True'
+        AllMustExist  = 'True'
 
     RESULTS:
         PASS:
@@ -59,50 +61,58 @@ Function c-net-11-dns-settings
     {
         If (($check.Count) -ne ($script:appSettings['DNSServers'].Count))
         {
-            $result.result  = $script:lang['Fail']
-            $result.message = 'DNS Server count mismatch'
-            $result.data    = "Configured: $($check -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
-        }
-        Else
-        {
-            If (($script:appSettings['OrderSpecific']) -eq 'TRUE')
+            If ($script:appSettings['AllMustExist'] -eq 'TRUE')
             {
-                For ($i=0; $i -le ($check.Count); $i++)
-                {
-                    If ($check[$i] -ne $script:appSettings['DNSServers'][$i]) { $result.message = 'DNS Server list is not in the required order'; Break }
-                }
-                If (($result.message) -ne '')
-                {
-                    $result.result = $script:lang['Fail']
-                    $result.data   = "Configured: $($check -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
-                }
-                Else
-                {
-                    $result.result  = $script:lang['Pass']
-                    $result.message = 'All DNS servers configured and in the right order'
-                    $result.data    = ($check -join ', ')
-                }
+                $result.result  = $script:lang['Fail']
+                $result.message = 'DNS Server count mismatch'
+                $result.data    = "Configured: $($check -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
             }
             Else
             {
-                ForEach ($itemC In $check)
-                {
-                    [boolean]$Found = $false
-                    ForEach ($itemS In $script:appSettings['DNSServers']) { If ($itemC -eq $itemS) { $Found = $true; Break } }
-                    If ($Found -eq $false)
-                    {
-                        $result.result  = $script:lang['Fail']
-                        $result.message = 'Mismatched DNS servers'
-                        $result.data    = "Configured: $($check -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
-                    }
-                }
+                $script:appSettings['OrderSpecific'] = 'FALSE'
+            }
+        }
 
-                If (($result.message) -eq '')
+        # Set OrderSpecific to FALSE if required
+        If (($script:appSettings['OrderSpecific']) -eq 'TRUE')
+        {
+            # Check OrderSpecific list
+            For ($i=0; $i -le ($check.Count); $i++)
+            {
+                If ($check[$i] -ne $script:appSettings['DNSServers'][$i]) { $result.message = 'DNS Server list is not in the required order'; Break }
+            }
+            If (($result.message) -ne '')
+            {
+                $result.result = $script:lang['Fail']
+                $result.data   = "Configured: $($check -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
+            }
+            Else
+            {
+                $result.result  = $script:lang['Pass']
+                $result.message = 'All DNS servers configured and in the right order'
+                $result.data    = ($check -join ', ')
+            }
+        }
+        Else
+        {
+            # Check any ordered list
+            ForEach ($itemC In $check)
+            {
+                [boolean]$Found = $false
+                ForEach ($itemS In $script:appSettings['DNSServers']) { If ($itemC -eq $itemS) { $Found = $true; Break } }
+                If ($Found -eq $false)
                 {
-                    $result.result  = $script:lang['Pass']
-                    $result.message = 'All DNS servers configured'
-                    $result.data    = ($check -join ', ')
+                    $result.result  = $script:lang['Fail']
+                    $result.message = 'Mismatched DNS servers'
+                    $result.data    = "Configured: $($check -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
                 }
+            }
+
+            If (($result.message) -eq '')
+            {
+                $result.result  = $script:lang['Pass']
+                $result.message = 'All DNS servers configured'
+                $result.data    = ($check -join ', ')
             }
         }
     }
