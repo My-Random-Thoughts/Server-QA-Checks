@@ -600,9 +600,9 @@ Function Show-ExtraSettingsForm
 {
     Param
     (
-        [parameter(Mandatory=$false)][string]$Timeout,
-        [parameter(Mandatory=$false)][string]$ccTasks,
-        [parameter(Mandatory=$false)][string]$ResultsPath
+        [parameter(Mandatory=$false)][string]$timeout,
+        [parameter(Mandatory=$false)][string]$concurrent,
+        [parameter(Mandatory=$false)][string]$outputLocation
     )
 
     [Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null
@@ -636,7 +636,7 @@ Function Show-ExtraSettingsForm
     $btn_Reset.Font               = $sysFont
     $btn_Reset.Text               = 'Reset'
     $btn_Reset.TabIndex           = '96'
-    $btn_Reset.Add_Click({ $cmo_TimeOut.SelectedItem = '60'; $cmo_CCTasks.SelectedItem = '5'; $txt_Location.Text = '$env:SystemDrive\QA\Results\' })
+    $btn_Reset.Add_Click({ $cmo_timeout.SelectedItem = '60'; $cmo_concurrent.SelectedItem = '5'; $txt_Location.Text = '$env:SystemDrive\QA\Results\' })
     $frm_Main.Controls.Add($btn_Reset)
 
     $btn_Accept                    = New-Object 'System.Windows.Forms.Button'
@@ -661,12 +661,12 @@ Function Show-ExtraSettingsForm
 #endregion
 #region OPTIONS
     # Option 1
-    $lbl_CheckTimeOut1             = New-Object 'System.Windows.Forms.Label'
-    $lbl_CheckTimeOut1.Location    = ' 12,  66'
-    $lbl_CheckTimeOut1.Size        = '150,  21'
-    $lbl_CheckTimeOut1.Text        = 'Check Timeout :'
-    $lbl_CheckTimeOut1.TextAlign   = 'MiddleRight'
-    $frm_Main.Controls.Add($lbl_CheckTimeOut1)
+    $lbl_TimeOut1                  = New-Object 'System.Windows.Forms.Label'
+    $lbl_TimeOut1.Location         = ' 12,  66'
+    $lbl_TimeOut1.Size             = '150,  21'
+    $lbl_TimeOut1.Text             = 'Check Timeout :'
+    $lbl_TimeOut1.TextAlign        = 'MiddleRight'
+    $frm_Main.Controls.Add($lbl_timeout1)
 
     $cmo_TimeOut                   = New-Object 'System.Windows.Forms.ComboBox'
     $cmo_TimeOut.Location          = '168,  66'
@@ -678,37 +678,37 @@ Function Show-ExtraSettingsForm
     $cmo_TimeOut.SelectedItem      = '60'
     If ($Timeout -ne '') { $cmo_TimeOut.SelectedItem = $Timeout }
 
-    $lbl_CheckTimeOut2             = New-Object 'System.Windows.Forms.Label'
-    $lbl_CheckTimeOut2.Location    = '224,  66'
-    $lbl_CheckTimeOut2.Size        = '208,  21'
-    $lbl_CheckTimeOut2.Text        = 'Seconds'
-    $lbl_CheckTimeOut2.TextAlign   = 'MiddleLeft'
+    $lbl_TimeOut2                  = New-Object 'System.Windows.Forms.Label'
+    $lbl_TimeOut2.Location         = '224,  66'
+    $lbl_TimeOut2.Size             = '208,  21'
+    $lbl_TimeOut2.Text             = 'Seconds'
+    $lbl_TimeOut2.TextAlign        = 'MiddleLeft'
     $frm_Main.Controls.Add($lbl_CheckTimeOut2)
 
     # Option 2
-    $lbl_CCTasks1                  = New-Object 'System.Windows.Forms.Label'
-    $lbl_CCTasks1.Location         = ' 12, 102'
-    $lbl_CCTasks1.Size             = '150,  21'
-    $lbl_CCTasks1.Text             = 'Concurrent Tasks :'
-    $lbl_CCTasks1.TextAlign        = 'MiddleRight'
-    $frm_Main.Controls.Add($lbl_CCTasks1)
+    $lbl_Concurrent1               = New-Object 'System.Windows.Forms.Label'
+    $lbl_Concurrent1.Location      = ' 12, 102'
+    $lbl_Concurrent1.Size          = '150,  21'
+    $lbl_Concurrent1.Text          = 'Concurrent Tasks :'
+    $lbl_Concurrent1.TextAlign     = 'MiddleRight'
+    $frm_Main.Controls.Add($lbl_Concurrent1)
 
-    $cmo_CCTasks                   = New-Object 'System.Windows.Forms.ComboBox'
-    $cmo_CCTasks.Location          = '168, 102'
-    $cmo_CCTasks.Size              = ' 50,  21'
-    $cmo_CCTasks.DropDownStyle     = 'DropDownList'
-    $frm_Main.Controls.Add($cmo_CCTasks)
-    [string[]]$TasksList           = @('2', '3', '4', '5', '7', '10', '15')
-    $cmo_CCTasks.Items.AddRange($TasksList) | Out-Null
-    $cmo_CCTasks.SelectedItem      = '5'
-    If ($ccTasks -ne '') { $cmo_CCTasks.SelectedItem = $ccTasks }
+    $cmo_Concurrent                = New-Object 'System.Windows.Forms.ComboBox'
+    $cmo_Concurrent.Location       = '168, 102'
+    $cmo_Concurrent.Size           = ' 50,  21'
+    $cmo_Concurrent.DropDownStyle  = 'DropDownList'
+    $frm_Main.Controls.Add($cmo_concurrent)
+    [string[]]$ConCurrentList      = @('2', '3', '4', '5', '7', '10', '15')
+    $cmo_Concurrent.Items.AddRange($ConCurrentList) | Out-Null
+    $cmo_Concurrent.SelectedItem   = '5'
+    If ($concurrent -ne '') { $cmo_Concurrent.SelectedItem = $concurrent }
 
-    $lbl_CCTasks2                  = New-Object 'System.Windows.Forms.Label'
-    $lbl_CCTasks2.Location         = '225, 102'
-    $lbl_CCTasks2.Size             = '208,  21'
-    $lbl_CCTasks2.Text             = 'Higher values = more resources'
-    $lbl_CCTasks2.TextAlign        = 'MiddleLeft'
-    $frm_Main.Controls.Add($lbl_CCTasks2)
+    $lbl_Concurrent2               = New-Object 'System.Windows.Forms.Label'
+    $lbl_Concurrent2.Location      = '225, 102'
+    $lbl_Concurrent2.Size          = '208,  21'
+    $lbl_Concurrent2.Text          = 'Higher values = more resources'
+    $lbl_Concurrent2.TextAlign     = 'MiddleLeft'
+    $frm_Main.Controls.Add($lbl_Concurrent2)
 
     # Option 3
     $lbl_Location                  = New-Object 'System.Windows.Forms.Label'
@@ -722,7 +722,7 @@ Function Show-ExtraSettingsForm
     $txt_Location.Location         = '168, 138'
     $txt_Location.Size             = '264,  20'
     $txt_Location.TextAlign        = 'Left'
-    If ($ResultsPath -ne '') { $txt_Location.Text = $ResultsPath } Else { $txt_Location.Text = '$env:SystemDrive\QA\Results\' }
+    If ($outputLocation -ne '') { $txt_Location.Text = $outputLocation } Else { $txt_Location.Text = '$env:SystemDrive\QA\Results\' }
     $frm_Main.Controls.Add($txt_Location)
     
 #endregion
@@ -736,9 +736,9 @@ Function Show-ExtraSettingsForm
     If ($result -eq [System.Windows.Forms.DialogResult]::OK)
     {
         [psobject]$return = New-Object -TypeName PSObject -Property @{
-            'Timeout'     = $cmo_TimeOut.Text.Trim();
-            'ccTasks'     = $cmo_CCTasks.Text.Trim();
-            'ResultsPath' = $txt_Location.Text.Trim();
+            'timeout'        = $cmo_TimeOut.Text.Trim();
+            'concurrent'     = $cmo_Concurrent.Text.Trim();
+            'outputLocation' = $txt_Location.Text.Trim();
         }
         Return $return
     }
@@ -871,7 +871,6 @@ Function Display-MainForm
 
     $tab_Pages_SelectedIndexChanged = {
         If ($tab_Pages.SelectedIndex -eq 1) { $lbl_ChangesMade.Visible = $True                } Else { $lbl_ChangesMade.Visible = $False }
-        If ($tab_Pages.SelectedIndex -eq 3) { $btn_Settings.Visible    = $btn_t4_Save.Enabled } Else { $btn_Settings.Visible    = $False }
     }
 
     $btn_t1_Search_Click = {
@@ -928,8 +927,14 @@ Function Display-MainForm
 
         $lbl_t1_ScanningScripts.Visible = $True
         $lbl_t1_ScanningScripts.Text    = 'Scanning Check Location: '
+
+        # Load settings from INI file
         $txt_t4_ShortCode.Text          = ($settingsINI.settings.shortcode)
         $txt_t4_ReportTitle.Text        = ($settingsINI.settings.reportCompanyName)
+        $script:settings.timeout        = ($settingsINI.settings.timeout)
+        $script:settings.concurrent     = ($settingsINI.settings.concurrent)
+        $script:settings.outputLocation = ($settingsINI.settings.outputLocation)
+
         $btn_t4_Save.Enabled            = $False
         $btn_t4_Generate.Enabled        = $false
         $tab_t3_Pages.TabPages.Clear()
@@ -1154,6 +1159,13 @@ Function Display-MainForm
         $MainFORM.Cursor             = 'Default'
     }
 
+    $btn_t4_Options_Click = {
+        $MainFORM.Cursor  = 'WaitCursor'
+        [object]$settings = Show-ExtraSettingsForm -timeout ($script:settings.Timeout) -concurrent ($script:settings.concurrent) -outputLocation ($script:settings.outputLocation)
+        If ([string]::IsNullOrEmpty($settings) -eq $false) { [psobject]$script:settings = $settings }
+        $MainFORM.Cursor  = 'Default'
+    }
+
     $btn_t4_Save_Click = {
         If (([string]::IsNullOrEmpty($txt_t4_ShortCode.Text) -eq $true) -or ([string]::IsNullOrEmpty($txt_t4_ReportTitle.Text) -eq $true))
         {
@@ -1181,9 +1193,9 @@ Function Display-MainForm
         $outputFile.AppendLine("reportCompanyName = $($txt_t4_ReportTitle.Text)")
         $outputFile.AppendLine('')
         $outputFile.AppendLine("language          = $($cmo_t1_Language.Text)")
-        $outputFile.AppendLine("outputLocation    = $($script:settings.ResultsPath)")
+        $outputFile.AppendLine("outputLocation    = $($script:settings.outputLocation)")
         $outputFile.AppendLine("timeout           = $($script:settings.TimeOut)")
-        $outputFile.AppendLine("concurrent        = $($script:settings.ccTasks)")
+        $outputFile.AppendLine("concurrent        = $($script:settings.concurrent)")
         $outputFile.AppendLine('')
 
         # Loop through all checks saving as required, hiding others
@@ -1237,13 +1249,12 @@ Function Display-MainForm
         $btn_t4_Save.Enabled     = $False
         $btn_t4_Generate.Enabled = $False
 
-        [string]$Cmd = "PowerShell -Command {& '$script:ExecutionFolder\Compiler.ps1' -Settings $(Split-Path -Path $script:saveFile -Leaf)}"
-        Invoke-Expression -Command $Cmd
-
-        [string]$CmdRS = "PowerShell -Command {& '$script:ExecutionFolder\CompilerRS.ps1' -Settings $(Split-Path -Path $script:saveFile -Leaf)}"
-        Invoke-Expression -Command $CmdRS
-
-        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Custom QA Script generated", ' Generate QA Script', 'OK', 'Information') 
+        $lbl_t4_Generate.Text = 'Generating Standard QA Script'
+        Invoke-Expression -Command "PowerShell -Command {& '$script:ExecutionFolder\Compiler.ps1'   -Settings $(Split-Path -Path $script:saveFile -Leaf)}"    # Build Standard QA Script
+        $lbl_t4_Generate.Text = 'Generating Runspace QA Script (proof of concept)'
+        Invoke-Expression -Command "PowerShell -Command {& '$script:ExecutionFolder\CompilerRS.ps1' -Settings $(Split-Path -Path $script:saveFile -Leaf)}"    # Build Runspace QA Script
+        $lbl_t4_Generate.Text = ''
+        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Custom QA Script generated", ' Generate QA Script', 'OK', 'Information')
 
         $btn_t4_Save.Enabled     = $True
         $btn_t4_Generate.Enabled = $True
@@ -1251,7 +1262,7 @@ Function Display-MainForm
     }
 
     $btn_RestoreINI_Click = {
-        [string]$msgbox = [System.Windows.Forms.MessageBox]::Show($MainFORM, "If you have lost your settings file, you can use this option to restore it.`nClick 'OK' to select the compiled QA script you want to restore the settings from.", ' Restore Settings File', 'OKCancel', 'Information')
+        [string]$msgbox = [System.Windows.Forms.MessageBox]::Show($MainFORM, "If you have lost your settings file, you can use this option to restore it.`nClick 'OK' to select the compiled QA script you want to restore your settings from.", ' Restore Settings File', 'OKCancel', 'Information')
         If ($msgbox -eq 'Cancel') { Return }
 
         [string]$originalQA = (Get-File -InitialDirectory $script:ExecutionFolder -Title 'Select the compiled QA script to restore the settings from:')
@@ -1261,13 +1272,15 @@ Function Display-MainForm
         # Start retrevial process
         [array]   $skippedChecks = ''
         [string[]]$content   = (Get-Content -Path $originalQA)
-        [string]  $enabledF  = ([regex]::Match($content, '(\[array\]\$script\:qaChecks \= \()((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))'))
+
+        [string]  $enabledF  = ([regex]::Match($content, '(\[array\]\$script\:qaChecks \= \()((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))'))    # Get list of enabled functions
                   $enabledF  = $enabledF.Replace(' ', '').Trim()
-        [string[]]$functions = ($content | Select-String -Pattern '(Function c-)([a-z]{3}[-][0-9]{2})' -AllMatches)
+        [string[]]$functions = ($content | Select-String -Pattern '(Function c-)([a-z]{3}[-][0-9]{2})' -AllMatches)                      # Get list of all functions
         [string]  $FuncOLD = ''
         [string]  $FuncNEW = ''
 
-        ForEach ($func In $functions) { If ($enabledF.Contains($func) -eq $false) { $skippedChecks += ($func.Substring(11, 6).Replace('-', '')) } }
+        # Get list of skipped functions
+        ForEach ($func In $functions) { If ($enabledF.Contains($func.Substring(9)) -eq $false) { $skippedChecks += ($func.Substring(11, 6).Replace('-', '')) } }
 
         [System.Text.StringBuilder]$outputFile = ''
         $outputFile.AppendLine('[settings]')                   | Out-Null
@@ -1276,18 +1289,17 @@ Function Display-MainForm
 
         ForEach ($line In $content)
         {
-            If ($line.StartsWith('[string]$reportCompanyName')) { $outputFile.AppendLine("reportCompanyName =$($line.Split('=')[1])".Replace('"', '').Trim()) | Out-Null }
-            If ($line.StartsWith('[string]$script:qaOutput'  )) { $outputFile.AppendLine("outputLocation    =$($line.Split('=')[1])".Replace('"', '').Trim()) | Out-Null
-                $outputFile.AppendLine('') | Out-Null
-                Break
-            }
+            If ($line.StartsWith('[string]$reportCompanyName'  )) { $outputFile.AppendLine("reportCompanyName =$($line.Split('=')[1])".Replace('"', '').Trim()) | Out-Null }
+            If ($line.StartsWith('[string]$script:qaOutput'    )) { $outputFile.AppendLine("outputLocation    =$($line.Split('=')[1])".Replace('"', '').Trim()) | Out-Null }
+            If ($line.StartsWith('[int]   $script:ccTasks'     )) { $outputFile.AppendLine("concurrent        =$($line.Split('=')[1])".Replace('"', '').Trim()) | Out-Null }
+            If ($line.StartsWith('[int]   $script:checkTimeout')) { $outputFile.AppendLine("timeout           =$($line.Split('=')[1])".Replace('"', '').Trim()) | Out-Null }
         }
 
         ForEach ($line In $content)
         {
             If ($line.StartsWith('Function newResult { Return ')) { [string]$funcName = ''; [string[]]$appSettings = $null }
             If ($line.StartsWith('$script:appSettings['        )) {
-                [string[]]$newLine = ($line.Substring(21).Replace("']", '')).Split('=')
+                [string[]]$newLine = ($line.Substring(21).Replace("']", '')) -Split ' = '    # Need to have spaced around the equals sign due to check settings having equal signs in them (SYS-18)
                 $appSettings += (($newLine[0].Trim()).PadRight(35) + '= ' + ($newLine[1]).Trim())
             }
             If ($line.StartsWith('Function c-'))
@@ -1305,8 +1317,10 @@ Function Display-MainForm
 
                 If ($skippedChecks.Contains($funcName))    { $outputFile.AppendLine("[$funcName-skip]") | Out-Null }
                 Else                                       { $outputFile.AppendLine("[$funcName]"     ) | Out-Null }
+
                 If ([string]::IsNullOrEmpty($appSettings)) { $outputFile.AppendLine("; No Settings")    | Out-Null }
                 Else { ForEach ($setting In $appSettings)  { $outputFile.AppendLine($setting)           | Out-Null } }
+
                 $outputFile.AppendLine('')                                                              | Out-Null
              }
         }
@@ -1315,13 +1329,6 @@ Function Display-MainForm
 
         $MainFORM.Cursor = 'Default'
         [System.Windows.Forms.MessageBox]::Show($MainFORM, "Restore Complete`nThe file is called 'RESTORED.ini'`n`nIt is located in the same folder as the QA script you selected.`nRemember to move this to the Settings folder.", ' Restore Settings File', 'OK', 'Information')
-    }
-
-    $btn_Settings_Click = {
-        $MainFORM.Cursor = 'WaitCursor'
-        [object]$settings = Show-ExtraSettingsForm -Timeout ($script:settings.Timeout) -ccTasks ($script:settings.ccTasks) -ResultsPath ($script:settings.ResultsPath)
-        If ([string]::IsNullOrEmpty($settings) -eq $false) { [psobject]$script:settings = $settings }
-        $MainFORM.Cursor = 'Default'
     }
 #endregion
 ###################################################################################################
@@ -1339,7 +1346,6 @@ Function Display-MainForm
     $lbl_ChangesMade              = New-Object 'System.Windows.Forms.Label'
     $btn_RestoreINI               = New-Object 'System.Windows.Forms.Button'
     $btn_Exit                     = New-Object 'System.Windows.Forms.Button'
-    $btn_Settings                 = New-Object 'System.Windows.Forms.Button'
 
     # TAB 1
     $lbl_t1_Welcome               = New-Object 'System.Windows.Forms.Label'
@@ -1380,8 +1386,10 @@ Function Display-MainForm
     $lbl_t4_QAReport              = New-Object 'System.Windows.Forms.Label'
     $txt_t4_ShortCode             = New-Object 'System.Windows.Forms.TextBox'
     $txt_t4_ReportTitle           = New-Object 'System.Windows.Forms.TextBox'
+    $btn_t4_Options               = New-Object 'System.Windows.Forms.Button'
     $btn_t4_Save                  = New-Object 'System.Windows.Forms.Button'
     $btn_t4_Generate              = New-Object 'System.Windows.Forms.Button'
+    $lbl_t4_Generate              = New-Object 'System.Windows.Forms.Label'
 #endregion
 #region MAIN FORM 2
     $MainFORM.SuspendLayout()
@@ -1485,6 +1493,7 @@ This script will help you create a custom settings file for the QA checks, one t
 
 
 It will allow you to select which checks you want to use and which to skip.  You will also be able to set specific values for each of the check settings.  For a more detailed description on using this script, please read the documentation.
+
 
 
 
@@ -1691,46 +1700,54 @@ For example: 'QA_ACME_v3.xx.xxxx.ps1'.
 Also enter a name or other label for the HTML results file.  This is automatically appended with 'QA Report'.
 For example: 'ACME QA Report'.
 
-
+Click 'Additional Options' to configure futher configuration settings.
 
 
 Click the 'Save Settings' button below to save your selections and values.
-Once done, you can then click 'Generate QA Script' to create the compiled QA script'
+Once done, you can then click 'Generate QA Script' to create the compiled QA script
 "@
     $tab_Page4.Controls.Add($lbl_t4_Complete_Info)
 
     # lbl_t4_ShortCode
-    $lbl_t4_ShortCode.Location  = '  9, 325'
+    $lbl_t4_ShortCode.Location  = '  9, 289'
     $lbl_t4_ShortCode.Size      = '291,  20'
     $lbl_t4_ShortCode.TextAlign = 'MiddleRight'
     $lbl_t4_ShortCode.Text      = 'Settings Short Code :'
     $tab_Page4.Controls.Add($lbl_t4_ShortCode)
 
+    # txt_t4_ShortCode
+    $txt_t4_ShortCode.Location  = '306, 289'
+    $txt_t4_ShortCode.Size      = '150,  20'
+    $txt_t4_ShortCode.TextAlign = 'Center'
+    $tab_Page4.Controls.Add($txt_t4_ShortCode)
+
     # lbl_t4_ReportTitle
-    $lbl_t4_ReportTitle.Location  = '  9, 361'
+    $lbl_t4_ReportTitle.Location  = '  9, 325'
     $lbl_t4_ReportTitle.Size      = '291,  20'
     $lbl_t4_ReportTitle.TextAlign = 'MiddleRight'
     $lbl_t4_ReportTitle.Text      = 'HTML Report Company Name :'
     $tab_Page4.Controls.Add($lbl_t4_ReportTitle)
 
     # lbl_t4_QAReport
-    $lbl_t4_QAReport.Location  = '462, 361'
+    $lbl_t4_QAReport.Location  = '462, 325'
     $lbl_t4_QAReport.Size      = '291,  20'
     $lbl_t4_QAReport.TextAlign = 'MiddleLeft'
     $lbl_t4_QAReport.Text      = 'QA Report'
     $tab_Page4.Controls.Add($lbl_t4_QAReport)
 
-    # txt_t4_ShortCode
-    $txt_t4_ShortCode.Location  = '306, 325'
-    $txt_t4_ShortCode.Size      = '150,  20'
-    $txt_t4_ShortCode.TextAlign = 'Center'
-    $tab_Page4.Controls.Add($txt_t4_ShortCode)
-
     # txt_t4_ReportTitle
-    $txt_t4_ReportTitle.Location  = '306, 361'
+    $txt_t4_ReportTitle.Location  = '306, 325'
     $txt_t4_ReportTitle.Size      = '150,  20'
     $txt_t4_ReportTitle.TextAlign = 'Center'
     $tab_Page4.Controls.Add($txt_t4_ReportTitle)
+
+    # btn_t4_Options
+    $btn_t4_Options.Location      = '306, 361'
+    $btn_t4_Options.Size          = '150,  25'
+    $btn_t4_Options.TabIndex      = 97
+    $btn_t4_Options.Text          = 'Additonal Options'
+    $btn_t4_Options.Add_Click($btn_t4_Options_Click)
+    $tab_Page4.Controls.Add($btn_t4_Options)
 
     # btn_t4_Save
     $btn_t4_Save.Location = '306, 421'
@@ -1747,6 +1764,13 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
     $btn_t4_Generate.Enabled  = $False
     $btn_t4_Generate.Add_Click($btn_t4_Generate_Click)
     $tab_Page4.Controls.Add($btn_t4_Generate)
+
+    # lbl_t4_Generate
+    $lbl_t4_Generate.Location  = '  9, 512'
+    $lbl_t4_Generate.Size      = '744,  20'
+    $lbl_t4_Generate.TextAlign = 'MiddleCenter'
+    $lbl_t4_Generate.Text      = ''
+    $tab_Page4.Controls.Add($lbl_t4_Generate)
 #endregion
 #region Common Controls
     # btn_RestoreINI
@@ -1764,15 +1788,6 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
     $btn_Exit.Text     = 'Exit'
     $btn_Exit.DialogResult = [System.Windows.Forms.DialogResult]::Cancel    # Use this instead of a "Click" event
     $MainFORM.Controls.Add($btn_Exit)
-
-    # $tn_Settings
-    $btn_Settings.Location = '322, 635'
-    $btn_Settings.Size     = '150,  25'
-    $btn_Settings.TabIndex = 97
-    $btn_Settings.Text     = 'Additonal Settings'
-    $btn_Settings.Visible  = $False
-    $btn_Settings.Add_Click($btn_Settings_Click)
-    $MainFORM.Controls.Add($btn_Settings)
 
     # lbl_ChangesMade
     $lbl_ChangesMade.Location  = '174, 630'
@@ -1816,9 +1831,9 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
 ###################################################################################################
         [string]  $script:saveFile        = ''
         [psobject]$script:settings        = New-Object -TypeName PSObject -Property @{
-            'Timeout'     = '60';
-            'ccTasks'     = '5';
-            'ResultsPath' = '$env:SystemDrive\QA\Results\';
+            'timeout'        = '60';
+            'concurrent'     = '5';
+            'outputLocation' = '$env:SystemDrive\QA\Results\';
         }
 Try   { [string]  $script:ExecutionFolder = (Split-Path -Path ((Get-Variable MyInvocation -ValueOnly -ErrorAction SilentlyContinue).MyCommand.Path) -ErrorAction SilentlyContinue) }
 Catch { [string]  $script:ExecutionFolder = '' }
