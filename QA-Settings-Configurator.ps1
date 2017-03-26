@@ -621,8 +621,9 @@ Function Show-ExtraSettingsForm
     $frm_Main.ShowInTaskbar        = $False
     $frm_Main.AutoScaleDimensions  = '6, 13'
     $frm_Main.AutoScaleMode        = 'Font'
-    $frm_Main.ClientSize           = '444, 222'    # 450 x 300
+    $frm_Main.ClientSize           = '444, 222'    # 450 x 250
     $frm_Main.StartPosition        = 'CenterParent'
+    $frm_Main.Add_FormClosed($frm_Main_Cleanup_FormClosed)
 
     $lbl_Description               = New-Object 'System.Windows.Forms.Label'
     $lbl_Description.Location      = ' 12,  12'
@@ -666,14 +667,14 @@ Function Show-ExtraSettingsForm
     $lbl_TimeOut1.Size             = '150,  21'
     $lbl_TimeOut1.Text             = 'Check Timeout :'
     $lbl_TimeOut1.TextAlign        = 'MiddleRight'
-    $frm_Main.Controls.Add($lbl_timeout1)
+    $frm_Main.Controls.Add($lbl_Timeout1)
 
+    [string[]]$TimeOutList         = @('30','45','60','75','90','120')
     $cmo_TimeOut                   = New-Object 'System.Windows.Forms.ComboBox'
     $cmo_TimeOut.Location          = '168,  66'
     $cmo_TimeOut.Size              = ' 50,  21'
     $cmo_TimeOut.DropDownStyle     = 'DropDownList'
     $frm_Main.Controls.Add($cmo_TimeOut)
-    [string[]]$TimeOutList         = @('30','45','60','75','90','120')
     $cmo_TimeOut.Items.AddRange($TimeOutList) | Out-Null
     $cmo_TimeOut.SelectedItem      = '60'
     If ($Timeout -ne '') { $cmo_TimeOut.SelectedItem = $Timeout }
@@ -683,22 +684,22 @@ Function Show-ExtraSettingsForm
     $lbl_TimeOut2.Size             = '208,  21'
     $lbl_TimeOut2.Text             = 'Seconds'
     $lbl_TimeOut2.TextAlign        = 'MiddleLeft'
-    $frm_Main.Controls.Add($lbl_CheckTimeOut2)
+    $frm_Main.Controls.Add($lbl_TimeOut2)
 
     # Option 2
     $lbl_Concurrent1               = New-Object 'System.Windows.Forms.Label'
     $lbl_Concurrent1.Location      = ' 12, 102'
     $lbl_Concurrent1.Size          = '150,  21'
-    $lbl_Concurrent1.Text          = 'Concurrent Tasks :'
+    $lbl_Concurrent1.Text          = 'Check Concurrency :'
     $lbl_Concurrent1.TextAlign     = 'MiddleRight'
     $frm_Main.Controls.Add($lbl_Concurrent1)
 
+    [string[]]$ConCurrentList      = @('2', '3', '4', '5', '7', '10', '15')
     $cmo_Concurrent                = New-Object 'System.Windows.Forms.ComboBox'
     $cmo_Concurrent.Location       = '168, 102'
     $cmo_Concurrent.Size           = ' 50,  21'
     $cmo_Concurrent.DropDownStyle  = 'DropDownList'
     $frm_Main.Controls.Add($cmo_concurrent)
-    [string[]]$ConCurrentList      = @('2', '3', '4', '5', '7', '10', '15')
     $cmo_Concurrent.Items.AddRange($ConCurrentList) | Out-Null
     $cmo_Concurrent.SelectedItem   = '5'
     If ($concurrent -ne '') { $cmo_Concurrent.SelectedItem = $concurrent }
@@ -706,7 +707,7 @@ Function Show-ExtraSettingsForm
     $lbl_Concurrent2               = New-Object 'System.Windows.Forms.Label'
     $lbl_Concurrent2.Location      = '225, 102'
     $lbl_Concurrent2.Size          = '208,  21'
-    $lbl_Concurrent2.Text          = 'Higher values = more resources'
+    $lbl_Concurrent2.Text          = 'At a time'
     $lbl_Concurrent2.TextAlign     = 'MiddleLeft'
     $frm_Main.Controls.Add($lbl_Concurrent2)
 
@@ -714,7 +715,7 @@ Function Show-ExtraSettingsForm
     $lbl_Location                  = New-Object 'System.Windows.Forms.Label'
     $lbl_Location.Location         = ' 12, 138'
     $lbl_Location.Size             = '150,  20'
-    $lbl_Location.Text             = 'Report Location :'
+    $lbl_Location.Text             = 'Report Output Location :'
     $lbl_Location.TextAlign        = 'MiddleRight'
     $frm_Main.Controls.Add($lbl_Location)
 
@@ -724,16 +725,22 @@ Function Show-ExtraSettingsForm
     $txt_Location.TextAlign        = 'Left'
     If ($outputLocation -ne '') { $txt_Location.Text = $outputLocation } Else { $txt_Location.Text = '$env:SystemDrive\QA\Results\' }
     $frm_Main.Controls.Add($txt_Location)
-    
 #endregion
 #region FORM STARTUP / SHUTDOWN
-    $InitialFormWindowState        = New-Object 'System.Windows.Forms.FormWindowState'
-    $frm_Main_StateCorrection_Load = { $frm_Main.WindowState = $InitialFormWindowState }
+    $frm_Main_Cleanup_FormClosed = {
+        Try {
+            $btn_Accept.Remove_Click($btn_Accept_Click)
+        } Catch {}
+        $frm_Main.Remove_FormClosed($frm_Main_Cleanup_FormClosed)
+        $frm_Main.Dispose()
+    }
 
     ForEach ($control In $frm_Main.Controls) { $control.Font = $sysFont; Try { $control.FlatStyle = 'Standard' } Catch {} }
-    $result = $frm_Main.ShowDialog()
+    $lbl_Location.Height = $lbl_Location.Height
+    $btn_Location.Height = $txt_Location.Height
+    [string]$result = $frm_Main.ShowDialog()
 
-    If ($result -eq [System.Windows.Forms.DialogResult]::OK)
+    If ($result -eq 'OK')
     {
         [psobject]$return = New-Object -TypeName PSObject -Property @{
             'timeout'        = $cmo_TimeOut.Text.Trim();
@@ -783,9 +790,10 @@ Function Display-MainForm
 
     $Form_Cleanup_FormClosed   = {
         $tab_Pages.Remove_SelectedIndexChanged($tab_Pages_SelectedIndexChanged)
-        $btn_t4_Save.Add_Click($btn_t4_Save_Click)
+        $btn_t4_Save.Remove_Click($btn_t4_Save_Click)
         $btn_t1_Search.Remove_Click($btn_t1_Search_Click)
         $btn_t1_Import.Remove_Click($btn_t1_Import_Click)
+        $btn_t4_Options.Remove_Click($btn_t4_Options_Click)
         $btn_t4_Generate.Remove_Click($btn_t4_Generate_Click)
         $btn_t2_NextPage.Remove_Click($btn_t2_NextPage_Click)
         $btn_t2_SelectAll.Remove_Click($btn_t2_SelectAll_Click)
