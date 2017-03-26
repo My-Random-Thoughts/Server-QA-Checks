@@ -1051,7 +1051,7 @@ Function Display-MainForm
             [System.Windows.Forms.ListView]$lvwObject =    $tabObject.Controls["lvw_$($folder.Header.Trim())"]
             If ($lvwObject.Items.Count -gt 0)
             {
-                $msgbox = ([System.Windows.Forms.MessageBox]::Show($MainFORM, "Any unsaved changes will be lost`nAre you sure you want to continue.?`n`nTo save your current changes: Click 'No',`nChange to the 'Generate QA' tab, click 'Save Settings'", 'Warning', 'YesNo', 'Warning', 'Button2'))
+                $msgbox = ([System.Windows.Forms.MessageBox]::Show($MainFORM, "Any unsaved changes will be lost`nAre you sure you want to continue.?`n`nTo save your current changes: Click 'No',`nChange to the 'Generate QA' tab, click 'Save Settings'", ' Warning', 'YesNo', 'Warning', 'Button2'))
                 If ($msgbox -eq 'No') { Return }
                 Break
             }
@@ -1157,7 +1157,7 @@ Function Display-MainForm
     $btn_t4_Save_Click = {
         If (([string]::IsNullOrEmpty($txt_t4_ShortCode.Text) -eq $true) -or ([string]::IsNullOrEmpty($txt_t4_ReportTitle.Text) -eq $true))
         {
-            [System.Windows.Forms.MessageBox]::Show($MainFORM, 'Please fill in a "ShortCode" and "ReportTitle" value.', 'Missing Data', 'OK', 'Warning')
+            [System.Windows.Forms.MessageBox]::Show($MainFORM, 'Please fill in the short code and report title values.', ' Missing Data', 'OK', 'Warning')
             Return
         }
 
@@ -1168,9 +1168,9 @@ Function Display-MainForm
         If ($script:saveFile.EndsWith('default-settings.ini'))
         {
             $MainFORM.Cursor = 'Default'
-            [System.Windows.Forms.MessageBox]::Show($MainFORM, "You should not save over the default-settings file.`n" +
-                                                               "It will be overwritten when the source code is updated`n`n" +
-                                                               "Please select a different file name", 'default-settings.ini', 'OK', 'Error')
+            [System.Windows.Forms.MessageBox]::Show($MainFORM, "You should not save over the default settings file.`n" +
+                                                               "It will be overwritten whenever the source code is updated`n`n" +
+                                                               "Please select a different file name", ' default-settings.ini', 'OK', 'Error')
             Return
         }
 
@@ -1227,7 +1227,7 @@ Function Display-MainForm
         }
 
         $outputFile.ToString() | Out-File -FilePath $script:saveFile -Encoding ascii -Force
-        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Settings file '$(Split-Path -Path $script:saveFile -Leaf)' saved successfully.", 'Save Settings', 'OK', 'Information') 
+        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Settings file '$(Split-Path -Path $script:saveFile -Leaf)' saved successfully.", ' Save Settings', 'OK', 'Information') 
         $btn_t4_Generate.Enabled = $True
         $MainFORM.Cursor = 'Default'
     }
@@ -1237,10 +1237,13 @@ Function Display-MainForm
         $btn_t4_Save.Enabled     = $False
         $btn_t4_Generate.Enabled = $False
 
-        [string]$Cmd = "PowerShell -Command {& '$script:ExecutionFolder\compiler.ps1' -Settings $(Split-Path -Path $script:saveFile -Leaf)}"
+        [string]$Cmd = "PowerShell -Command {& '$script:ExecutionFolder\Compiler.ps1' -Settings $(Split-Path -Path $script:saveFile -Leaf)}"
         Invoke-Expression -Command $Cmd
 
-        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Custom QA Script generated", 'Generate QA Script', 'OK', 'Information') 
+        [string]$CmdRS = "PowerShell -Command {& '$script:ExecutionFolder\CompilerRS.ps1' -Settings $(Split-Path -Path $script:saveFile -Leaf)}"
+        Invoke-Expression -Command $CmdRS
+
+        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Custom QA Script generated", ' Generate QA Script', 'OK', 'Information') 
 
         $btn_t4_Save.Enabled     = $True
         $btn_t4_Generate.Enabled = $True
@@ -1248,7 +1251,7 @@ Function Display-MainForm
     }
 
     $btn_RestoreINI_Click = {
-        [string]$msgbox = [System.Windows.Forms.MessageBox]::Show($MainFORM, "If you have lost your settings file, you can use this option to restore it.`nClick 'OK' to select the compiled QA script you want to restore the settings from.", 'Restore Settings File', 'OKCancel', 'Information')
+        [string]$msgbox = [System.Windows.Forms.MessageBox]::Show($MainFORM, "If you have lost your settings file, you can use this option to restore it.`nClick 'OK' to select the compiled QA script you want to restore the settings from.", ' Restore Settings File', 'OKCancel', 'Information')
         If ($msgbox -eq 'Cancel') { Return }
 
         [string]$originalQA = (Get-File -InitialDirectory $script:ExecutionFolder -Title 'Select the compiled QA script to restore the settings from:')
@@ -1311,7 +1314,7 @@ Function Display-MainForm
         $outputFile.ToString() | Out-File -FilePath "$(Split-Path -Path $originalQA -Parent)\RESTORED.ini" -Encoding ascii -Force
 
         $MainFORM.Cursor = 'Default'
-        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Restore Complete`nThe file is called 'RESTORED.ini'`n`nIt is located in the same folder as the QA script you selected.`nRemember to move this to the Settings folder.", 'Restore Settings File', 'OK', 'Information')
+        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Restore Complete`nThe file is called 'RESTORED.ini'`n`nIt is located in the same folder as the QA script you selected.`nRemember to move this to the Settings folder.", ' Restore Settings File', 'OK', 'Information')
     }
 
     $btn_Settings_Click = {
@@ -1366,8 +1369,8 @@ Function Display-MainForm
 
     # TAB 3 
     $lbl_t3_ScriptSelection       = New-Object 'System.Windows.Forms.Label'
-    $tab_t3_Pages                 = New-Object 'System.Windows.Forms.TabControl'    # TabPages are generated automatically
     $lbl_t3_NoParameters          = New-Object 'System.Windows.Forms.Label'
+    $tab_t3_Pages                 = New-Object 'System.Windows.Forms.TabControl'    # TabPages are generated automatically
 
     # TAB 4
     $lbl_t4_Complete              = New-Object 'System.Windows.Forms.Label'
