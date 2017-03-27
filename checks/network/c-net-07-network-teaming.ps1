@@ -90,7 +90,7 @@ Function c-net-07-network-teaming
 
     If ($check -like '*200*')    # 2003, 2008
     {
-        If (((Check-VMware $serverName) -eq $false) -or ((Check-HyperV $serverName) -eq $false))
+        If (((Check-VMware $serverName) -eq $false) -and ((Check-HyperV $serverName) -eq $false))
         {
             If ($check1.Count -gt 0)
             {
