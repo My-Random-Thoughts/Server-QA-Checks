@@ -1,5 +1,5 @@
 # Runspaces Proof Of Concept
-I have included a separate compiler to build a POC check that uses Runspace Pools instead of Jobs to run each check.  Runspaces have the advantage of being extremely fast compared to Jobs.  A full scan drops from about 60 seconds to just 12.   However, it does not fully work correctly against remote servers, only locally checked ones.  Improvements will come, but slowly.!  
+I have included a separate compiler to build a POC check that uses Runspace Pools instead of PowerShell Jobs to run each check.  Runspaces have the advantage of being extremely fast compared to Jobs.  A full scan drops from about 60 seconds to just 12.
 
 
 
