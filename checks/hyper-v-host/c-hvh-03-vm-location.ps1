@@ -39,7 +39,7 @@ Function c-hvh-03-vm-location
  
     #... CHECK STARTS HERE ...#
 
-    If ((Check-NameSpace -serverName $serverName -namespace 'Virtualization') -eq $true)
+    If ((Check-NameSpace -ServerName $serverName -NameSpace 'ROOT\Virtualization') -eq $true)
     {
         Try
         {

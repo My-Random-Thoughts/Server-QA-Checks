@@ -38,7 +38,7 @@ Function c-hvh-02-no-other-server-roles
  
     #... CHECK STARTS HERE ...#
 
-    If ((Check-NameSpace -serverName $serverName -namespace 'Virtualization') -eq $true)
+    If ((Check-NameSpace -ServerName $serverName -NameSpace 'ROOT\Virtualization') -eq $true)
     {
         Try
         {

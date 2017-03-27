@@ -38,7 +38,7 @@ Function c-hvh-01-server-core
  
     #... CHECK STARTS HERE ...#
 
-    If ((Check-NameSpace -serverName $serverName -namespace 'Virtualization') -eq $true)
+    If ((Check-NameSpace -ServerName $serverName -NameSpace 'ROOT\Virtualization') -eq $true)
     {
         Try
         {
