@@ -40,7 +40,7 @@ Function c-net-06-network-agent
 
     #... CHECK STARTS HERE ...#
 
-    If (((Check-VMware $serverName) -eq $false) -or ((Check-HyperV $serverName) -eq $false))
+    If (((Check-VMware $serverName) -eq $false) -and ((Check-HyperV $serverName) -eq $false))
     {
         Try
         {
