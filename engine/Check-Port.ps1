@@ -1,9 +1,9 @@
 Function Check-Port
 {
-    Param ([string]$serverName, [string]$Port)
+    Param ([string]$ServerName, [string]$Port)
     Try {
         $tcp  = New-Object System.Net.Sockets.TcpClient
-        $con  = $tcp.BeginConnect($serverName, $port, $null, $null)
+        $con  = $tcp.BeginConnect($ServerName, $port, $null, $null)
         $wait = $con.AsyncWaitHandle.WaitOne(3000, $false)
 
         If (-not $wait) { $tcp.Close(); Return $false }

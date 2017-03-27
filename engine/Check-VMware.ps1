@@ -1,6 +1,6 @@
 Function Check-VMware
 {
-    Param ([string]$serverName)
-    $wmiBIOS = Get-WmiObject -ComputerName $serverName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object SerialNumber
+    Param ([string]$ServerName)
+    $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object SerialNumber
     If ($wmiBIOS.SerialNumber -like '*VMware*') { Return $true } Else { Return $false }        
 }

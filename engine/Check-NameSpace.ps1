@@ -1,8 +1,10 @@
 Function Check-NameSpace
 {
-    Param ([string]$serverName, [string]$namespace)
-    [string]$find = $namespace;  [string]$ns = 'ROOT'
-    If ($namespace -like '*\*') { [string]$find = $namespace.Split('\')[-1]; [string]$ns = 'ROOT\' + $namespace.replace('\{0}' -f $find, '') }
-    [array] $wmin = Get-WmiObject -ComputerName $serverName -Namespace $ns -Class '__Namespace' -ErrorAction Stop | Select-Object -ExpandProperty Name
-    If ($wmin -contains $find) { Return $true } Else { Return $false }
+    Param ([string]$ServerName, [string]$NameSpace)
+    $NameSpace = $NameSpace.Trim('\')
+    ForEach ($leaf In $NameSpace.Split('\')) {
+        [string]$path += $leaf + '\'
+        Try { [string]$wmio = Get-WmiObject -ComputerName $ServerName -Namespace $path.TrimEnd('\') -Class '__Namespace' -ErrorAction Stop | Select-Object -ExcludeProperty Name } Catch { }
+        If ($wmio -eq '') { Return $false } Else { $wmio = '' } }
+    Return $true
 }
