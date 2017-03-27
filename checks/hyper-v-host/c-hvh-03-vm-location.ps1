@@ -23,7 +23,7 @@
         Hyper-V Host Servers
 
     REQUIRED-FUNCTIONS:
-        Check-HyperV
+        Check-NameSpace
 #>
 
 Function c-hvh-03-vm-location
@@ -39,7 +39,7 @@ Function c-hvh-03-vm-location
  
     #... CHECK STARTS HERE ...#
 
-    If ((Check-HyperV $serverName) -eq $true)
+    If ((Check-NameSpace -serverName $serverName -namespace 'Virtualization') -eq $true)
     {
         Try
         {

@@ -22,7 +22,7 @@
         Hyper-V Host Servers
 
     REQUIRED-FUNCTIONS:
-        Check-HyperV
+        Check-NameSpace
 #>
 
 Function c-hvh-01-server-core
@@ -38,7 +38,7 @@ Function c-hvh-01-server-core
  
     #... CHECK STARTS HERE ...#
 
-    If ((Check-HyperV $serverName) -eq $true)
+    If ((Check-NameSpace -serverName $serverName -namespace 'Virtualization') -eq $true)
     {
         Try
         {
