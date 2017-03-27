@@ -40,7 +40,7 @@ Function c-sys-16-remote-desktop
 
     Try
     {
-        If ((Check-NameSpace -serverName $serverName -namespace 'Cimv2\TerminalServices') -eq $true)
+        If ((Check-NameSpace -ServerName $serverName -NameSpace 'ROOT\Cimv2\TerminalServices') -eq $true)
         {
             [string]$query1 = 'Select AllowTSConnections FROM Win32_TerminalServiceSetting'
             [string]$check1 = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2\TerminalServices -Authentication PacketPrivacy -Impersonation Impersonate | Select-Object -ExpandProperty AllowTSConnections

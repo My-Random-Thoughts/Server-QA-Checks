@@ -39,7 +39,7 @@ Function c-sys-14-power-plan
 
     Try
     {
-        If ((Check-NameSpace -serverName $serverName -namespace 'Cimv2\Power') -eq $true)
+        If ((Check-NameSpace -ServerName $serverName -NameSpace 'ROOT\Cimv2\Power') -eq $true)
         {
             [string]$query = 'SELECT ElementName FROM Win32_PowerPlan WHERE IsActive="True"'
             [string]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2\Power -Authentication PacketPrivacy -Impersonation Impersonate | Select-Object -ExpandProperty ElementName
