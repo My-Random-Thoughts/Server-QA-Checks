@@ -40,14 +40,14 @@ Function c-sec-11-iis-default-page
 
     Try
     {
-        If ((Check-NameSpace -serverName $serverName -namespace 'MicrosoftIISv2') -eq $true)
+        If ((Check-NameSpace -ServerName $serverName -NameSpace 'ROOT\MicrosoftIISv2') -eq $true)
         {
             # IISv6
             [string]$query  = "SELECT DefaultDoc FROM IISWebServerSetting"
             [string]$chktmp = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\MicrosoftIISv2 | Select-Object -ExpandProperty DefaultDoc
             If ($chktmp -ne $null) { $check = $chktmp.Replace(',', ', ') }
         }
-        ElseIf ((Check-NameSpace -serverName $serverName -namespace 'WebAdministration') -eq $true)
+        ElseIf ((Check-NameSpace -ServerName $serverName -NameSpace 'ROOT\WebAdministration') -eq $true)
         {
             # IISv7
             [string]$query  = "SELECT Files FROM DefaultDocumentSection"
