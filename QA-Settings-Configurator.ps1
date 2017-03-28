@@ -382,7 +382,7 @@ Function Show-InputForm
     $frm_Main.Text                 = " $Title"
     $frm_Main.ShowInTaskbar        = $False
     $frm_Main.AutoScaleDimensions  = '6, 13'
-    $frm_Main.AutoScaleMode        = 'Font'
+    $frm_Main.AutoScaleMode        = 'None'
     $frm_Main.ClientSize           = '394, 147'    # 400 x 175
     $frm_Main.StartPosition        = 'CenterParent'
 
@@ -620,7 +620,7 @@ Function Show-ExtraSettingsForm
     $frm_Main.Text                 = ' Additional Settings'
     $frm_Main.ShowInTaskbar        = $False
     $frm_Main.AutoScaleDimensions  = '6, 13'
-    $frm_Main.AutoScaleMode        = 'Font'
+    $frm_Main.AutoScaleMode        = 'None'
     $frm_Main.ClientSize           = '444, 222'    # 450 x 250
     $frm_Main.StartPosition        = 'CenterParent'
     $frm_Main.Add_FormClosed($frm_Main_Cleanup_FormClosed)
@@ -628,7 +628,7 @@ Function Show-ExtraSettingsForm
     $lbl_Description               = New-Object 'System.Windows.Forms.Label'
     $lbl_Description.Location      = ' 12,  12'
     $lbl_Description.Size          = '420,  33'
-    $lbl_Description.Text          = 'This form allows you to set any additional settings that help control the QA scripts and its output.  Do not change these settings if you are unsure.'
+    $lbl_Description.Text          = 'This form allows you to set any additional settings that help control the QA scripts and its output.'
     $frm_Main.Controls.Add($lbl_Description)
 
     $btn_Reset                     = New-Object 'System.Windows.Forms.Button'
@@ -715,7 +715,7 @@ Function Show-ExtraSettingsForm
     $lbl_Location                  = New-Object 'System.Windows.Forms.Label'
     $lbl_Location.Location         = ' 12, 138'
     $lbl_Location.Size             = '150,  20'
-    $lbl_Location.Text             = 'Report Output Location :'
+    $lbl_Location.Text             = 'Report Location :'
     $lbl_Location.TextAlign        = 'MiddleRight'
     $frm_Main.Controls.Add($lbl_Location)
 
@@ -1064,7 +1064,7 @@ Function Display-MainForm
             [System.Windows.Forms.ListView]$lvwObject =    $tabObject.Controls["lvw_$($folder.Header.Trim())"]
             If ($lvwObject.Items.Count -gt 0)
             {
-                $msgbox = ([System.Windows.Forms.MessageBox]::Show($MainFORM, "Any unsaved changes will be lost`nAre you sure you want to continue.?`n`nTo save your current changes: Click 'No',`nChange to the 'Generate QA' tab, click 'Save Settings'", ' Warning', 'YesNo', 'Warning', 'Button2'))
+                $msgbox = ([System.Windows.Forms.MessageBox]::Show($MainFORM, "Any unsaved changes will be lost.`nAre you sure you want to continue.?`n`nTo save your current changes: Click 'No',`nChange to the 'Generate QA' tab, click 'Save Settings'.", ' Warning', 'YesNo', 'Warning', 'Button2'))
                 If ($msgbox -eq 'No') { Return }
                 Break
             }
@@ -1189,8 +1189,8 @@ Function Display-MainForm
         {
             $MainFORM.Cursor = 'Default'
             [System.Windows.Forms.MessageBox]::Show($MainFORM, "You should not save over the default settings file.`n" +
-                                                               "It will be overwritten whenever the source code is updated`n`n" +
-                                                               "Please select a different file name", ' default-settings.ini', 'OK', 'Error')
+                                                               "It will be overwritten whenever the source code is updated.`n`n" +
+                                                               "Please select a different file name.", ' default-settings.ini', 'OK', 'Error')
             Return
         }
 
@@ -1254,23 +1254,33 @@ Function Display-MainForm
 
     $btn_t4_Generate_Click = {
         $MainFORM.Cursor = 'WaitCursor'
-        $btn_t4_Save.Enabled     = $False
-        $btn_t4_Generate.Enabled = $False
+        $btn_Exit.Enabled           = $False
+        $btn_RestoreINI.Enabled     = $False
+        $btn_t4_Save.Enabled        = $False
+        $btn_t4_Options.Enabled     = $False
+        $btn_t4_Generate.Enabled    = $False
+        $txt_t4_ShortCode.Enabled   = $False
+        $txt_t4_ReportTitle.Enabled = $False
 
         $lbl_t4_Generate.Text = 'Generating Standard QA Script'
         Invoke-Expression -Command "PowerShell -Command {& '$script:ExecutionFolder\Compiler.ps1'   -Settings $(Split-Path -Path $script:saveFile -Leaf)}"    # Build Standard QA Script
         $lbl_t4_Generate.Text = 'Generating Runspace QA Script (proof of concept)'
         Invoke-Expression -Command "PowerShell -Command {& '$script:ExecutionFolder\CompilerRS.ps1' -Settings $(Split-Path -Path $script:saveFile -Leaf)}"    # Build Runspace QA Script
         $lbl_t4_Generate.Text = ''
-        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Custom QA Script generated", ' Generate QA Script', 'OK', 'Information')
+        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Custom QA Script generated.", ' Generate QA Script', 'OK', 'Information')
 
-        $btn_t4_Save.Enabled     = $True
-        $btn_t4_Generate.Enabled = $True
+        $btn_Exit.Enabled           = $True
+        $btn_RestoreINI.Enabled     = $True
+        $btn_t4_Save.Enabled        = $True
+        $btn_t4_Options.Enabled     = $True
+        $btn_t4_Generate.Enabled    = $True
+        $txt_t4_ShortCode.Enabled   = $True
+        $txt_t4_ReportTitle.Enabled = $True
         $MainFORM.Cursor = 'Default'
     }
 
     $btn_RestoreINI_Click = {
-        [string]$msgbox = [System.Windows.Forms.MessageBox]::Show($MainFORM, "If you have lost your settings file, you can use this option to restore it.`nClick 'OK' to select the compiled QA script you want to restore your settings from.", ' Restore Settings File', 'OKCancel', 'Information')
+        [string]$msgbox = [System.Windows.Forms.MessageBox]::Show($MainFORM, "If you have lost your settings file, you can use this option to restore it.  Click 'OK' to select the compiled QA script you want to restore your settings from.", ' Restore Settings File', 'OKCancel', 'Information')
         If ($msgbox -eq 'Cancel') { Return }
 
         [string]$originalQA = (Get-File -InitialDirectory $script:ExecutionFolder -Title 'Select the compiled QA script to restore the settings from:')
@@ -1336,7 +1346,7 @@ Function Display-MainForm
         $outputFile.ToString() | Out-File -FilePath "$(Split-Path -Path $originalQA -Parent)\RESTORED.ini" -Encoding ascii -Force
 
         $MainFORM.Cursor = 'Default'
-        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Restore Complete`nThe file is called 'RESTORED.ini'`n`nIt is located in the same folder as the QA script you selected.`nRemember to move this to the Settings folder.", ' Restore Settings File', 'OK', 'Information')
+        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Restore Complete.`nThe file is called 'RESTORED.ini'.`n`nIt is located in the same folder as the QA script you selected.  Remember to move this to the Settings folder.", ' Restore Settings File', 'OK', 'Information')
     }
 #endregion
 ###################################################################################################
@@ -1409,7 +1419,7 @@ Function Display-MainForm
 
     # MainForm
     $MainFORM.AutoScaleDimensions = '6, 13'
-    $MainFORM.AutoScaleMode       = 'Font'
+    $MainFORM.AutoScaleMode       = 'None'
     $MainFORM.ClientSize          = '794, 672'    # 800 x 700
     $MainFORM.FormBorderStyle     = 'FixedSingle'
     $MainFORM.MaximizeBox         = $False
@@ -1494,7 +1504,7 @@ Function Display-MainForm
 
     # lbl_t1_Introduction
     $lbl_t1_Introduction.Location  = '9, 35'
-    $lbl_t1_Introduction.Size      = '744, 175'
+    $lbl_t1_Introduction.Size      = '744, 235'
     $lbl_t1_Introduction.TextAlign = 'TopLeft'
     $lbl_t1_Introduction.Text      = @"
 This script will help you create a custom settings file for the QA checks, one that is tailored for your environment.
@@ -1617,8 +1627,8 @@ To start, click the 'Set Check Location' button below...
     $tab_Page2.Controls.Add($lbl_t2_SelectedCount)
 
     # lbl_t2_Select
-    $lbl_t2_Select.Location  = '242, 542'
-    $lbl_t2_Select.Size      = ' 50,  25'
+    $lbl_t2_Select.Location  = '202, 542'
+    $lbl_t2_Select.Size      = ' 90,  25'
     $lbl_t2_Select.Text      = 'Select :'
     $lbl_t2_Select.TextAlign = 'MiddleRight'
     $tab_Page2.Controls.Add($lbl_t2_Select)
@@ -1634,7 +1644,7 @@ To start, click the 'Set Check Location' button below...
     # btn_t2_SelectAll
     $btn_t2_SelectInv.Location = '354, 542'
     $btn_t2_SelectInv.Size     = ' 50,  25'
-    $btn_t2_SelectInv.Text     = 'Invert'
+    $btn_t2_SelectInv.Text     = 'Inv'
     $btn_t2_SelectInv.Enabled  = $False
     $btn_t2_SelectInv.Add_Click($btn_t2_SelectInv_Click)
     $tab_Page2.Controls.Add($btn_t2_SelectInv)
@@ -1699,7 +1709,7 @@ To start, click the 'Set Check Location' button below...
 
     # lbl_t4_Complete_Info
     $lbl_t4_Complete_Info.Location  = '  9,  35'
-    $lbl_t4_Complete_Info.Size      = '744, 175'
+    $lbl_t4_Complete_Info.Size      = '744, 235'
     $lbl_t4_Complete_Info.TextAlign = 'TopLeft'
     $lbl_t4_Complete_Info.Text      = @"
 Enter a short code for this settings file, this will save the QA script file with it as part of the name.
@@ -1712,7 +1722,7 @@ Click 'Additional Options' to configure futher configuration settings.
 
 
 Click the 'Save Settings' button below to save your selections and values.
-Once done, you can then click 'Generate QA Script' to create the compiled QA script
+Once done, you can then click 'Generate QA Script' to create the compiled QA script.
 "@
     $tab_Page4.Controls.Add($lbl_t4_Complete_Info)
 
