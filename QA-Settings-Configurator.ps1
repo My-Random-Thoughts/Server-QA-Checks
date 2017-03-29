@@ -1,13 +1,16 @@
-#Requires -version 4
-Remove-Variable * -ErrorAction SilentlyContinue
+#Requires         -Version 4
 Set-StrictMode    -Version 2
+Remove-Variable * -ErrorAction SilentlyContinue
 Clear-Host
+
+# Icon Image Index: 0: Optional, 1: Gear, 2: Disabled Gear
 
 [Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')    | Out-Null
 [Reflection.Assembly]::LoadWithPartialName('System.Data')             | Out-Null
 [Reflection.Assembly]::LoadWithPartialName('System.Drawing')          | Out-Null
 [System.Drawing.Font]$sysFont     =                                   [System.Drawing.SystemFonts]::MessageBoxFont
-[System.Drawing.Font]$sysFontBold = New-Object 'System.Drawing.Font' ([System.Drawing.SystemFonts]::MessageBoxFont.Name, [System.Drawing.SystemFonts]::MessageBoxFont.SizeInPoints, [System.Drawing.FontStyle]::Bold)
+[System.Drawing.Font]$sysFontBold = New-Object 'System.Drawing.Font' ($sysFont.Name, $sysFont.SizeInPoints, [System.Drawing.FontStyle]::Bold)
+[System.Drawing.Font]$sysFontStke = New-Object 'System.Drawing.Font' ($sysFont.Name, $sysFont.SizeInPoints, [System.Drawing.FontStyle]::Strikeout)
 [System.Windows.Forms.Application]::EnableVisualStyles()
 $script:qahelp = @{}
 
@@ -22,21 +25,21 @@ Function Get-Folder ( [string]$Description, [string]$InitialDirectory, [boolean]
     [string]$return = ''
     If ([threading.thread]::CurrentThread.GetApartmentState() -eq 'STA')
     {
-        $foldername = New-Object 'System.Windows.Forms.FolderBrowserDialog'
-        $foldername.RootFolder          = 'MyComputer'
-        $foldername.Description         = $Description
-        $foldername.ShowNewFolderButton = $ShowNewFolderButton
-        If ([string]::IsNullOrEmpty($initialDirectory) -eq $False) { $foldername.SelectedPath = $initialDirectory }
-        If ($foldername.ShowDialog($MainForm) -eq [System.Windows.Forms.DialogResult]::OK) { $return = $($foldername.SelectedPath) }
-        Try { $foldername.Dispose() } Catch {}
+        $FolderBrowser = New-Object 'System.Windows.Forms.FolderBrowserDialog'
+        $FolderBrowser.RootFolder          = 'MyComputer'
+        $FolderBrowser.Description         = $Description
+        $FolderBrowser.ShowNewFolderButton = $ShowNewFolderButton
+        If ([string]::IsNullOrEmpty($InitialDirectory) -eq $False) { $FolderBrowser.SelectedPath = $InitialDirectory }
+        If ($FolderBrowser.ShowDialog($MainForm) -eq [System.Windows.Forms.DialogResult]::OK) { $return = $($FolderBrowser.SelectedPath) }
+        Try { $FolderBrowser.Dispose() } Catch {}
     }
     Else
     {
         # Workaround for MTA not showing the dialog box.
         # Initial Directory is not possible when using the COM Object
         $comObject  = New-Object -ComObject 'Shell.Application'
-        $foldername = $comObject.BrowseForFolder(0, $Description, 0, 0)
-        If ([string]::IsNullOrEmpty($foldername) -eq $False) { $return = $($foldername.Self.Path) } Else { $return = '' }
+        $FolderBrowser = $comObject.BrowseForFolder(0, $Description, 0, 0)
+        If ([string]::IsNullOrEmpty($FolderBrowser) -eq $False) { $return = $($FolderBrowser.Self.Path) } Else { $return = '' }
         [System.Runtime.Interopservices.Marshal]::ReleaseComObject($comObject) | Out-Null    # Dispose COM object
     }
     Return $return
@@ -45,28 +48,28 @@ Function Get-Folder ( [string]$Description, [string]$InitialDirectory, [boolean]
 Function Get-File ( [string]$InitialDirectory, [string]$Title )
 {
     [string]$return = ''
-    $filename = New-Object 'System.Windows.Forms.OpenFileDialog'
-    $filename.InitialDirectory = $InitialDirectory
-    $filename.Multiselect      = $true
-    $filename.Title            = $Title
-    $filename.Filter           = 'Compiled QA Scripts (*.ps1)|*.ps1'
-    If ([threading.thread]::CurrentThread.GetApartmentState() -ne 'STA') { $filename.ShowHelp = $true }    # Workaround for MTA issues not showing dialog box
-    If ($filename.ShowDialog($MainFORM) -eq [System.Windows.Forms.DialogResult]::OK) { $return = ($filename.FileName) }
-    Try { $filename.Dispose() } Catch {}
+    $OpenFile = New-Object 'System.Windows.Forms.OpenFileDialog'
+    $OpenFile.InitialDirectory = $InitialDirectory
+    $OpenFile.Multiselect      = $true
+    $OpenFile.Title            = $Title
+    $OpenFile.Filter           = 'Compiled QA Scripts (*.ps1)|*.ps1'
+    If ([threading.thread]::CurrentThread.GetApartmentState() -ne 'STA') { $OpenFile.ShowHelp = $true }    # Workaround for MTA issues not showing dialog box
+    If ($OpenFile.ShowDialog($MainFORM) -eq [System.Windows.Forms.DialogResult]::OK) { $return = ($OpenFile.FileName) }
+    Try { $OpenFile.Dispose() } Catch {}
     Return $return
 }
 
 Function Save-File ( [string]$InitialDirectory, [string]$Title, [string]$InitialFileName )
 {
     [string]$return = ''
-    $filename = New-Object 'System.Windows.Forms.SaveFileDialog'
-    $filename.InitialDirectory = $InitialDirectory
-    $filename.Title            = $Title
-    $filename.FileName         = $InitialFileName
-    $filename.Filter           = 'QA Configuration Settings (*.ini)|*.ini|All Files|*.*'
-    If ([threading.thread]::CurrentThread.GetApartmentState() -ne 'STA') { $filename.ShowHelp = $true }    # Workaround for MTA issues not showing dialog box
-    If ($filename.ShowDialog($MainForm) -eq [System.Windows.Forms.DialogResult]::OK) { $return = ($filename.FileName) }
-    Try { $filename.Dispose() } Catch {}
+    $SaveFile = New-Object 'System.Windows.Forms.SaveFileDialog'
+    $SaveFile.InitialDirectory = $InitialDirectory
+    $SaveFile.Title            = $Title
+    $SaveFile.FileName         = $InitialFileName
+    $SaveFile.Filter           = 'QA Configuration Settings (*.ini)|*.ini|All Files|*.*'
+    If ([threading.thread]::CurrentThread.GetApartmentState() -ne 'STA') { $SaveFile.ShowHelp = $true }    # Workaround for MTA issues not showing dialog box
+    If ($SaveFile.ShowDialog($MainForm) -eq [System.Windows.Forms.DialogResult]::OK) { $return = ($SaveFile.FileName) }
+    Try { $SaveFile.Dispose() } Catch {}
     Return $return
 }
 
@@ -87,10 +90,11 @@ Function Add-ListViewItem ( [System.Windows.Forms.ListView]$ListView, $Items, [i
     [System.Windows.Forms.ListViewItem]$listitem = $ListView.Items.Add($Items.ToString(), $Items.ToString(), $ImageIndex)
     If ($SubItems -ne $null ) { $listitem.SubItems.AddRange($SubItems) }
     If ($lvGroup  -ne $null ) { $listitem.Group = $lvGroup }
-    If ($Enabled  -eq $false)
+    If (($Enabled -eq $false) -and ($listitem.Text -ne ' '))
     {
-        $listitem.ForeColor  = 'GrayText'    # Make the item look disabled
-        $listitem.ImageIndex = -1            # Remove the icon
+        $listitem.Font       = $sysFontStke
+        $listitem.ForeColor  = 'GrayText'
+        $listitem.ImageIndex = 2
     }
 }
 
@@ -123,12 +127,12 @@ Function Show-InputForm
 {
     Param
     (
-        [parameter(Mandatory=$true )] [string]  $Type,
-        [parameter(Mandatory=$true )] [string]  $Title,
-        [parameter(Mandatory=$true )] [string]  $Description,
-        [parameter(Mandatory=$false)] [string]  $Validation = 'None',
-        [parameter(Mandatory=$false)] [string[]]$InputList,
-        [parameter(Mandatory=$false)] [string[]]$CurrentValue
+        [parameter(Mandatory=$true )][string]  $Type,
+        [parameter(Mandatory=$true )][string]  $Title,
+        [parameter(Mandatory=$true )][string]  $Description,
+        [parameter(Mandatory=$false)][string]  $Validation = 'None',
+        [parameter(Mandatory=$false)][string[]]$InputList,
+        [parameter(Mandatory=$false)][string[]]$CurrentValue
     )
 
     # [ValidateSet('Simple', 'Check', 'Option', 'List', 'Large')]
@@ -600,9 +604,9 @@ Function Show-ExtraSettingsForm
 {
     Param
     (
-        [parameter(Mandatory=$false)][string]$timeout,
-        [parameter(Mandatory=$false)][string]$concurrent,
-        [parameter(Mandatory=$false)][string]$outputLocation
+        [parameter(Mandatory=$false)][string]$Timeout,
+        [parameter(Mandatory=$false)][string]$Concurrent,
+        [parameter(Mandatory=$false)][string]$OutputLocation
     )
 
     [Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null
@@ -637,7 +641,7 @@ Function Show-ExtraSettingsForm
     $btn_Reset.Font               = $sysFont
     $btn_Reset.Text               = 'Reset'
     $btn_Reset.TabIndex           = '96'
-    $btn_Reset.Add_Click({ $cmo_timeout.SelectedItem = '60'; $cmo_concurrent.SelectedItem = '5'; $txt_Location.Text = '$env:SystemDrive\QA\Results\' })
+    $btn_Reset.Add_Click({ $cmo_Timeout.SelectedItem = '60'; $cmo_Concurrent.SelectedItem = '5'; $txt_Location.Text = '$env:SystemDrive\QA\Results\' })
     $frm_Main.Controls.Add($btn_Reset)
 
     $btn_Accept                    = New-Object 'System.Windows.Forms.Button'
@@ -699,10 +703,10 @@ Function Show-ExtraSettingsForm
     $cmo_Concurrent.Location       = '168, 102'
     $cmo_Concurrent.Size           = ' 50,  21'
     $cmo_Concurrent.DropDownStyle  = 'DropDownList'
-    $frm_Main.Controls.Add($cmo_concurrent)
+    $frm_Main.Controls.Add($cmo_Concurrent)
     $cmo_Concurrent.Items.AddRange($ConCurrentList) | Out-Null
     $cmo_Concurrent.SelectedItem   = '5'
-    If ($concurrent -ne '') { $cmo_Concurrent.SelectedItem = $concurrent }
+    If ($Concurrent -ne '') { $cmo_Concurrent.SelectedItem = $Concurrent }
 
     $lbl_Concurrent2               = New-Object 'System.Windows.Forms.Label'
     $lbl_Concurrent2.Location      = '225, 102'
@@ -723,7 +727,7 @@ Function Show-ExtraSettingsForm
     $txt_Location.Location         = '168, 138'
     $txt_Location.Size             = '264,  20'
     $txt_Location.TextAlign        = 'Left'
-    If ($outputLocation -ne '') { $txt_Location.Text = $outputLocation } Else { $txt_Location.Text = '$env:SystemDrive\QA\Results\' }
+    If ($OutputLocation -ne '') { $txt_Location.Text = $OutputLocation } Else { $txt_Location.Text = '$env:SystemDrive\QA\Results\' }
     $frm_Main.Controls.Add($txt_Location)
 #endregion
 #region FORM STARTUP / SHUTDOWN
@@ -743,9 +747,9 @@ Function Show-ExtraSettingsForm
     If ($result -eq 'OK')
     {
         [psobject]$return = New-Object -TypeName PSObject -Property @{
-            'timeout'        = $cmo_TimeOut.Text.Trim();
-            'concurrent'     = $cmo_Concurrent.Text.Trim();
-            'outputLocation' = $txt_Location.Text.Trim();
+            'Timeout'        = $cmo_TimeOut.Text.Trim();
+            'Concurrent'     = $cmo_Concurrent.Text.Trim();
+            'OutputLocation' = $txt_Location.Text.Trim();
         }
         Return $return
     }
@@ -769,7 +773,7 @@ Function Display-MainForm
         ForEach ($control In $MainForm.Controls) { $control.Font = $sysFont }
         ForEach ($tab In $tab_Pages.TabPages) { ForEach ($control In $tab.Controls) { $control.Font = $sysFont } }
 
-        # Set some fonts
+        # Set some bold fonts
         $lbl_t1_Welcome.Font         = $sysFontBold
         $lbl_t2_CheckSelection.Font  = $sysFontBold
         $lbl_t3_ScriptSelection.Font = $sysFontBold
@@ -779,8 +783,8 @@ Function Display-MainForm
         $lbl_t3_NoParameters.Visible    = $true
         $lst_t2_SelectChecks.CheckBoxes = $False
         $lst_t2_SelectChecks.Groups.Add('ErrorGroup','Please Note')
-        Add-ListViewItem -ListView $lst_t2_SelectChecks -Items '' -SubItems ''                                   -Group 'ErrorGroup'
-        Add-ListViewItem -ListView $lst_t2_SelectChecks -Items '' -SubItems 'Select your scripts location first' -Group 'ErrorGroup' 
+        Add-ListViewItem -ListView $lst_t2_SelectChecks -Items '' -SubItems ('','')                                   -Group 'ErrorGroup'
+        Add-ListViewItem -ListView $lst_t2_SelectChecks -Items '' -SubItems ('Select your scripts location first','') -Group 'ErrorGroup' 
     }
 
     $MainFORM_FormClosing = [System.Windows.Forms.FormClosingEventHandler] {
@@ -806,6 +810,7 @@ Function Display-MainForm
         Try {
             $sysFont.Dispose()
             $sysFontBold.Dispose()
+            $sysFontStke.Dispose()
         } Catch {}
 
         $MainFORM.Remove_FormClosing($MainFORM_FormClosing)
@@ -877,22 +882,17 @@ Function Display-MainForm
         $MainFORM.Cursor = 'Default'
     }
 
-    $tab_Pages_SelectedIndexChanged = {
-        If ($tab_Pages.SelectedIndex -eq 1) { $lbl_ChangesMade.Visible = $True                } Else { $lbl_ChangesMade.Visible = $False }
-    }
+    $tab_Pages_SelectedIndexChanged = { If ($tab_Pages.SelectedIndex -eq 1) { $lbl_ChangesMade.Visible = $True } Else { $lbl_ChangesMade.Visible = $False } }
 
     $btn_t1_Search_Click = {
         # Search location and read in scripts
         $btn_t1_Search.Enabled       = $False
         $btn_t1_Import.Enabled       = $False
-        $lbl_t1_Language.Enabled     = $False
         $cmo_t1_Language.Enabled     = $False
-        $lbl_t1_SettingsFile.Enabled = $False
         $cmo_t1_SettingsFile.Enabled = $False
 
         $MainFORM.Cursor = 'WaitCursor'
-        [string]$InitialDirectory = "$script:ExecutionFolder"
-        $script:scriptLocation = (Get-Folder -Description 'Select the QA checks root folder:' -InitialDirectory $InitialDirectory -ShowNewFolderButton $False)
+        $script:scriptLocation = (Get-Folder -Description 'Select the QA checks root folder:' -InitialDirectory $script:ExecutionFolder -ShowNewFolderButton $False)
         If ([string]::IsNullOrEmpty($script:scriptLocation) -eq $True) { $btn_t1_Search.Enabled = $True; $MainFORM.Cursor = 'Default'; Return }
         If ($script:scriptLocation.EndsWith('\scripts')) { $script:scriptLocation = $script:scriptLocation.TrimEnd('\scripts') }
 
@@ -914,17 +914,20 @@ Function Display-MainForm
         }
 
         $btn_t1_Import.Enabled       = $iniLoadOK
-        $lbl_t1_Language.Enabled     = $iniLoadOK
         $cmo_t1_Language.Enabled     = $iniLoadOK
-        $lbl_t1_SettingsFile.Enabled = $iniLoadOK
         $cmo_t1_SettingsFile.Enabled = $iniLoadOK
         $btn_t1_Import.Focus()
-
         $MainFORM.Cursor = 'Default'
     }
 
     $btn_t1_Import_Click = {
-        $MainFORM.Cursor = 'WaitCursor'
+        $MainFORM.Cursor             = 'WaitCursor'
+
+        $btn_t1_Search.Enabled       = $False
+        $btn_t1_Import.Enabled       = $False
+        $cmo_t1_Language.Enabled     = $False
+        $cmo_t1_SettingsFile.Enabled = $False
+
         [System.Globalization.TextInfo]$TextInfo = (Get-Culture).TextInfo    # Used for 'ToTitleCase' below
 
         # Load Language, Settings and Help details
@@ -939,9 +942,9 @@ Function Display-MainForm
         # Load settings from INI file
         $txt_t4_ShortCode.Text          = ($settingsINI.settings.shortcode)
         $txt_t4_ReportTitle.Text        = ($settingsINI.settings.reportCompanyName)
-        $script:settings.timeout        = ($settingsINI.settings.timeout)
-        $script:settings.concurrent     = ($settingsINI.settings.concurrent)
-        $script:settings.outputLocation = ($settingsINI.settings.outputLocation)
+        $script:settings.Timeout        = ($settingsINI.settings.timeout)
+        $script:settings.Concurrent     = ($settingsINI.settings.concurrent)
+        $script:settings.OutputLocation = ($settingsINI.settings.outputLocation)
 
         $btn_t4_Save.Enabled            = $False
         $btn_t4_Generate.Enabled        = $false
@@ -1041,6 +1044,8 @@ Function Display-MainForm
         $lbl_t1_ScanningScripts.Visible = $False
         $btn_t1_Search.Enabled          = $True
         $btn_t1_Import.Enabled          = $True
+        $cmo_t1_Language.Enabled        = $True
+        $cmo_t1_SettingsFile.Enabled    = $True
         $btn_t2_NextPage.Enabled        = $True
         $btn_t2_SelectAll.Enabled       = $True
         $btn_t2_SelectInv.Enabled       = $True
@@ -1049,11 +1054,16 @@ Function Display-MainForm
         $MainFORM.Cursor                = 'Default'
     }
 
-    $btn_t2_SelectAll_Click  = { ForEach ($item In $lst_t2_SelectChecks.Items) { $item.Checked =       $true          }; Update-SelectedCount }
-    $btn_t2_SelectInv_Click  = { ForEach ($item In $lst_t2_SelectChecks.Items) { $item.Checked = (-not $item.Checked) }; Update-SelectedCount }
-    $btn_t2_SelectNone_Click = { ForEach ($item In $lst_t2_SelectChecks.Items) { $item.Checked =       $false         }; Update-SelectedCount }
+    $btn_t2_SelectAll_Click  = { $script:UpdateSelectedCount = $False; $MainFORM.Cursor = 'AppStarting'; ForEach ($item In $lst_t2_SelectChecks.Items) { $item.Checked =       $true          }; Update-SelectedCount; $MainFORM.Cursor = 'Default'; $script:UpdateSelectedCount = $True }
+    $btn_t2_SelectInv_Click  = { $script:UpdateSelectedCount = $False; $MainFORM.Cursor = 'AppStarting'; ForEach ($item In $lst_t2_SelectChecks.Items) { $item.Checked = (-not $item.Checked) }; Update-SelectedCount; $MainFORM.Cursor = 'Default'; $script:UpdateSelectedCount = $True }
+    $btn_t2_SelectNone_Click = { $script:UpdateSelectedCount = $False; $MainFORM.Cursor = 'AppStarting'; ForEach ($item In $lst_t2_SelectChecks.Items) { $item.Checked =       $false         }; Update-SelectedCount; $MainFORM.Cursor = 'Default'; $script:UpdateSelectedCount = $True }
 
-    $lst_t2_SelectChecks_ItemChecked          = { If ($_.Item.Checked -eq $True) { $_.Item.BackColor = 'Window' } Else { $_.Item.BackColor = 'Control' }; Update-SelectedCount }
+    $lst_t2_SelectChecks_ItemChecked = {
+        If ($_.Item.Checked -eq $True) { $_.Item.ForeColor = 'WindowText'; $_.Item.Font = $sysFont;     $_.Item.ImageIndex = 1 }    # Enabled
+        Else                           { $_.Item.ForeColor = 'GrayText';   $_.Item.Font = $sysFontStke; $_.Item.ImageIndex = 2 }    # Disabled
+        If ($script:UpdateSelectedCount -eq $True) { Update-SelectedCount } 
+    }
+
     $lst_t2_SelectChecks_SelectedIndexChanged = { If ($lst_t2_SelectChecks.SelectedItems.Count -eq 1) { $lbl_t2_Description.Text = ($lst_t2_SelectChecks.SelectedItems[0].SubItems[2].Text) } }
 
     $btn_t2_NextPage_Click = {
@@ -1169,7 +1179,7 @@ Function Display-MainForm
 
     $btn_t4_Options_Click = {
         $MainFORM.Cursor  = 'WaitCursor'
-        [object]$settings = Show-ExtraSettingsForm -timeout ($script:settings.Timeout) -concurrent ($script:settings.concurrent) -outputLocation ($script:settings.outputLocation)
+        [object]$settings = Show-ExtraSettingsForm -Timeout ($script:settings.Timeout) -Concurrent ($script:settings.concurrent) -OutputLocation ($script:settings.outputLocation)
         If ([string]::IsNullOrEmpty($settings) -eq $false) { [psobject]$script:settings = $settings }
         $MainFORM.Cursor  = 'Default'
     }
@@ -1201,9 +1211,9 @@ Function Display-MainForm
         $outputFile.AppendLine("reportCompanyName = $($txt_t4_ReportTitle.Text)")
         $outputFile.AppendLine('')
         $outputFile.AppendLine("language          = $($cmo_t1_Language.Text)")
-        $outputFile.AppendLine("outputLocation    = $($script:settings.outputLocation)")
+        $outputFile.AppendLine("outputLocation    = $($script:settings.OutputLocation)")
         $outputFile.AppendLine("timeout           = $($script:settings.TimeOut)")
-        $outputFile.AppendLine("concurrent        = $($script:settings.concurrent)")
+        $outputFile.AppendLine("concurrent        = $($script:settings.Concurrent)")
         $outputFile.AppendLine('')
 
         # Loop through all checks saving as required, hiding others
@@ -1541,7 +1551,6 @@ To start, click the 'Set Check Location' button below...
     $lbl_t1_Language.Size      = '291,  21'
     $lbl_t1_Language.Text      = 'Language :'
     $lbl_t1_Language.TextAlign = 'MiddleRight'
-    $lbl_t1_Language.Enabled   = $False
     $tab_Page1.Controls.Add($lbl_t1_Language)
 
     # cmo_t1_SettingsFile
@@ -1557,7 +1566,6 @@ To start, click the 'Set Check Location' button below...
     $lbl_t1_SettingsFile.Size      = "291,  $($cmo_t1_SettingsFile.Height)"
     $lbl_t1_SettingsFile.Text      = 'Base Settings File :'
     $lbl_t1_SettingsFile.TextAlign = 'MiddleRight'
-    $lbl_t1_SettingsFile.Enabled   = $False
     $tab_Page1.Controls.Add($lbl_t1_SettingsFile)
 
     # btn_t1_Import
@@ -1820,7 +1828,7 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
     $img_ListImages_binaryFomatter   = New-Object 'System.Runtime.Serialization.Formatters.Binary.BinaryFormatter'
     $img_ListImages_MemoryStream     = New-Object 'System.IO.MemoryStream' (,[byte[]][System.Convert]::FromBase64String('
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkD
-        AAAADwMAAACCCgAAAk1TRnQBSQFMAgEBAwEAAWgBAAFoAQABEAEAARABAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEoAwABQAMAARADAAEBAQABCAYAAQQYAAGAAgABgAMAAoABAAGAAwABgAEAAYABAAKAAgADwAEAAcAB3AHAAQAB8AHKAaYBAAEzBQABMwEAATMBAAEzAQACMwIAAxYBAAMcAQADIgEA
+        AAAADwMAAACeCgAAAk1TRnQBSQFMAgEBAwEAAYgBAAGIAQABEAEAARABAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEoAwABQAMAARADAAEBAQABCAYAAQQYAAGAAgABgAMAAoABAAGAAwABgAEAAYABAAKAAgADwAEAAcAB3AHAAQAB8AHKAaYBAAEzBQABMwEAATMBAAEzAQACMwIAAxYBAAMcAQADIgEA
         AykBAANVAQADTQEAA0IBAAM5AQABgAF8Af8BAAJQAf8BAAGTAQAB1gEAAf8B7AHMAQABxgHWAe8BAAHWAucBAAGQAakBrQIAAf8BMwMAAWYDAAGZAwABzAIAATMDAAIzAgABMwFmAgABMwGZAgABMwHMAgABMwH/AgABZgMAAWYBMwIAAmYCAAFmAZkCAAFmAcwCAAFmAf8CAAGZAwABmQEzAgABmQFmAgAC
         mQIAAZkBzAIAAZkB/wIAAcwDAAHMATMCAAHMAWYCAAHMAZkCAALMAgABzAH/AgAB/wFmAgAB/wGZAgAB/wHMAQABMwH/AgAB/wEAATMBAAEzAQABZgEAATMBAAGZAQABMwEAAcwBAAEzAQAB/wEAAf8BMwIAAzMBAAIzAWYBAAIzAZkBAAIzAcwBAAIzAf8BAAEzAWYCAAEzAWYBMwEAATMCZgEAATMBZgGZ
         AQABMwFmAcwBAAEzAWYB/wEAATMBmQIAATMBmQEzAQABMwGZAWYBAAEzApkBAAEzAZkBzAEAATMBmQH/AQABMwHMAgABMwHMATMBAAEzAcwBZgEAATMBzAGZAQABMwLMAQABMwHMAf8BAAEzAf8BMwEAATMB/wFmAQABMwH/AZkBAAEzAf8BzAEAATMC/wEAAWYDAAFmAQABMwEAAWYBAAFmAQABZgEAAZkB
@@ -1830,12 +1838,12 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
         Af8BAAHMAWYCAAHMAWYBMwEAAZkCZgEAAcwBZgGZAQABzAFmAcwBAAGZAWYB/wEAAcwBmQIAAcwBmQEzAQABzAGZAWYBAAHMApkBAAHMAZkBzAEAAcwBmQH/AQACzAIAAswBMwEAAswBZgEAAswBmQEAA8wBAALMAf8BAAHMAf8CAAHMAf8BMwEAAZkB/wFmAQABzAH/AZkBAAHMAf8BzAEAAcwC/wEAAcwB
         AAEzAQAB/wEAAWYBAAH/AQABmQEAAcwBMwIAAf8CMwEAAf8BMwFmAQAB/wEzAZkBAAH/ATMBzAEAAf8BMwH/AQAB/wFmAgAB/wFmATMBAAHMAmYBAAH/AWYBmQEAAf8BZgHMAQABzAFmAf8BAAH/AZkCAAH/AZkBMwEAAf8BmQFmAQAB/wKZAQAB/wGZAcwBAAH/AZkB/wEAAf8BzAIAAf8BzAEzAQAB/wHM
         AWYBAAH/AcwBmQEAAf8CzAEAAf8BzAH/AQAC/wEzAQABzAH/AWYBAAL/AZkBAAL/AcwBAAJmAf8BAAFmAf8BZgEAAWYC/wEAAf8CZgEAAf8BZgH/AQAC/wFmAQABIQEAAaUBAANfAQADdwEAA4YBAAOWAQADywEAA7IBAAPXAQAD3QEAA+MBAAPqAQAD8QEAA/gBAAHwAfsB/wEAAaQCoAEAA4ADAAH/AgAB
-        /wMAAv8BAAH/AwAB/wEAAf8BAAL/AgAD/xUAAfMB/wEAAe8BkQEAAf8B8QH/NgAB8QG1AfEB8wKRAfEBBwGuAfEpAAP0CgAB8wK1A7sCtQGRAfIFAAH0AVIEMAEDBDABURYAAvQBtQGMAbUC9AYAAvMB7gG7AfACvAEJAbsCtQHvAfMB8gMAARsBWAM4AQMBEwFSAzgBUhUAAfQB7gGMAa8BjAGvAYwB7gH0
-        BAAB/wK7AQkB3QEJA7sCtQG7AbUCkQH/AgAB9gF6AV4B+wE4ATABSgE3AjgBNwF0FAAB9AGvAYwBvAH0AYwB9AG8AYwBrwH0BAAB9AEJARkBCQG7AfQCAAHzArUBuwGRAfMDAAH/ARsBegFeAvsBNwM4AVIB8xQAAfQBjAP0AYwD9AGMAfQEAAH0AbsB8AG7AfIEAAHyAbUBuwHtAfQEAAH/AZoB5QFeATcB
-        SgE4AfsBNwEcAf8UAAH0AYwC9AHwAYwB8AL0AYwB9AMAArsBCQHwAfcFAAH/AbUBuwG1ApEDAAH/ARsC5QFYARIBOAH7AVIBGgH/FAAB9AGMAfMBtQGvAfEBrwG1AfMBjAH0AwAB8AMJAZEFAAH1AbUBuwK1AQcEAAH/AXoB5QFRAUMBWAE4AXQB/xUAAfQBjAGNAbwD9AG8AY0BjAH0BAAB/wG7ARkBtQHw
-        BAAB8QK7AbUB/wYAARsB5QFzAUMBWAE3ARoWAAH0Aa8BjAG8A/QBvAGMAa8B9AMAAf8B8AEJAfEBCQH3AQcC/wHuAbsBBwG7AbUBBwYAAfYCegJYAVEB/xcAAfQB7gGMAa8B8QGvAYwB7gH0BAAB/wK7AQkBGQG8AbsCtQS7AbUBkQYAAf8BGwJeATcBGhkAAvQBtQGMAbUC9AYAA/QBCQPxAfABCQK7AfIC
-        9AcAAfYBegFYAXkB9BsAA/QKAAH0AbsECQG7ArUB8wkAAf8C9AH1Af8oAAH0AQcB9AH/ArsB9AHyAbsB9DoAAe4BuycAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcAA/8BAAL/AfIBRwL/AgAC/wHgAQcC/wIAAfwBfwHgAQcBwAEDAgAB8AEfAYABAQHAAQMCAAHgAQ8CAAHAAQMCAAHA
-        AQcCgQHAAQMCAAHAAQcBgwHBAeABAwIAAcACBwHAAeABAwIAAcACBwHAAfABBwIAAcABBwGDAcEB+AEPAgABwAEHAQABAQH4AQ8CAAHgAQ8BAAEBAfgBHwIAAfABHwGAAQEB/AEfAgAB/AF/AeABBwH8AR8CAAL/AeABBwL/AgAC/wH+AX8C/wIACw=='))
+        /wMAAv8BAAH/AwAB/wEAAf8BAAL/AgAD/xUAAfMB/wEAAe8BkQEAAf8B8QH/BwAC/wEAAfQB8wEAAf8B9ScAAfEBtQHxAfMCkQHxAQcBrgHxBgAB9AHzAfQB/wLzAfUB9AHzAfUZAAP0CgAB8wK1A7sCtQGRAfIGAAH/A/MB9ATzAfUXAAL0AbUBjAG1AvQGAALzAe4BuwHwArwBCQG7ArUB7wHzAfICAAL/
+        B/QC8wH0Av8UAAH0Ae4BjAGvAYwBrwGMAe4B9AQAAf8CuwEJAd0BCQO7ArUBuwG1ApEC/wH0AfMG9AbzAf8SAAH0Aa8BjAG8AfQBjAH0AbwBjAGvAfQEAAH0AQkBGQEJAbsB9AIAAfMCtQG7AZEB8wIAAf8E9AH/AgAB/wLzAfQB8wH/EwAB9AGMA/QBjAP0AYwB9AQAAfQBuwHwAbsB8gQAAfIBtQG7Ae0B
+        9AIAAf8C9AHzAf8EAAH1AfMB9AHzAf8TAAH0AYwC9AHwAYwB8AL0AYwB9AMAArsBCQHwAfcFAAH/AbUBuwG1ApEE9AHzBQAB/wHzAfQD8xIAAfQBjAHzAbUBrwHxAa8BtQHzAYwB9AMAAfADCQGRBQAB9QG1AbsCtQEHBPQB8wUAAf8B8wH0AvMB9BIAAfQBjAGNAbwD9AG8AY0BjAH0BAAB/wG7ARkBtQHw
+        BAAB8QK7AbUB/wIAAf8C9AHzAfQEAAH0AfMB9AHzFAAB9AGvAYwBvAP0AbwBjAGvAfQDAAH/AfABCQHxAQkB9wEHAv8B7gG7AQcBuwG1AQcBAAH/BPQB8wH0Av8E9AHzAfQUAAH0Ae4BjAGvAfEBrwGMAe4B9AQAAf8CuwEJARkBvAG7ArUEuwG1AZEBAAH/BfQD8wP0A/MVAAL0AbUBjAG1AvQGAAP0AQkD
+        8QHwAQkCuwHyAvQCAAP/CPQB9QL/FwAD9AoAAfQBuwQJAbsCtQHzBgAB/wX0A/MB/yYAAfQBBwH0Af8CuwH0AfIBuwH0BgAB/wH0Av8C9AH/AfUB9AH/KgAB7gG7DgAC9BcAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcAA/8BAAL/AfIBRwHyAU8CAAL/AeABBwHgAQcCAAH8AX8B4AEH
+        AeABBwIAAfABHwGAAQEBgAEBAgAB4AEPBgABwAEHBIECAAHAAQcBgwHBAYMBwQIAAcACBwHAAQcBwAIAAcACBwHAAQcBwAIAAcABBwGDAcEBgwHDAgABwAEHAQABAQEAAQECAAHgAQ8BAAEBAQABAQIAAfABHwGAAQEBgAEBAgAB/AF/AeABBwHgAQcCAAL/AeABBwHgAQcCAAL/Af4BfwH+AX8CAAs='))
     $img_ListImages.ImageStream      = $img_ListImages_binaryFomatter.Deserialize($img_ListImages_MemoryStream)
     $img_ListImages_binaryFomatter   = $null
     $img_ListImages_MemoryStream     = $null
@@ -1847,13 +1855,14 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
     Return $MainFORM.ShowDialog()
 }
 ###################################################################################################
-        [string]  $script:saveFile        = ''
-        [psobject]$script:settings        = New-Object -TypeName PSObject -Property @{
-            'timeout'        = '60';
-            'concurrent'     = '5';
-            'outputLocation' = '$env:SystemDrive\QA\Results\';
+        [boolean] $script:UpdateSelectedCount = $False    # Speeds up processing of All/Inv/None buttons
+        [string]  $script:saveFile            = ''
+        [psobject]$script:settings            = New-Object -TypeName PSObject -Property @{
+            'Timeout'        = '60';
+            'Concurrent'     = '5';
+            'OutputLocation' = '$env:SystemDrive\QA\Results\';
         }
-Try   { [string]  $script:ExecutionFolder = (Split-Path -Path ((Get-Variable MyInvocation -ValueOnly -ErrorAction SilentlyContinue).MyCommand.Path) -ErrorAction SilentlyContinue) }
-Catch { [string]  $script:ExecutionFolder = '' }
+Try   { [string]  $script:ExecutionFolder     = (Split-Path -Path ((Get-Variable MyInvocation -ValueOnly -ErrorAction SilentlyContinue).MyCommand.Path) -ErrorAction SilentlyContinue) }
+Catch { [string]  $script:ExecutionFolder     = '' }
 ###################################################################################################
 Display-MainForm | Out-Null
