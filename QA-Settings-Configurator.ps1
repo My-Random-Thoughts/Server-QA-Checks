@@ -770,8 +770,8 @@ Function Display-MainForm
 
     $MainFORM_Load = {
         # Change font to a nicer one
-        ForEach ($control In $MainForm.Controls) { $control.Font = $sysFont }
-        ForEach ($tab In $tab_Pages.TabPages) { ForEach ($control In $tab.Controls) { $control.Font = $sysFont } }
+        ForEach ($control In $MainForm.Controls)                                        { $control.Font = $sysFont }
+        ForEach ($tab     In $tab_Pages.TabPages) { ForEach ($control In $tab.Controls) { $control.Font = $sysFont } }
 
         # Set some bold fonts
         $lbl_t1_Welcome.Font         = $sysFontBold
@@ -783,8 +783,8 @@ Function Display-MainForm
         $lbl_t3_NoParameters.Visible    = $true
         $lst_t2_SelectChecks.CheckBoxes = $False
         $lst_t2_SelectChecks.Groups.Add('ErrorGroup','Please Note')
-        Add-ListViewItem -ListView $lst_t2_SelectChecks -Items '' -SubItems ('','')                                   -Group 'ErrorGroup'
-        Add-ListViewItem -ListView $lst_t2_SelectChecks -Items '' -SubItems ('Select your scripts location first','') -Group 'ErrorGroup' 
+        Add-ListViewItem -ListView $lst_t2_SelectChecks -Items '' -SubItems ('','')                                   -ImageIndex -1 -Group 'ErrorGroup' -Enabled $true
+        Add-ListViewItem -ListView $lst_t2_SelectChecks -Items '' -SubItems ('Select your scripts location first','') -ImageIndex -1 -Group 'ErrorGroup' -Enabled $true 
     }
 
     $MainFORM_FormClosing = [System.Windows.Forms.FormClosingEventHandler] {
@@ -803,6 +803,7 @@ Function Display-MainForm
         $btn_t2_SelectAll.Remove_Click($btn_t2_SelectAll_Click)
         $btn_t2_SelectInv.Remove_Click($btn_t2_SelectInv_Click)
         $btn_t2_SelectNone.Remove_Click($btn_t2_SelectNone_Click)
+        $lst_t2_SelectChecks.Remove_Enter($lst_t2_SelectChecks_Enter)
         $lst_t2_SelectChecks.Remove_ItemChecked($lst_t2_SelectChecks_ItemChecked)
         $lst_t2_SelectChecks.Remove_SelectedIndexChanged($lst_t2_SelectChecks_SelectedIndexChanged)
 
@@ -882,7 +883,10 @@ Function Display-MainForm
         $MainFORM.Cursor = 'Default'
     }
 
-    $tab_Pages_SelectedIndexChanged = { If ($tab_Pages.SelectedIndex -eq 1) { $lbl_ChangesMade.Visible = $True } Else { $lbl_ChangesMade.Visible = $False } }
+    $tab_Pages_SelectedIndexChanged = {
+        If ($tab_Pages.SelectedIndex -eq 0) { $btn_RestoreINI.Visible  = $True } Else { $btn_RestoreINI.Visible  = $False }
+        If ($tab_Pages.SelectedIndex -eq 1) { $lbl_ChangesMade.Visible = $True } Else { $lbl_ChangesMade.Visible = $False }
+    }
 
     $btn_t1_Search_Click = {
         # Search location and read in scripts
@@ -947,11 +951,12 @@ Function Display-MainForm
         $script:settings.OutputLocation = ($settingsINI.settings.outputLocation)
 
         $btn_t4_Save.Enabled            = $False
-        $btn_t4_Generate.Enabled        = $false
+        $btn_t4_Generate.Enabled        = $False
+        $lst_t2_SelectChecks.CheckBoxes = $True
+
         $tab_t3_Pages.TabPages.Clear()
         $lst_t2_SelectChecks.Items.Clear()
         $lst_t2_SelectChecks.Groups.Clear()
-        $lst_t2_SelectChecks.CheckBoxes = $True
 
         [object[]]$folders = (Get-ChildItem -Path "$script:scriptLocation\checks" | Where-Object { $_.PsIsContainer -eq $True } | Select-Object -ExpandProperty Name | Sort-Object Name )
         ForEach ($folder In ($folders | Sort-Object Name))
@@ -1064,6 +1069,9 @@ Function Display-MainForm
         If ($script:UpdateSelectedCount -eq $True) { Update-SelectedCount } 
     }
 
+    $lst_t2_SelectChecks_Enter = {
+        If ($lst_t2_SelectChecks.Checkboxes -eq $False) { $btn_Exit.Focus() }
+    }
     $lst_t2_SelectChecks_SelectedIndexChanged = { If ($lst_t2_SelectChecks.SelectedItems.Count -eq 1) { $lbl_t2_Description.Text = ($lst_t2_SelectChecks.SelectedItems[0].SubItems[2].Text) } }
 
     $btn_t2_NextPage_Click = {
@@ -1614,6 +1622,7 @@ To start, click the 'Set Check Location' button below...
     $lst_t2_SelectChecks_CH_Code.Width  = 100
     $lst_t2_SelectChecks_CH_Name.Width  = 366 - ([System.Windows.Forms.SystemInformation]::VerticalScrollBarWidth + 4)
     $lst_t2_SelectChecks_CH_Desc.Width  =   0
+    $lst_t2_SelectChecks.Add_Enter($lst_t2_SelectChecks_Enter)
     $lst_t2_SelectChecks.Add_ItemChecked($lst_t2_SelectChecks_ItemChecked)
     $lst_t2_SelectChecks.Add_SelectedIndexChanged($lst_t2_SelectChecks_SelectedIndexChanged)
     $tab_Page2.Controls.Add($lst_t2_SelectChecks)
@@ -1812,18 +1821,18 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
     $btn_Exit.Size     = '75, 25'
     $btn_Exit.TabIndex = 98
     $btn_Exit.Text     = 'Exit'
-    $btn_Exit.DialogResult = [System.Windows.Forms.DialogResult]::Cancel    # Use this instead of a "Click" event
+    $btn_Exit.DialogResult = [System.Windows.Forms.DialogResult]::Cancel    # Use this instead of a 'Click' event
     $MainFORM.Controls.Add($btn_Exit)
 
     # lbl_ChangesMade
-    $lbl_ChangesMade.Location  = '174, 630'
-    $lbl_ChangesMade.Size      = '527,  35'
+    $lbl_ChangesMade.Location  = ' 12, 625'    # 183
+    $lbl_ChangesMade.Size      = '680,  45'    # 509
     $lbl_ChangesMade.Text      = "NOTE: If you make any selection changes and click 'Next', any unsaved changes will be lost."
     $lbl_ChangesMade.TextAlign = 'MiddleLeft'
     $lbl_ChangesMade.Visible   = $False
     $MainFORM.Controls.Add($lbl_ChangesMade)
 
-    # img_ListImages - All 16x16 Icons
+    # img_ListImages - All 16x16 Icons - 0: Optional, 1: Gear, 2: Disabled Gear
     $img_ListImages.TransparentColor = 'Transparent'
     $img_ListImages_binaryFomatter   = New-Object 'System.Runtime.Serialization.Formatters.Binary.BinaryFormatter'
     $img_ListImages_MemoryStream     = New-Object 'System.IO.MemoryStream' (,[byte[]][System.Convert]::FromBase64String('
@@ -1858,10 +1867,9 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
         [boolean] $script:UpdateSelectedCount = $False    # Speeds up processing of All/Inv/None buttons
         [string]  $script:saveFile            = ''
         [psobject]$script:settings            = New-Object -TypeName PSObject -Property @{
-            'Timeout'        = '60';
-            'Concurrent'     = '5';
-            'OutputLocation' = '$env:SystemDrive\QA\Results\';
-        }
+                                                    'Timeout'        = '60';
+                                                    'Concurrent'     = '5';
+                                                    'OutputLocation' = '$env:SystemDrive\QA\Results\' }
 Try   { [string]  $script:ExecutionFolder     = (Split-Path -Path ((Get-Variable MyInvocation -ValueOnly -ErrorAction SilentlyContinue).MyCommand.Path) -ErrorAction SilentlyContinue) }
 Catch { [string]  $script:ExecutionFolder     = '' }
 ###################################################################################################
