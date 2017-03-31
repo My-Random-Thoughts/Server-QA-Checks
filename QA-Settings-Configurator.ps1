@@ -630,7 +630,6 @@ Function Show-ExtraSettingsForm
     $frm_Main.AutoScaleMode        = 'None'
     $frm_Main.ClientSize           = '444, 222'    # 450 x 250
     $frm_Main.StartPosition        = 'CenterParent'
-    $frm_Main.Add_FormClosed($frm_Main_Cleanup_FormClosed)
 
     $lbl_Description               = New-Object 'System.Windows.Forms.Label'
     $lbl_Description.Location      = ' 12,  12'
@@ -643,7 +642,7 @@ Function Show-ExtraSettingsForm
     $btn_Reset.Size               = ' 75,  25'
     $btn_Reset.Font               = $sysFont
     $btn_Reset.Text               = 'Reset'
-    $btn_Reset.TabIndex           = '96'
+    $btn_Reset.TabIndex           = '99'
     $btn_Reset.Add_Click({ $cmo_Timeout.SelectedItem = '60'; $cmo_Concurrent.SelectedItem = '5'; $txt_Location.Text = '$env:SystemDrive\QA\Results\' })
     $frm_Main.Controls.Add($btn_Reset)
 
@@ -743,8 +742,6 @@ Function Show-ExtraSettingsForm
     }
 
     ForEach ($control In $frm_Main.Controls) { $control.Font = $sysFont; Try { $control.FlatStyle = 'Standard' } Catch {} }
-    $lbl_Location.Height = $lbl_Location.Height
-    $btn_Location.Height = $txt_Location.Height
     [string]$result = $frm_Main.ShowDialog()
 
     If ($result -eq 'OK')
