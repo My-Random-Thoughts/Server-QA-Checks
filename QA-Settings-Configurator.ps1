@@ -37,8 +37,9 @@ Function Get-Folder ( [string]$Description, [string]$InitialDirectory, [boolean]
     {
         # Workaround for MTA not showing the dialog box.
         # Initial Directory is not possible when using the COM Object
-        $comObject  = New-Object -ComObject 'Shell.Application'
-        $FolderBrowser = $comObject.BrowseForFolder(0, $Description, 0, 0)
+        $Description  += "`nUnable to automatically select correct folder."
+        $comObject     = New-Object -ComObject 'Shell.Application'
+        $FolderBrowser = $comObject.BrowseForFolder(0, $Description, 512, '')    # 512 = No 'New Folder' button, '' = Initial folder (Desktop)
         If ([string]::IsNullOrEmpty($FolderBrowser) -eq $False) { $return = $($FolderBrowser.Self.Path) } Else { $return = '' }
         [System.Runtime.Interopservices.Marshal]::ReleaseComObject($comObject) | Out-Null    # Dispose COM object
     }
@@ -52,7 +53,7 @@ Function Get-File ( [string]$InitialDirectory, [string]$Title )
     $OpenFile.InitialDirectory = $InitialDirectory
     $OpenFile.Multiselect      = $true
     $OpenFile.Title            = $Title
-    $OpenFile.Filter           = 'Compiled QA Scripts (*.ps1)|*.ps1'
+    $OpenFile.Filter           = 'Compiled QA Scripts|*.ps1'
     If ([threading.thread]::CurrentThread.GetApartmentState() -ne 'STA') { $OpenFile.ShowHelp = $true }    # Workaround for MTA issues not showing dialog box
     If ($OpenFile.ShowDialog($MainFORM) -eq [System.Windows.Forms.DialogResult]::OK) { $return = ($OpenFile.FileName) }
     Try { $OpenFile.Dispose() } Catch {}
@@ -66,7 +67,7 @@ Function Save-File ( [string]$InitialDirectory, [string]$Title, [string]$Initial
     $SaveFile.InitialDirectory = $InitialDirectory
     $SaveFile.Title            = $Title
     $SaveFile.FileName         = $InitialFileName
-    $SaveFile.Filter           = 'QA Configuration Settings (*.ini)|*.ini|All Files|*.*'
+    $SaveFile.Filter           = 'QA Configuration Settings|*.ini'
     If ([threading.thread]::CurrentThread.GetApartmentState() -ne 'STA') { $SaveFile.ShowHelp = $true }    # Workaround for MTA issues not showing dialog box
     If ($SaveFile.ShowDialog($MainForm) -eq [System.Windows.Forms.DialogResult]::OK) { $return = ($SaveFile.FileName) }
     Try { $SaveFile.Dispose() } Catch {}
@@ -92,9 +93,10 @@ Function Add-ListViewItem ( [System.Windows.Forms.ListView]$ListView, $Items, [i
     If ($lvGroup  -ne $null ) { $listitem.Group = $lvGroup }
     If (($Enabled -eq $false) -and ($listitem.Text -ne ' '))
     {
-        $listitem.Font       = $sysFontStke
-        $listitem.ForeColor  = 'GrayText'
-        $listitem.ImageIndex = 2
+        $listitem.Font      =  $sysFontStke
+        $listitem.ForeColor = 'GrayText'
+        $listitem.BackColor = 'Control'
+        If ($listitem.ImageIndex -eq 1) { $listitem.ImageIndex = 2 } Else { $listitem.ImageIndex = -1 }
     }
 }
 
@@ -150,6 +152,7 @@ Function Show-InputForm
         ForEach ($Control In $frm_Main.Controls) { If ($control -is [System.Windows.Forms.CheckBox]) { $control.Checked = $checked } }
     }
 
+    [int]$numberOfTextBoxes = 0
     $AddButton_Click = { AddButton_Click -BoxNumber (($frm_Main.Controls.Count - 5) / 2) -Value '' -Override $false -Type 'TEXT' }
     Function AddButton_Click ( [int]$BoxNumber, [string]$Value, [boolean]$Override, [string]$Type )
     {
@@ -788,7 +791,7 @@ Function Display-MainForm
     }
 
     $MainFORM_FormClosing = [System.Windows.Forms.FormClosingEventHandler] {
-        $quit = [System.Windows.Forms.MessageBox]::Show($MainFORM, 'Are you sure you want to exit this form.?', ' Quit', 'YesNo', 'Question')
+        $quit = [System.Windows.Forms.MessageBox]::Show($MainFORM, 'Are you sure you want to exit this form.?', ' Exit', 'YesNo', 'Question')
         If ($quit -eq 'No') { $_.Cancel = $True }
     }
 
@@ -814,20 +817,18 @@ Function Display-MainForm
             $sysFontStke.Dispose()
         } Catch {}
 
-        $MainFORM.Remove_FormClosing($MainFORM_FormClosing)
         $MainFORM.Remove_Load($MainFORM_Load)
         $MainFORM.Remove_Load($MainFORM_StateCorrection_Load)
+        $MainFORM.Remove_FormClosing($MainFORM_FormClosing)
     }
 #endregion
 ###################################################################################################
 #region FORM Scripts
-    Function Update-SelectedCount { $lbl_t2_SelectedCount.Text = "$($lst_t2_SelectChecks.CheckedItems.Count) of $($lst_t2_SelectChecks.Items.Count) checks selected" }
-    Function ListView_SelectedIndexChanged ( [System.Windows.Forms.ListView]$SourceControl )
-    {
-        If ( $SourceControl.SelectedItems                -eq $null) { Return }
-        If ( $SourceControl.SelectedItems.Count          -eq  0   ) { Return }
-        If (($SourceControl.SelectedItems[0].ImageIndex) -eq -1   ) { Return }
+    Function Update-SelectedCount {
+        $lbl_t2_SelectedCount.Text = "$($lst_t2_SelectChecks.CheckedItems.Count) of $($lst_t2_SelectChecks.Items.Count) checks selected"
+        If ($lst_t2_SelectChecks.CheckedItems.Count -eq 0) { $btn_t2_NextPage.Enabled = $False } Else { $btn_t2_NextPage.Enabled = $True }
     }
+
     Function ListView_DoubleClick ( [System.Windows.Forms.ListView]$SourceControl )
     {
         If ([string]::IsNullOrEmpty(($SourceControl.SelectedItems[0].Text).Trim()) -eq $True) { Return }
@@ -884,24 +885,23 @@ Function Display-MainForm
     }
 
     $tab_Pages_SelectedIndexChanged = {
-        If ($tab_Pages.SelectedIndex -eq 0) { $btn_RestoreINI.Visible  = $True } Else { $btn_RestoreINI.Visible  = $False }
-        If ($tab_Pages.SelectedIndex -eq 1) { $lbl_ChangesMade.Visible = $True } Else { $lbl_ChangesMade.Visible = $False }
+        If ($tab_Pages.SelectedIndex -eq 0) { $btn_RestoreINI.Visible  = $True } Else { $btn_RestoreINI.Visible  = $False }    # Show/Hide 'Restore INI' button
+        If ($tab_Pages.SelectedIndex -eq 1) { $lbl_ChangesMade.Visible = $True } Else { $lbl_ChangesMade.Visible = $False }    # Show/Hide 'Selection Changes' Label
     }
 
     $btn_t1_Search_Click = {
         # Search location and read in scripts
+        $MainFORM.Cursor             = 'WaitCursor'
         $btn_t1_Search.Enabled       = $False
         $btn_t1_Import.Enabled       = $False
         $cmo_t1_Language.Enabled     = $False
         $cmo_t1_SettingsFile.Enabled = $False
 
-        $MainFORM.Cursor = 'WaitCursor'
         $script:scriptLocation = (Get-Folder -Description 'Select the QA checks root folder:' -InitialDirectory $script:ExecutionFolder -ShowNewFolderButton $False)
         If ([string]::IsNullOrEmpty($script:scriptLocation) -eq $True) { $btn_t1_Search.Enabled = $True; $MainFORM.Cursor = 'Default'; Return }
-        If ($script:scriptLocation.EndsWith('\scripts')) { $script:scriptLocation = $script:scriptLocation.TrimEnd('\scripts') }
+        If ($script:scriptLocation.EndsWith('\checks')) { $script:scriptLocation = $script:scriptLocation.TrimEnd('\checks') }
 
-        $btn_t1_Search.Enabled = $True
-        [boolean]$iniLoadOK    = $False
+        [boolean]$iniLoadOK = $False
         Try
         {
             [string[]]$langList    = (Get-ChildItem -Path "$script:scriptLocation\i18n"     -Filter '*_text.ini' -ErrorAction Stop | Select-Object -ExpandProperty Name | Sort-Object Name | ForEach { $_.Replace('_text.ini','') } )
@@ -917,6 +917,7 @@ Function Display-MainForm
             $iniLoadOK = $False
         }
 
+        $btn_t1_Search.Enabled       = $True
         $btn_t1_Import.Enabled       = $iniLoadOK
         $cmo_t1_Language.Enabled     = $iniLoadOK
         $cmo_t1_SettingsFile.Enabled = $iniLoadOK
@@ -926,22 +927,20 @@ Function Display-MainForm
 
     $btn_t1_Import_Click = {
         $MainFORM.Cursor             = 'WaitCursor'
-
         $btn_t1_Search.Enabled       = $False
         $btn_t1_Import.Enabled       = $False
         $cmo_t1_Language.Enabled     = $False
         $cmo_t1_SettingsFile.Enabled = $False
 
-        [System.Globalization.TextInfo]$TextInfo = (Get-Culture).TextInfo    # Used for 'ToTitleCase' below
+        $lbl_t1_ScanningScripts.Visible = $True
+        $lbl_t1_ScanningScripts.Text    = 'Scanning Check Location...'
 
         # Load Language, Settings and Help details
         [hashtable]$settingsINI = (Load-IniFile -Inputfile "$script:scriptLocation\settings\$($cmo_t1_SettingsFile.Text).ini")
         [hashtable]$languageINI = (Load-IniFile -Inputfile "$script:scriptLocation\i18n\$($cmo_t1_Language.Text)_text.ini")
         [string[]] $loadhelpINI = (Get-Content  -Path      "$script:scriptLocation\i18n\$($cmo_t1_Language.Text)_help.ps1" -ErrorAction SilentlyContinue)
         ForEach ($help In $loadhelpINI) { If ([string]::IsNullOrEmpty($help) -eq $False) { Invoke-Expression -Command $help } }
-
-        $lbl_t1_ScanningScripts.Visible = $True
-        $lbl_t1_ScanningScripts.Text    = 'Scanning Check Location: '
+        $loadhelpINI = $null
 
         # Load settings from INI file
         $txt_t4_ShortCode.Text          = ($settingsINI.settings.shortcode)
@@ -950,70 +949,37 @@ Function Display-MainForm
         $script:settings.Concurrent     = ($settingsINI.settings.concurrent)
         $script:settings.OutputLocation = ($settingsINI.settings.outputLocation)
 
-        $btn_t4_Save.Enabled            = $False
-        $btn_t4_Generate.Enabled        = $False
-        $lst_t2_SelectChecks.CheckBoxes = $True
-
+        # Clear any existing entries and start from scratch
         $tab_t3_Pages.TabPages.Clear()
         $lst_t2_SelectChecks.Items.Clear()
         $lst_t2_SelectChecks.Groups.Clear()
+        $lst_t2_SelectChecks.CheckBoxes = $True
 
         [object[]]$folders = (Get-ChildItem -Path "$script:scriptLocation\checks" | Where-Object { $_.PsIsContainer -eq $True } | Select-Object -ExpandProperty Name | Sort-Object Name )
+        [System.Globalization.TextInfo]$TextInfo = (Get-Culture).TextInfo    # Used for 'ToTitleCase' below
         ForEach ($folder In ($folders | Sort-Object Name))
         {
             $folder = $($TextInfo.ToTitleCase($folder))
             $lbl_t1_ScanningScripts.Text = "Scanning script folder: $($folder.ToUpper())"
             $lbl_t1_ScanningScripts.Refresh(); [System.Windows.Forms.Application]::DoEvents()
 
-            # Add TabPage for folder and create a ListView item
-            $newTab = New-Object 'System.Windows.Forms.TabPage'
-            $newTab.Font = $sysFont
-            $newTab.Text = $folder
-            $newTab.Name = "tab_$folder"
-            $newTab.Tag  = "tab_$folder"
-            $tab_t3_Pages.TabPages.Add($newTab)
-
-            # lst_t3_EnterDetails
-            $newLVW = New-Object 'System.Windows.Forms.ListView'
-            $newLVW.Font           = $sysFont
-            $newLVW.Name           = "lvw_$folder"
-            $newLVW.HeaderStyle    = 'Nonclickable'
-            $newLVW.FullRowSelect  = $True
-            $newLVW.GridLines      = $False
-            $newLVW.LabelWrap      = $False
-            $newLVW.MultiSelect    = $False
-            $newLVW.Location       = '  3,  3'
-            $newLVW.Size           = '730, 498'
-            $newLVW.View           = 'Details'
-            $newLVW.SmallImageList = $img_ListImages
-            $newLVW_CH_Name  = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Name.Text  = 'Check'; $newLVW_CH_Name.Width  = 225
-            $newLVW_CH_Value = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Value.Text = 'Value'; $newLVW_CH_Value.Width = 505 - ([System.Windows.Forms.SystemInformation]::VerticalScrollBarWidth + 4)
-            $newLVW_CH_Type  = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Type.Text  = ''     ; $newLVW_CH_Type.Width  =   0    # 
-            $newLVW_CH_Desc  = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Desc.Text  = ''     ; $newLVW_CH_Desc.Width  =   0    # Description from check file
-            $newLVW_CH_Vali  = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Vali.Text  = ''     ; $newLVW_CH_Vali.Width  =   0    # Validation type
-            $newLVW.Columns.Add($newLVW_CH_Name)  | Out-Null                                                                           # ---
-            $newLVW.Columns.Add($newLVW_CH_Value) | Out-Null                                                                           # 730  = Control Width
-            $newLVW.Columns.Add($newLVW_CH_Type)  | Out-Null
-            $newLVW.Columns.Add($newLVW_CH_Desc)  | Out-Null
-            $newLVW.Columns.Add($newLVW_CH_Vali)  | Out-Null
-
-            $newLVW.Add_KeyPress( { If ($_.KeyChar -eq 13) { ListView_DoubleClick          -SourceControl $this } } )
-            $newLVW.Add_DoubleClick(                       { ListView_DoubleClick          -SourceControl $this }   )
-            $newLVW.Add_SelectedIndexChanged(              { ListView_SelectedIndexChanged -SourceControl $this }   )
-            $newTab.Controls.Add($newLVW)
-
+            # FOR TAB-2 LIST OF CHECKS
+            # Generate GUID for group IDs
             [string]$guid = ([guid]::NewGuid() -as [string]).Split('-')[0]
             $lst_t2_SelectChecks.Groups.Add("$guid", " $folder")
 
             [object[]]$scripts = (Get-ChildItem -Path "$script:scriptLocation\checks\$folder" -Filter 'c-*.ps1' | Select-Object -ExpandProperty Name | Sort-Object Name )
             ForEach ($script In ($scripts | Sort-Object Name))
             {
-                [string]$script    =  $script.Replace($script.Split('.')[-1], '').TrimEnd('.')
-                [string]$checkCode = ($script.Substring(2, 6).Replace('-',''))
-                [string]$checkName = ($languageINI.$($checkCode).Name)
-                If ([string]::IsNullOrEmpty($checkName) -eq $True) { $checkName = '*' + $TextInfo.ToTitleCase($(($script.Substring(9)).Replace('-', ' '))) } Else { $checkName = $checkName.Trim("'") }
+                [string]$script    = $script.TrimEnd('.ps1')                      # Remove PS1.extension
+                [string]$checkCode = ($script.Substring(2, 6).Replace('-',''))    # Get check code: c-acc-01-local-user  -->  acc01
+                [string]$checkName = ($languageINI.$($checkCode).Name)            # Get check name from INI file
 
-                # Load description
+                # Checks to see if the "checkName" value has been retreved or not
+                If ([string]::IsNullOrEmpty($checkName) -eq $True) { $checkName = '*' + $TextInfo.ToTitleCase($(($script.Substring(9)).Replace('-', ' '))) }
+                Else                                               { $checkName = $checkName.Trim("'") }
+
+                # Load check description
                 [string]$checkDesc = ''
                 If ([string]::IsNullOrEmpty($script:qahelp[$checkCode]) -eq $False)
                 {
@@ -1039,13 +1005,58 @@ Function Display-MainForm
                     ($regExD.Groups[1].Value.Trim().Split("`n")) | ForEach { $checkDesc += $_.Trim() + '  ' }
                 }
 
+                # Add check details to selection list, and check if required
                 Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', "`n`n")) -Group $guid -ImageIndex 1 -Enabled $True
                 If ($settingsINI.ContainsKey($checkCode) -eq $true) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True }
             }
+
+            # #####################################################################################
+            # FOR TAB-3 OF MAIN TABPAGE CONTROL
+            # Add TabPage for folder
+            $newTab = New-Object 'System.Windows.Forms.TabPage'
+            $newTab.Font = $sysFont
+            $newTab.Text = $folder
+            $newTab.Name = "tab_$folder"
+            $newTab.Tag  = "tab_$folder"
+            $tab_t3_Pages.TabPages.Add($newTab)
+
+            # Create a new ListView object
+            $newLVW = New-Object 'System.Windows.Forms.ListView'
+            $newLVW.Font           = $sysFont
+            $newLVW.Name           = "lvw_$folder"
+            $newLVW.HeaderStyle    = 'Nonclickable'
+            $newLVW.FullRowSelect  = $True
+            $newLVW.GridLines      = $False
+            $newLVW.LabelWrap      = $False
+            $newLVW.MultiSelect    = $False
+            $newLVW.Location       = '  3,  3'
+            $newLVW.Size           = '730, 498'
+            $newLVW.View           = 'Details'
+            $newLVW.SmallImageList = $img_ListImages
+
+            # Add columns
+            $newLVW_CH_Name  = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Name.Text  = 'Check'; $newLVW_CH_Name.Width  = 225
+            $newLVW_CH_Value = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Value.Text = 'Value'; $newLVW_CH_Value.Width = 505 - ([System.Windows.Forms.SystemInformation]::VerticalScrollBarWidth + 4)
+            $newLVW_CH_Type  = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Type.Text  = ''     ; $newLVW_CH_Type.Width  =   0    # 
+            $newLVW_CH_Desc  = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Desc.Text  = ''     ; $newLVW_CH_Desc.Width  =   0    # Description from check file
+            $newLVW_CH_Vali  = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Vali.Text  = ''     ; $newLVW_CH_Vali.Width  =   0    # Validation type
+            $newLVW.Columns.Add($newLVW_CH_Name)  | Out-Null                                                                           # ---
+            $newLVW.Columns.Add($newLVW_CH_Value) | Out-Null                                                                           # 730  = Control Width
+            $newLVW.Columns.Add($newLVW_CH_Type)  | Out-Null
+            $newLVW.Columns.Add($newLVW_CH_Desc)  | Out-Null
+            $newLVW.Columns.Add($newLVW_CH_Vali)  | Out-Null
+
+            # Add Events for each Listview
+            $newLVW.Add_KeyPress( { If ($_.KeyChar -eq 13) { ListView_DoubleClick -SourceControl $this } } )
+            $newLVW.Add_DoubleClick(                       { ListView_DoubleClick -SourceControl $this }   )
+
+            # Add new Listview to new folder
+            $newTab.Controls.Add($newLVW)
         }
+
         Update-SelectedCount
 
-        $tab_Pages.SelectedIndex        = 1
+        $tab_Pages.SelectedIndex        = 1         # Change to the next tab
         $lbl_t1_ScanningScripts.Visible = $False
         $btn_t1_Search.Enabled          = $True
         $btn_t1_Import.Enabled          = $True
@@ -1064,18 +1075,22 @@ Function Display-MainForm
     $btn_t2_SelectNone_Click = { $script:UpdateSelectedCount = $False; $MainFORM.Cursor = 'AppStarting'; ForEach ($item In $lst_t2_SelectChecks.Items) { $item.Checked =       $false         }; Update-SelectedCount; $MainFORM.Cursor = 'Default'; $script:UpdateSelectedCount = $True }
 
     $lst_t2_SelectChecks_ItemChecked = {
-        If ($_.Item.Checked -eq $True) { $_.Item.ForeColor = 'WindowText'; $_.Item.Font = $sysFont;     $_.Item.ImageIndex = 1 }    # Enabled
-        Else                           { $_.Item.ForeColor = 'GrayText';   $_.Item.Font = $sysFontStke; $_.Item.ImageIndex = 2 }    # Disabled
+        If ($_.Item.Checked -eq $True) { $_.Item.ForeColor = 'WindowText'; $_.Item.BackColor = 'Window';  $_.Item.Font = $sysFont;     $_.Item.ImageIndex = 1 }    # Enabled
+        Else                           { $_.Item.ForeColor = 'GrayText';   $_.Item.BackColor = 'Control'; $_.Item.Font = $sysFontStke; $_.Item.ImageIndex = 2 }    # Disabled
         If ($script:UpdateSelectedCount -eq $True) { Update-SelectedCount } 
     }
 
-    $lst_t2_SelectChecks_Enter = {
-        If ($lst_t2_SelectChecks.Checkboxes -eq $False) { $btn_Exit.Focus() }
-    }
     $lst_t2_SelectChecks_SelectedIndexChanged = { If ($lst_t2_SelectChecks.SelectedItems.Count -eq 1) { $lbl_t2_Description.Text = ($lst_t2_SelectChecks.SelectedItems[0].SubItems[2].Text) } }
 
+    $lst_t2_SelectChecks_Enter = { If ($lst_t2_SelectChecks.Checkboxes -eq $False) { $btn_Exit.Focus() } }
+
     $btn_t2_NextPage_Click = {
-        If ($lst_t2_SelectChecks.Items.Count -eq 0) { Return }
+        If ($lst_t2_SelectChecks.Items.Count        -eq 0) { Return }
+        If ($lst_t2_SelectChecks.CheckedItems.Count -eq 0) { Return }
+
+        $cmo_t1_SettingsFile.Enabled = $False
+        $cmo_t1_Language.Enabled     = $False
+
         ForEach ($folder In $lst_t2_SelectChecks.Groups)
         {
             [System.Windows.Forms.TabPage] $tabObject = $tab_t3_Pages.TabPages["tab_$($folder.Header.Trim())"]
@@ -1088,10 +1103,11 @@ Function Display-MainForm
             }
         }
 
-        $MainFORM.Cursor         = 'WaitCursor'
+        $MainFORM.Cursor = 'WaitCursor'
         [System.Collections.Hashtable]$settingsINI   = (Load-IniFile -Inputfile "$script:scriptLocation\settings\$($cmo_t1_SettingsFile.Text).ini")
         [string]                      $SkippedChecks = ($SettingsINI.Keys | Where-Object { $_.EndsWith('-skip') })
 
+        # Add each of the checks' settings to the correct tab page
         ForEach ($folder In $lst_t2_SelectChecks.Groups)
         {
             # Get correct ListView object
@@ -1110,15 +1126,17 @@ Function Display-MainForm
 
                 # Create each item
                 [System.Collections.Hashtable]$iniKeys = $null
+                If ($SkippedChecks.Contains($("$($listItem.Text)-skip"))) { $iniKeys = ($settingsINI.$("$($listItem.Text)-skip")) }
+                Else                                                      { $iniKeys = ($settingsINI.$(   $listItem.Text)       ) }
 
-                If ($SkippedChecks.Contains($("$($listItem.Text)-skip"))) { $iniKeys = ($settingsINI.$("$($listItem.Text)-skip")) } Else { $iniKeys = ($settingsINI.$($listItem.Text)) }
                 ForEach ($item In (($iniKeys.Keys) | Sort-Object))
                 {
-                    [string]$value = ($iniKeys.$item)
-                    $value = $value.Replace("', '", "'; '").Replace("','", "'; '")
-                    [string]$desc = ''
+                    [string]$value = [regex]::Replace(($iniKeys.$item), "'\s{0,},\s{0,}'", "'; '")    # Replace:    ', '  -->  '; '
+                    [string]$desc  = ''    #                             ^      ^      ^ -- ^^ ^
 
-                    If ([string]::IsNullOrEmpty($script:qahelp[$($listItem.Text)]) -eq $False) {
+                    # Get the help text for each check setting
+                    If ([string]::IsNullOrEmpty($script:qahelp[$($listItem.Text)]) -eq $False)
+                    {
                         Try {
                             [xml]$xmlDesc = New-Object 'System.Xml.XmlDataDocument'
                             $xmlDesc.LoadXml($script:qahelp[$($listItem.Text)])
@@ -1127,7 +1145,9 @@ Function Display-MainForm
                         } Catch { }
                     }
 
+                    # Remove all double spaces
                     Do { $desc = $desc.Replace('  ', ' ') } While ($desc.Contains('  '))
+
                     $desc = $desc.Replace("$($item.Trim()) - ", '')
                     [string]$type = 'Unknown'
 
@@ -1201,17 +1221,18 @@ Function Display-MainForm
 
         $MainFORM.Cursor = 'WaitCursor'
         $script:saveFile = (Save-File -InitialDirectory "$script:ExecutionFolder\settings" -Title 'Save Settings File')
-        If ([string]::IsNullOrEmpty($script:saveFile) -eq $True) { Return }
+        $MainFORM.Cursor = 'Default'
 
+        If ([string]::IsNullOrEmpty($script:saveFile) -eq $True) { Return }
         If ($script:saveFile.EndsWith('default-settings.ini'))
         {
-            $MainFORM.Cursor = 'Default'
             [System.Windows.Forms.MessageBox]::Show($MainFORM, "You should not save over the default settings file.`n" +
                                                                "It will be overwritten whenever the source code is updated.`n`n" +
                                                                "Please select a different file name.", ' default-settings.ini', 'OK', 'Error')
             Return
         }
 
+        $MainFORM.Cursor = 'WaitCursor'
         [System.Text.StringBuilder]$outputFile = ''
         # Write out header information
         $outputFile.AppendLine('[settings]')
@@ -1248,12 +1269,12 @@ Function Display-MainForm
                         {
                             Switch -Wildcard ($item.SubItems[2].Text)
                             {
-                                'COMBO*' { [string]$out =  "$($item.SubItems[1].Text)" }
+                                'COMBO*' { [string]$out =  "$($item.SubItems[1].Text)"                    }
                                 'CHECK*' { [string]$out = "$(($item.SubItems[1].Text).Replace(';', ','))" }
-                                'LARGE'  { [string]$out =  "$($item.SubItems[1].Text)" }
+                                'LARGE'  { [string]$out =  "$($item.SubItems[1].Text)"                    }
                                 'LIST'   { [string]$out = "$(($item.SubItems[1].Text).Replace(';', ','))" }
-                                'SIMPLE' { [string]$out =  "$($item.SubItems[1].Text)" }
-                                Default  { }
+                                'SIMPLE' { [string]$out =  "$($item.SubItems[1].Text)"                    }
+                                Default  {                                                                }
                             }
                             If ([string]::IsNullOrEmpty($($item.Text).Trim(' ')) -eq $False) { $outputFile.AppendLine("$(($item.Text).Trim().PadRight(34)) = $out") }
                         }
@@ -1306,16 +1327,13 @@ Function Display-MainForm
         $MainFORM.Cursor = 'WaitCursor'
 
         # Start retrevial process
-        [array]   $skippedChecks = ''
         [string[]]$content   = (Get-Content -Path $originalQA)
-
         [string]  $enabledF  = ([regex]::Match($content, '(\[array\]\$script\:qaChecks \= \()((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))'))    # Get list of enabled functions
                   $enabledF  = $enabledF.Replace(' ', '').Trim()
         [string[]]$functions = ($content | Select-String -Pattern '(Function c-)([a-z]{3}[-][0-9]{2})' -AllMatches)                      # Get list of all functions
-        [string]  $FuncOLD = ''
-        [string]  $FuncNEW = ''
 
         # Get list of skipped functions
+        [array]   $skippedChecks = ''
         ForEach ($func In $functions) { If ($enabledF.Contains($func.Substring(9)) -eq $false) { $skippedChecks += ($func.Substring(11, 6).Replace('-', '')) } }
 
         [System.Text.StringBuilder]$outputFile = ''
@@ -1331,13 +1349,18 @@ Function Display-MainForm
             If ($line.StartsWith('[int]   $script:checkTimeout')) { $outputFile.AppendLine("timeout           =$($line.Split('=')[1])".Replace('"', '').Trim()) | Out-Null }
         }
 
+        [string]$FuncOLD = ''
+        [string]$FuncNEW = ''
+        # Start process
         ForEach ($line In $content)
         {
-            If ($line.StartsWith('Function newResult { Return ')) { [string]$funcName = ''; [string[]]$appSettings = $null }
+            If ($line.StartsWith('Function newResult { Return ')) { [string]$funcName = ''; [string[]]$appSettings = $null }    # Clear settings
             If ($line.StartsWith('$script:appSettings['        )) {
-                [string[]]$newLine = ($line.Substring(21).Replace("']", '')) -Split ' = '    # Need to have spaced around the equals sign due to check settings having equal signs in them (SYS-18)
+                # Need to have spaces around the equals sign due to check settings having equal signs in them (ie:SYS-18)
+                [string[]]$newLine = ($line.Substring(21).Replace("']", '')) -Split ' = '
                 $appSettings += (($newLine[0].Trim()).PadRight(35) + '= ' + ($newLine[1]).Trim())
             }
+
             If ($line.StartsWith('Function c-'))
             {
                 $funcName = ($line.Substring(11, 6).Replace('-', ''))
@@ -1351,11 +1374,11 @@ Function Display-MainForm
                     $outputFile.AppendLine("; $(($FuncNEW).ToUpper().Trim())")                                                                    | Out-Null
                 }
 
-                If ($skippedChecks.Contains($funcName))    { $outputFile.AppendLine("[$funcName-skip]") | Out-Null }
-                Else                                       { $outputFile.AppendLine("[$funcName]"     ) | Out-Null }
+                If ($skippedChecks.Contains($funcName))    { $outputFile.AppendLine("[$funcName-skip]") | Out-Null }      # Skipped check
+                Else                                       { $outputFile.AppendLine("[$funcName]"     ) | Out-Null }      # Enabled check
 
-                If ([string]::IsNullOrEmpty($appSettings)) { $outputFile.AppendLine("; No Settings")    | Out-Null }
-                Else { ForEach ($setting In $appSettings)  { $outputFile.AppendLine($setting)           | Out-Null } }
+                If ([string]::IsNullOrEmpty($appSettings)) { $outputFile.AppendLine("; No Settings")    | Out-Null }      # No settings for this check
+                Else { ForEach ($setting In $appSettings)  { $outputFile.AppendLine($setting)           | Out-Null } }    # Write out all settings and values
 
                 $outputFile.AppendLine('')                                                              | Out-Null
              }
@@ -1364,7 +1387,7 @@ Function Display-MainForm
         $outputFile.ToString() | Out-File -FilePath "$(Split-Path -Path $originalQA -Parent)\RESTORED.ini" -Encoding ascii -Force
 
         $MainFORM.Cursor = 'Default'
-        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Restore Complete.`nThe file is called 'RESTORED.ini'.`n`nIt is located in the same folder as the QA script you selected.  Remember to move this to the Settings folder.", ' Restore Settings File', 'OK', 'Information')
+        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Restore Complete.`nThe file is called 'RESTORED.ini'.`n`nIt is located in the same folder as the QA script you selected.  Remember to move it to the settings folder for reuse.", ' Restore Settings File', 'OK', 'Information')
     }
 #endregion
 ###################################################################################################
@@ -1867,9 +1890,10 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
         [boolean] $script:UpdateSelectedCount = $False    # Speeds up processing of All/Inv/None buttons
         [string]  $script:saveFile            = ''
         [psobject]$script:settings            = New-Object -TypeName PSObject -Property @{
-                                                    'Timeout'        = '60';
-                                                    'Concurrent'     = '5';
-                                                    'OutputLocation' = '$env:SystemDrive\QA\Results\' }
+            'Timeout'        = '60';
+            'Concurrent'     = '5';
+            'OutputLocation' = '$env:SystemDrive\QA\Results\'
+        }
 Try   { [string]  $script:ExecutionFolder     = (Split-Path -Path ((Get-Variable MyInvocation -ValueOnly -ErrorAction SilentlyContinue).MyCommand.Path) -ErrorAction SilentlyContinue) }
 Catch { [string]  $script:ExecutionFolder     = '' }
 ###################################################################################################
