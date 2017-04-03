@@ -305,7 +305,7 @@ Function Start-QAProcess
         Write-Host ''
         $origpos = $host.UI.RawUI.CursorPosition                                                # Set cursor position
         Write-Host '   Saving Check Results...' -ForegroundColor White -NoNewline               # and display message
-        Export-Results -results_input $serverresults
+        Export-Results -ResultsInput $serverresults -CurrentServerNumber $CurrentServerNumber
         $host.UI.RawUI.CursorPosition = $origpos; Write-Host ''.PadRight(30, ' ') -NoNewline    # then clear message
 
         # Show results counts
@@ -365,7 +365,7 @@ Function Show-Results
 
 Function Export-Results
 {
-    Param ( [array]$results_input )
+    Param ( [array]$ResultsInput, [int]$CurrentServerNumber )
     [string]$Head = @'
 <style>
     @charset UTF-8;
@@ -421,7 +421,7 @@ Function Export-Results
     [string]$dt2 = $dt1.Replace('/','.').Replace(' ','-').Replace(':','.')    # 'yyyy/MM/dd HH:mm'  -->  'yyyy.MM.dd-HH.mm'
     [string]$un  = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name.ToLower()
 
-    [string]$server = $results_input[0].server
+    [string]$server = $ResultsInput[0].server
     $resultsplit = Get-ResultsSplit -serverName $server
     [string]$body = @"
 <div id="header">
@@ -452,7 +452,7 @@ Function Export-Results
     [array] $cust = @()
     [string]$path = $script:qaOutput + $server + '_' + $dt2 + '.html'
     # Sort the results, adding the customer specific items at the end
-    $results_input   | Select-Object name, check, result, message, data | ForEach-Object {
+    $ResultsInput | Select-Object name, check, result, message, data | ForEach-Object {
         If (($_.check) -eq 'X') { $core += $_ } Else { If ($script:sections.Keys -contains ($_.check).SubString(2,3)) { $core += $_ } Else { $cust += $_ } }
     }
     $core    = $core | Sort-Object check; $cust = $cust | Sort-Object check
@@ -472,18 +472,23 @@ Function Export-Results
     {
         [string]$path   =  $script:qaOutput + 'QA_Results.csv'
         [array] $outCSV =  @()
-        [array] $cnvCSV = ($results_input | Select-Object server, name, check, datetime, result, message, data | Sort-Object check, server | ConvertTo-Csv -NoTypeInformation)
+        [array] $cnvCSV = ($ResultsInput | Select-Object server, name, check, datetime, result, message, data | Sort-Object check, server | ConvertTo-Csv -NoTypeInformation)
+        If ($CurrentServerNumber -gt 1) { $cnvCSV  = ($cnvCSV | Select-Object -Skip 1) }    # Remove header info
         $cnvCSV | ForEach-Object { $outCSV += $_.Replace(',#',', ') }
         $outCSV | Out-File -FilePath $path -Encoding utf8 -Force -Append
     }
 
+    # XML Output
     If ($GenerateXML -eq $true)
     {
-        [string]$path   =  $script:qaOutput + 'QA_Results.xml'
-        [array] $outXML =  @()
-        [array] $cnvXML = (($results_input | Select-Object server, name, check, datetime, result, message, data | Sort-Object check, server | ConvertTo-Xml -NoTypeInformation).OuterXml -as [string])
-        $cnvXML | ForEach-Object { $outXML += $_.Replace(',#',', ') }
-        $outXML | Out-File -FilePath $path -Encoding utf8 -Force -Append
+        [string]$path = $script:qaOutput + 'QA_Results.xml'
+        If ($CurrentServerNumber -eq 1) { '<?xml version="1.0" encoding="utf-8" ?><QAResultsFile></QAResultsFile>' | Out-File -FilePath $path -Encoding utf8 -Force }
+        [string]$inXML  = (Get-Content -Path $path)
+        [xml]   $cnvXML = ($ResultsInput | Select-Object server, name, check, datetime, result, message, data | Sort-Object check, server | ConvertTo-XML -NoTypeInformation)
+
+        $inXML = $inXML -replace '</QAResultsFile>', "$($cnvXML.Objects.InnerXml)</QAResultsFile>"
+        $inXML = $inXML.Replace(',#',', ')
+        $inXML | Out-File -FilePath $path -Encoding utf8 -Force
     }
 }
 
