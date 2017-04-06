@@ -71,7 +71,7 @@ Function c-com-01-mcafee-antivirus-installed
         {
             $result.result  = $script:lang['Fail']
             $result.message = 'McAfee product found, but wrong version, '
-            $result.data    = 'Version {0} found. Expected version: {1}, ' -f $verCheck, $script:appSettings['ProductVersion']
+            $result.data    = 'Version {0} found. Expected version: {1},#' -f $verCheck, $script:appSettings['ProductVersion']
         }
 
         # Check DAT Update date
