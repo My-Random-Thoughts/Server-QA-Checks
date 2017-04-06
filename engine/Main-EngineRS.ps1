@@ -82,7 +82,7 @@ Function Start-QAProcess
 {
     # Verbose information output
     [boolean]$verbose = ($PSCmdlet.MyInvocation.BoundParameters.ContainsKey('Verbose'))
-    [boolean]$debug   = ($PSCmdlet.MyInvocation.BoundParameters.ContainsKey('Debug'))
+    [boolean]$debug   = ($PSCmdlet.MyInvocation.BoundParameters.ContainsKey('DoNotPing'))
     If ($verbose -eq $true) { $script:ccTasks = 1 }
 
     # Write job information
