@@ -79,7 +79,7 @@ Function c-net-04-binding-order
                 Try
                 {
                     [string]$query   = 'SELECT NetConnectionID FROM Win32_NetworkAdapter WHERE GUID="{0}"' -f $deviceid
-                    [array] $adapter = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty NetConnectionID
+                    [array] $adapter = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object -ExpandProperty NetConnectionID
                 }
                 Catch { }
             }
