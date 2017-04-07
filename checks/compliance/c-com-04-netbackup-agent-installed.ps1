@@ -11,6 +11,9 @@
         ProductName         = 'Symantec NetBackup'
         RequiredServerRoles = ('Exchange', 'SQL')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             {product} found, Port 1556 open to {server}

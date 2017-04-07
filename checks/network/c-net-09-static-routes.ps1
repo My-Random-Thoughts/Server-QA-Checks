@@ -16,6 +16,9 @@
         StaticRoute03 = ('', '', '')
         StaticRoute04 = ('', '', '')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             All static routes are present

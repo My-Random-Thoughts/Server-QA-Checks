@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         DVDDriveLetter = 'R:'
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             CD/DVD drive set correctly

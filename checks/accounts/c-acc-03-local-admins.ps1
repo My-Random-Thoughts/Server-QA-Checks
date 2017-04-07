@@ -9,6 +9,9 @@
     DEFAULT-VALUES:
         IgnoreTheseUsers = ('Domain Admins', 'Enterprise Admins')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             No local administrators found

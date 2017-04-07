@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         KeyExchangeAlgorithms = ('Diffie-Hellman', 'ECDH', 'PKCS')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             All key exchange algorithms set correctly

@@ -9,6 +9,9 @@
     DEFAULT-VALUES:
         ProductNames = ('HDLM GUI', 'SANsurfer', 'Emulex FC')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
         WARNING:

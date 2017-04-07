@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         IgnoreTheseAdapters = ('Production', 'PROD', 'PRD')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             File And Print Services are disabled correctly

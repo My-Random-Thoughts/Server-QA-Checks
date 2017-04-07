@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         IgnoreTheseDeviceNames = ('')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             No device errors found

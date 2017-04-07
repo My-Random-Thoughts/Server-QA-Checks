@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         None
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Autorun is disabled

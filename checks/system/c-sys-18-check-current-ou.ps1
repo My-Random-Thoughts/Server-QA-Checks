@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         NoInTheseOUs = ('cn=Computers', 'ou=Quarantine')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Server not in default location

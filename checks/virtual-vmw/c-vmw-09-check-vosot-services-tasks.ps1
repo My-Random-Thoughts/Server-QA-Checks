@@ -9,6 +9,9 @@
     DEFAULT-VALUES:
         vosotXmlFile = 'C:\ProgramData\VMware\OSOT\VMware Templates\636014.xml'
 
+    DEFAULT-STATE:
+        Skip
+
     RESULTS:
         PASS:
             All mandatory and recommended settings configured

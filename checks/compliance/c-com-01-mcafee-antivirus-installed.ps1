@@ -12,6 +12,9 @@
         ProductName          = 'McAfee VirusScan Enterprise'
         ProductVersion       = '8.8'
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             McAfee product found, DATs are OK

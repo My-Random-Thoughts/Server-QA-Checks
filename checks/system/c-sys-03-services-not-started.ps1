@@ -9,6 +9,9 @@
     DEFAULT-VALUES:
         IgnoreTheseServices = ('NetBackup Bare Metal Restore Boot Server', 'NetBackup SAN Client Fibre Transport Service', 'Microsoft .NET Framework NGEN', 'Software Protection', 'Volume Shadow Copy')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             All auto-start services are running

@@ -9,6 +9,9 @@
     DEFAULT-VALUES:
         IgnoreTheseUsers = ('Guest', 'ASPNET', '___VMware')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             No additional local accounts exist

@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         ProductNames = ('RSA Authentication Manager', 'RSA Authentication Agent')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             {product} found

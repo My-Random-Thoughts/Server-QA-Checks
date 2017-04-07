@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         None
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             More than 7 drives exist, but on different SCSI adapters

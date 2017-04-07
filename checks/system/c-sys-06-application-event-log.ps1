@@ -10,6 +10,9 @@
         GetLatestEntriesAge   = '14'
         GetLatestEntriesCount = '15'
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             No errors found in application event log

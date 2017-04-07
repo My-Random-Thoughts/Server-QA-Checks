@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         ProductNames = ('Microsoft Monitoring Agent', 'System Center Operations Manager', 'Operations Manager Agent')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             {product} found, Port {port} open to {server}

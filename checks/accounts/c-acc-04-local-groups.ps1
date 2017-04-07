@@ -7,7 +7,10 @@
         IgnoreTheseUsers - List of known user or groups accounts to ignore
 
     DEFAULT-VALUES:
-        IgnoreTheseUsers = ('NT AUTHORITY\\NetworkService', 'NT AUTHORITY\\LocalService', 'LocalSystem')
+        IgnoreTheseUsers = ('Allowed RODC Password Replication Group', 'Cert Publishers', 'ConfigMgr Remote Control Users', 'Denied RODC Password Replication Group', 'DHCP', 'DnsAdmins', 'HelpServicesGroup', 'IIS_WPG', 'Offer Remote Assistance Helpers', 'Pre-Windows 2000 Compatible Access', 'RAS and IAS Servers', 'TelnetClients', 'WinRMRemoteWMIUsers__', 'SQLServer', 'RSABypass')
+
+    DEFAULT-STATE:
+        Enabled
 
     RESULTS:
         PASS:

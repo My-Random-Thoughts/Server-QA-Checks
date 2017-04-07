@@ -9,6 +9,9 @@
     DEFAULT-VALUES:
         ProductNames = ('HP Array Configuration Utility', 'Dell OpenManage Server Administrator', 'Broadcom Drivers And Management Applications')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
         WARNING:

@@ -9,6 +9,9 @@
     DEFAULT-VALUES:
         IgnoreTheseScheduledTasks = ('SQM data sender', 'SystemSoundsService', 'StartComponentCleanup', 'Automatic-Workplace-Join', 'ReplaceOMCert', 'Optimize Start Menu Cache Files')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             No additional scheduled tasks found

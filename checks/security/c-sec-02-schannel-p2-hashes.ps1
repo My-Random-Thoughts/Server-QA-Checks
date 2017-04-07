@@ -10,6 +10,9 @@
         EnabledHashes  = ('SHA', 'SHA256', 'SHA384', 'SHA512')
         DisabledHashes = ('MD5')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             All hashes set correctly

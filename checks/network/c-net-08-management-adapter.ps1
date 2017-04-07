@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         ManagementAdapterNames = ('Management', 'MGMT', 'MGT')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Management network adapter found

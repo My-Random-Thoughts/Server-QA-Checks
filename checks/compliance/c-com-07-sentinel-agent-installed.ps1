@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         None
 
+    DEFAULT-STATE:
+        Skip
+
     RESULTS:
         PASS:
             Sentinel agent found, port {port} open to {server}

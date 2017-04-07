@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         ProductNames = ('HP Network Config Utility', 'Broadcom Advanced Control Suite', 'Broadcom Drivers and Management Applications')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             {product} found

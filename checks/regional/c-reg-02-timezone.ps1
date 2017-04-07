@@ -9,6 +9,9 @@
     DEFAULT-VALUES:
         TimeZoneNames = ('(UTC) Dublin, Edinburgh, Lisbon, London', '(GMT) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London', '(UTC+00:00) Dublin, Edinburgh, Lisbon, London')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Server timezone set correctly

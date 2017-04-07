@@ -9,6 +9,9 @@
     DEFAULT-VALUES:
         IgnoreTheseUsers = ('NT AUTHORITY\\NetworkService', 'NT AUTHORITY\\LocalService', 'LocalSystem')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             No services found running under a local accounts

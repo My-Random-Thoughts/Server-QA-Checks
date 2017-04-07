@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         DisabledProtocols = ('Multi-Protocol Unified Hello', 'PCT 1.0', 'SSL 2.0', 'SSL 3.0', 'TLS 1.0')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             All protocols set correctly

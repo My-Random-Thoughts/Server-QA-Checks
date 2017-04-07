@@ -4,7 +4,7 @@
 
     REQUIRED-INPUTS:
         MaximumDATAgeAllowed - Maximum number of days that DATs are allowed to be out of date|Integer
-        ProductName          - Full name of the McAfee product
+        ProductName          - Full name of the Trend product
         ProductVersion       - Current version of the product that you are using|Decimal
         DATPathLocation      - Full path location of the DAT location|File
 
@@ -13,6 +13,9 @@
         ProductName          = 'Trend Micro OfficeScan Client'
         ProductVersion       = '10.6'
         DATPathLocation      = 'C:\Program Files (x86)\Trend Micro\OfficeScan Client\'
+
+    DEFAULT-STATE:
+        Enabled
 
     RESULTS:
         PASS:

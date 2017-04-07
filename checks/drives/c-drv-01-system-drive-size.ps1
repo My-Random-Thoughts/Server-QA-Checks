@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         MinimumSystemDriveSize = '49'
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             System drive ({letter}) meets minimum required size

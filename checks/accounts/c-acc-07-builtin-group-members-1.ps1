@@ -10,8 +10,11 @@
 
     DEFAULT-VALUES:
         AllMustExist = 'False'
-        GroupMembers = ('')
+        GroupMembers = ('Domain Admins')
         GroupName    = 'Remote Desktop Users'
+
+    DEFAULT-STATE:
+        Enabled
 
     RESULTS:
         PASS:

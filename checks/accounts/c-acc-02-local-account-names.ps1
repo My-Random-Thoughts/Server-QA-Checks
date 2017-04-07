@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         InvalidAdminNames = ('Administrator', 'Admin', 'Guest', 'Guest1')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             All local accounts have been renamed

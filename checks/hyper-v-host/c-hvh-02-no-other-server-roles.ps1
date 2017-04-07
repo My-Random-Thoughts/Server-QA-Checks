@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         IgnoreTheseRoleIDs = ('20', '67', '340', '417', '466', '477', '481', '487')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             No extra server roles or features exist

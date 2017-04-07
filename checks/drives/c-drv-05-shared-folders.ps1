@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         IgnoreTheseShares = ('NETLOGON', 'SYSVOL', 'CertEnroll')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             No additional shares found

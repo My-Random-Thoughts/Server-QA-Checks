@@ -9,6 +9,9 @@
     DEFAULT-VALUES:
         NetworkTeamNames = ('HP Network Teaming', 'BASP Virtual Adapter')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Network team count: {number}

@@ -9,6 +9,9 @@
     DEFAULT-VALUES:
         FixedPageFileSize = '4096'
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Pagefile is set correctly

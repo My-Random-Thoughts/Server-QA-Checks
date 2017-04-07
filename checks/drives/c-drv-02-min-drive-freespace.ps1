@@ -10,6 +10,9 @@
         IgnoreTheseDrives       = ('A', 'B')
         MinimumDrivePercentFree = '17'
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             All drives have the required minimum free space of {size}%

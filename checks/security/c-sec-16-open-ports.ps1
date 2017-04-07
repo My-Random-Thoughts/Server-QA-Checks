@@ -9,6 +9,9 @@
     DEFAULT-VALUES:
         IgnoreThesePorts = ('5985', '5986', '8192')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             No extra ports are open

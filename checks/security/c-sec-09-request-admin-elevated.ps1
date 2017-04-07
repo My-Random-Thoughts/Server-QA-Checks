@@ -10,6 +10,9 @@
     DEFAULT-VALUES:
         ElevatePromptForAdminCredentials = ('1', '3')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Prompt for credentials is enabled

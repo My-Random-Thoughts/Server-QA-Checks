@@ -9,6 +9,9 @@
     DEFAULT-VALUES:
         None
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Time source is set to a remote server, and is syncronsized correctly

@@ -13,6 +13,9 @@
         GroupMembers = ('')
         GroupName    = ''
 
+    DEFAULT-STATE:
+        Skip
+
     RESULTS:
         PASS:
             No additional users exist

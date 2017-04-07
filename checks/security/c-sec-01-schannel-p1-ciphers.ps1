@@ -10,6 +10,9 @@
         EnabledCiphers  = ('AES 128/128', 'AES 256/256', 'Triple DES 168/168')
         DisabledCiphers = ('DES 56/56', 'NULL', 'RC2 128/128', 'RC2 40/128', 'RC2 56/128', 'RC2 56/56', 'RC4 128/128', 'RC4 40/128', 'RC4 56/128', 'RC4 64/128')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             All ciphers set correctly

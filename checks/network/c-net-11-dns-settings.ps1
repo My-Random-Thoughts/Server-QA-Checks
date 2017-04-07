@@ -12,6 +12,9 @@
         OrderSpecific = 'True'
         AllMustExist  = 'True'
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             All DNS servers configured (and in the right order)

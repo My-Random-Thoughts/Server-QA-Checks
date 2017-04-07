@@ -11,6 +11,9 @@
         ManagementAdapterNames = ('Management', 'MGMT', 'MGT')
         ProductionAdapterNames = ('Production', 'PROD', 'PRD')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Binding order correctly set

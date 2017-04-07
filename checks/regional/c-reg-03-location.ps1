@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         DefaultLocation = 'United Kingdom'
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Regional location set correctly

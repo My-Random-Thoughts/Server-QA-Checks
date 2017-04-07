@@ -10,6 +10,9 @@
         DiskControllerDeviceType   = 'LSI_SAS'
         IgnoreTheseControllerTypes = ('spaceport', 'vhdmp')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Disk controller set correctly

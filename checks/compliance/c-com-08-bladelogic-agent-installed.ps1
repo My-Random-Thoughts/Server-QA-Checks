@@ -13,6 +13,9 @@
         CustomerCode  = 'ACME'
         LocalAccount  = 'Administrator'
 
+    DEFAULT-STATE:
+        Skip
+
     RESULTS:
         PASS:
             BladeLogic agent found, and file confgiured

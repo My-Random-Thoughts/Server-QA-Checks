@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         IgnoreThesePrinterNames = ('Send To OneNote', 'PDFCreator', 'Microsoft XPS Document Writer', 'Fax', 'WebEx Document Loader', 'Microsoft Print To PDF')
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Printers found, and spool directory is not set to default path

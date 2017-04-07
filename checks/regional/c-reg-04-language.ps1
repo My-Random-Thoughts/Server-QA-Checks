@@ -8,6 +8,9 @@
     DEFAULT-VALUES:
         DefaultLanguage = '00000809'
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Keyboard layout is set correctly

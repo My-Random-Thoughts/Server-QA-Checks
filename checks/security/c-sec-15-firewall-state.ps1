@@ -12,6 +12,9 @@
         PublicProfile   = '0'
         StandardProfile = '0'
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Windows firewall is set correctly

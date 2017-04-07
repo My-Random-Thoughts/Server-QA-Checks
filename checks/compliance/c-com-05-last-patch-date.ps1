@@ -9,6 +9,9 @@
     DEFAULT-VALUES:
         MaximumLastPatchAgeAllowed = '35'
 
+    DEFAULT-STATE:
+        Enabled
+
     RESULTS:
         PASS:
             Windows patches applied

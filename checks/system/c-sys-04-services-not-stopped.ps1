@@ -8,6 +8,8 @@
     DEFAULT-VALUES:
         CheckTheseServices = ('HP System Management Homepage')
 
+    DEFAULT-STATE:
+        Enabled
 
     RESULTS:
         PASS:
