@@ -1,4 +1,4 @@
-﻿<#
+<#
     Compiles all the needed powershell files for QA checks into one master script.
 #>
 
@@ -47,7 +47,7 @@ Function Load-IniFile
             Default    { [string]$errMessage = (Split-Path -Path (Split-Path -Path $InputFile -Parent) -Leaf) }
         }
         Write-Host ($errMessage + 'file "{0}" not found.' -f (Split-Path -Path $InputFile -Leaf)) -ForegroundColor Red
-        Write-Host  '  ERROR:'$InputFile                                                          -ForegroundColor Red
+        Write-Host  '        '$InputFile                                                          -ForegroundColor Red
         Write-Host ''
         Break
     }
@@ -69,10 +69,20 @@ Clear-Host
 Write-Header -Message 'QA Script Engine Check Compiler' -Width $ws
 
 # Load settings file
-[hashtable]$iniSettings = (Load-IniFile -InputFile ("$path\settings\$Settings" ))
-[hashtable]$lngStrings  = (Load-IniFile -InputFile ("$path\i18n\{0}_text.ini" -f ($iniSettings['settings']['language'])))
-[string]$shared = "Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }"
+Try
+{
+    [hashtable]$iniSettings = (Load-IniFile -InputFile ("$path\settings\$Settings" ))
+    [hashtable]$lngStrings  = (Load-IniFile -InputFile ("$path\i18n\{0}_text.ini" -f ($iniSettings['settings']['language'])))
+}
+Catch
+{
+    Write-Host '  ERROR: There were problems loading the required INI files.' -ForegroundColor Red
+    Write-Host '         Please check the settings file is correct.'          -ForegroundColor Red
+    Write-Host ''
+    Break
+}
 
+[string]$shared       = "Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }"
 [string]$scriptHeader = @"
 #Requires -Version 2
 <#
