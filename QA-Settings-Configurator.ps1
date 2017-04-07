@@ -779,6 +779,13 @@ Function Display-MainForm
         $lbl_t3_ScriptSelection.Font = $sysFontBold
         $lbl_t4_Complete.Font        = $sysFontBold
 
+        # Set some default sizes (due to theme elements)
+        $lbl_t1_Language.Height     = $cmo_t1_Language.Height
+        $lbl_t1_SettingsFile.Height = $cmo_t1_SettingsFile.Height
+        $lbl_t4_ShortCode.Height    = $txt_t4_ShortCode.Height
+        $lbl_t4_QAReport.Height     = $txt_t4_ReportTitle.Height
+        $lbl_t4_ReportTitle.Height  = $txt_t4_ReportTitle.Height
+
         # Setup default messages
         $lbl_t3_NoParameters.Visible    = $true
         $lst_t2_SelectChecks.CheckBoxes = $False
@@ -792,7 +799,7 @@ Function Display-MainForm
         If ($quit -eq 'No') { $_.Cancel = $True }
     }
 
-    $Form_Cleanup_FormClosed   = {
+    $Form_Cleanup_FormClosed = {
         $tab_Pages.Remove_SelectedIndexChanged($tab_Pages_SelectedIndexChanged)
         $btn_t4_Save.Remove_Click($btn_t4_Save_Click)
         $btn_t1_Search.Remove_Click($btn_t1_Search_Click)
@@ -805,7 +812,9 @@ Function Display-MainForm
         $btn_t2_SelectNone.Remove_Click($btn_t2_SelectNone_Click)
         $lst_t2_SelectChecks.Remove_Enter($lst_t2_SelectChecks_Enter)
         $lst_t2_SelectChecks.Remove_ItemChecked($lst_t2_SelectChecks_ItemChecked)
+        $cmo_t1_Language.Remove_SelectedIndexChanged($cmo_t1_Language_SelectedIndexChanged)
         $lst_t2_SelectChecks.Remove_SelectedIndexChanged($lst_t2_SelectChecks_SelectedIndexChanged)
+        $cmo_t1_SettingsFile.Remove_SelectedIndexChanged($cmo_t1_SettingsFile_SelectedIndexChanged)
 
         $tab_Pages
         Try {
@@ -829,7 +838,8 @@ Function Display-MainForm
     Function ListView_DoubleClick ( [System.Windows.Forms.ListView]$SourceControl )
     {
         If ([string]::IsNullOrEmpty(($SourceControl.SelectedItems[0].Text).Trim()) -eq $True) { Return }
-        If (($SourceControl.SelectedItems[0].ImageIndex) -eq -1) { Return }
+        If (($SourceControl.SelectedItems[0].ImageIndex) -eq -1) { Return }    # No Icon
+        If (($SourceControl.SelectedItems[0].ImageIndex) -eq  2) { Return }    # Disabled Gear
         $MainFORM.Cursor = 'WaitCursor'
 
         # Start EDIT for selected item
@@ -875,14 +885,14 @@ Function Display-MainForm
             }
 
             Default {
-                Write-Host "Invalid Type: $($selectedItem.SubItems[3].Text)"
+                Write-Host "Invalid Type: $($selectedItem.SubItems[2].Text)"
             }
         }
         $MainFORM.Cursor = 'Default'
     }
 
     $tab_Pages_SelectedIndexChanged = {
-        If ($tab_Pages.SelectedIndex -eq 0) { $btn_RestoreINI.Visible  = $True } Else { $btn_RestoreINI.Visible  = $False }    # Show/Hide 'Restore INI' button
+        If ($tab_Pages.SelectedIndex -eq 0) {  $btn_RestoreINI.Visible = $True } Else {  $btn_RestoreINI.Visible = $False }    # Show/Hide 'Restore INI' button
         If ($tab_Pages.SelectedIndex -eq 1) { $lbl_ChangesMade.Visible = $True } Else { $lbl_ChangesMade.Visible = $False }    # Show/Hide 'Selection Changes' Label
     }
 
@@ -902,7 +912,7 @@ Function Display-MainForm
         Try
         {
             [string[]]$langList    = (Get-ChildItem -Path "$script:scriptLocation\i18n"     -Filter '*_text.ini' -ErrorAction Stop | Select-Object -ExpandProperty Name | Sort-Object Name | ForEach { $_.Replace('_text.ini','') } )
-            [string[]]$settingList = (Get-ChildItem -Path "$script:scriptLocation\settings" -Filter '*.ini'      -ErrorAction Stop | Select-Object -ExpandProperty Name | Sort-Object Name | ForEach { $_.Replace(     '.ini','') } )
+            [string[]]$settingList = (Get-ChildItem -Path "$script:scriptLocation\settings" -Filter      '*.ini' -ErrorAction Stop | Select-Object -ExpandProperty Name | Sort-Object Name | ForEach { $_.Replace(     '.ini','') } )
             Load-ComboBox -ComboBox $cmo_t1_Language     -Items ($langList    | Sort-Object Name) -SelectedItem 'en-gb'            -Clear
             Load-ComboBox -ComboBox $cmo_t1_SettingsFile -Items ($settingList | Sort-Object Name) -SelectedItem 'default-settings' -Clear
             $iniLoadOK = $True
@@ -918,16 +928,20 @@ Function Display-MainForm
         $btn_t1_Import.Enabled       = $iniLoadOK
         $cmo_t1_Language.Enabled     = $iniLoadOK
         $cmo_t1_SettingsFile.Enabled = $iniLoadOK
+        If (($cmo_t1_Language.Text -eq '') -or ($cmo_t1_SettingsFile.Text -eq '')) { $btn_t1_Import.Enabled = $False }
         $btn_t1_Import.Focus()
         $MainFORM.Cursor = 'Default'
     }
 
+    $cmo_t1_Language_SelectedIndexChanged     = { If ($cmo_t1_Language.Text     -ne '') { $btn_t1_Import.Enabled = $True } }
+    $cmo_t1_SettingsFile_SelectedIndexChanged = { If ($cmo_t1_SettingsFile.Text -ne '') { $btn_t1_Import.Enabled = $True } }
+
     $btn_t1_Import_Click = {
-        $MainFORM.Cursor             = 'WaitCursor'
-        $btn_t1_Search.Enabled       = $False
-        $btn_t1_Import.Enabled       = $False
-        $cmo_t1_Language.Enabled     = $False
-        $cmo_t1_SettingsFile.Enabled = $False
+        $MainFORM.Cursor                = 'WaitCursor'
+        $btn_t1_Search.Enabled          = $False
+        $btn_t1_Import.Enabled          = $False
+        $cmo_t1_Language.Enabled        = $False
+        $cmo_t1_SettingsFile.Enabled    = $False
 
         $lbl_t1_ScanningScripts.Visible = $True
         $lbl_t1_ScanningScripts.Text    = 'Scanning Check Location...'
@@ -940,11 +954,11 @@ Function Display-MainForm
         $loadhelpINI = $null
 
         # Load settings from INI file
-        $txt_t4_ShortCode.Text          = ($settingsINI.settings.shortcode)
-        $txt_t4_ReportTitle.Text        = ($settingsINI.settings.reportCompanyName)
-        $script:settings.Timeout        = ($settingsINI.settings.timeout)
-        $script:settings.Concurrent     = ($settingsINI.settings.concurrent)
-        $script:settings.OutputLocation = ($settingsINI.settings.outputLocation)
+        Try { $txt_t4_ShortCode.Text          = ($settingsINI.settings.shortcode)         } Catch { $txt_t4_ShortCode.Text   = 'ACME' }
+        Try { $txt_t4_ReportTitle.Text        = ($settingsINI.settings.reportCompanyName) } Catch { $txt_t4_ReportTitle.Text = 'ACME' }
+        Try { $script:settings.Timeout        = ($settingsINI.settings.timeout)           } Catch { }    # \
+        Try { $script:settings.Concurrent     = ($settingsINI.settings.concurrent)        } Catch { }    #  | Use default settings
+        Try { $script:settings.OutputLocation = ($settingsINI.settings.outputLocation)    } Catch { }    # /
 
         # Clear any existing entries and start from scratch
         $tab_t3_Pages.TabPages.Clear()
@@ -968,12 +982,13 @@ Function Display-MainForm
             [object[]]$scripts = (Get-ChildItem -Path "$script:scriptLocation\checks\$folder" -Filter 'c-*.ps1' | Select-Object -ExpandProperty Name | Sort-Object Name )
             ForEach ($script In ($scripts | Sort-Object Name))
             {
-                [string]$script    = $script.TrimEnd('.ps1')                      # Remove PS1.extension
-                [string]$checkCode = ($script.Substring(2, 6).Replace('-',''))    # Get check code: c-acc-01-local-user  -->  acc01
-                [string]$checkName = ($languageINI.$($checkCode).Name)            # Get check name from INI file
+                [string]$Name      =  $script.TrimEnd('.ps1')                         # Remove PS1.extension
+                [string]$checkCode = ($Name.Substring(2, 6).Replace('-',''))          # Get check code: c-acc-01-local-user  -->  acc01
+                [string]$checkName = ''
+                Try {   $checkName = ($languageINI.$($checkCode).Name) } Catch { }    # Get check name from INI file
 
                 # Checks to see if the "checkName" value has been retreved or not
-                If ([string]::IsNullOrEmpty($checkName) -eq $True) { $checkName = '*' + $TextInfo.ToTitleCase($(($script.Substring(9)).Replace('-', ' '))) }
+                If ([string]::IsNullOrEmpty($checkName) -eq $True) { $checkName = '*' + $TextInfo.ToTitleCase($(($Name.Substring(9)).Replace('-', ' '))) }
                 Else                                               { $checkName = $checkName.Trim("'") }
 
                 # Load check description
@@ -994,7 +1009,7 @@ Function Display-MainForm
                 # Default back to the scripts description of help if required
                 If ($checkDesc -eq '')
                 {
-                    [string]$content   = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script.ps1") -TotalCount 50) -join "`n")
+                    [string]$content   = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script") -TotalCount 50) -join "`n")
                     $regExA = [RegEx]::Match($content,     "APPLIES:((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))")
                     $regExD = [RegEx]::Match($content, "DESCRIPTION:((?:.|\s)+?)(?:(?:[A-Z\- ]+:)|(?:#>))")
 
@@ -1003,7 +1018,7 @@ Function Display-MainForm
                 }
 
                 # Add check details to selection list, and check if required
-                Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', "`n`n")) -Group $guid -ImageIndex 1 -Enabled $True
+                Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', "`n`n"), "$folder\$script") -Group $guid -ImageIndex 1 -Enabled $True
                 If ($settingsINI.ContainsKey($checkCode) -eq $true) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True }
             }
 
@@ -1051,25 +1066,40 @@ Function Display-MainForm
             $newTab.Controls.Add($newLVW)
         }
 
-        Update-SelectedCount
-
-        $tab_Pages.SelectedIndex        = 1         # Change to the next tab
-        $lbl_t1_ScanningScripts.Visible = $False
-        $btn_t1_Search.Enabled          = $True
-        $btn_t1_Import.Enabled          = $True
-        $cmo_t1_Language.Enabled        = $True
-        $cmo_t1_SettingsFile.Enabled    = $True
-        $btn_t2_NextPage.Enabled        = $True
-        $btn_t2_SelectAll.Enabled       = $True
-        $btn_t2_SelectInv.Enabled       = $True
-        $btn_t2_SelectNone.Enabled      = $True
+        $tab_Pages.SelectedIndex               = 1         # Change to the next tab
+        $btn_t1_Search.Enabled                 = $True
+        $btn_t1_Import.Enabled                 = $True
+        $cmo_t1_Language.Enabled               = $True
+        $cmo_t1_SettingsFile.Enabled           = $True
+        $btn_t2_NextPage.Enabled               = $True
+        $btn_t2_SelectAll.Enabled              = $True
+        $btn_t2_SelectInv.Enabled              = $True
+        $btn_t2_SelectNone.Enabled             = $True
         $lst_t2_SelectChecks.Items[0].Selected = $True
-        $MainFORM.Cursor                = 'Default'
+        $lbl_t1_ScanningScripts.Visible        = $False
+
+        Update-SelectedCount
+        $script:UpdateSelectedCount            = $True
+        $MainFORM.Cursor                       = 'Default'
     }
 
-    $btn_t2_SelectAll_Click  = { $script:UpdateSelectedCount = $False; $MainFORM.Cursor = 'AppStarting'; ForEach ($item In $lst_t2_SelectChecks.Items) { $item.Checked =       $true          }; Update-SelectedCount; $MainFORM.Cursor = 'Default'; $script:UpdateSelectedCount = $True }
-    $btn_t2_SelectInv_Click  = { $script:UpdateSelectedCount = $False; $MainFORM.Cursor = 'AppStarting'; ForEach ($item In $lst_t2_SelectChecks.Items) { $item.Checked = (-not $item.Checked) }; Update-SelectedCount; $MainFORM.Cursor = 'Default'; $script:UpdateSelectedCount = $True }
-    $btn_t2_SelectNone_Click = { $script:UpdateSelectedCount = $False; $MainFORM.Cursor = 'AppStarting'; ForEach ($item In $lst_t2_SelectChecks.Items) { $item.Checked =       $false         }; Update-SelectedCount; $MainFORM.Cursor = 'Default'; $script:UpdateSelectedCount = $True }
+    Function btn_t2_SelectButtons([string]$SourceButton)
+    {
+        $MainFORM.Cursor = 'AppStarting'
+        $script:UpdateSelectedCount = $False
+        ForEach ($item In $lst_t2_SelectChecks.Items)
+        {
+            Switch ($SourceButton)
+            {
+                'SelectAll'  { $item.Checked =       $True          }
+                'SelectInv'  { $item.Checked = (-not $item.Checked) }
+                'SelectNone' { $item.Checked =       $false         }
+            }
+        }
+        Update-SelectedCount
+        $script:UpdateSelectedCount = $True
+        $MainFORM.Cursor = 'Default'
+    }
 
     $lst_t2_SelectChecks_ItemChecked = {
         If ($_.Item.Checked -eq $True) { $_.Item.ForeColor = 'WindowText'; $_.Item.BackColor = 'Window';  $_.Item.Font = $sysFont;     $_.Item.ImageIndex = 1 }    # Enabled
@@ -1122,15 +1152,29 @@ Function Display-MainForm
                 $lvwObject.Groups.Add($guid, " $($listItem.SubItems[1].Text) ($($listItem.Text.ToUpper()))")
 
                 # Create each item
-                [System.Collections.Hashtable]$iniKeys = $null
-                If ($SkippedChecks.Contains($("$($listItem.Text)-skip"))) { $iniKeys = ($settingsINI.$("$($listItem.Text)-skip")) }
-                Else                                                      { $iniKeys = ($settingsINI.$(   $listItem.Text)       ) }
+                $iniKeys = New-Object 'System.Collections.Hashtable'
+                Try
+                {
+                    If ($SkippedChecks.Contains($("$($listItem.Text)-skip"))) { $iniKeys = ($settingsINI.$("$($listItem.Text)-skip")) }
+                    Else                                                      { $iniKeys = ($settingsINI.$(   $listItem.Text)       ) }
+                }
+                Catch
+                {
+                    # Missing INI Section for this check, read from the check script itself
+                    [string]$getContent = ((Get-Content -Path "$script:scriptLocation\checks\$($listItem.SubItems[3].Text)" -TotalCount 50) -join "`n")
+                    $regEx = [RegEx]::Match($getContent,  "DEFAULT-VALUES:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
+                    [string[]]$Values = ($regEx.Groups[1].Value.Trim()).Split("`n")
+                    If (([string]::IsNullOrEmpty($Values) -eq $false) -and ($Values -ne 'None'))
+                    {
+                        ForEach ($EachValue In $Values) { $iniKeys.Add((($EachValue -split ' = ')[0]).Trim(), (($EachValue -split ' = ')[1]).Trim()) }
+                    }
+                }
 
                 ForEach ($item In (($iniKeys.Keys) | Sort-Object))
                 {
+                    [string]$desc  = ''
                     [string]$value = [regex]::Replace(($iniKeys.$item), "'\s{0,},\s{0,}'", "'; '")    # Replace:    ', '  -->  '; '
-                    [string]$desc  = ''    #                             ^      ^      ^ -- ^^ ^
-
+                    #                                                    ^      ^      ^ == ^^ ^
                     # Get the help text for each check setting
                     If ([string]::IsNullOrEmpty($script:qahelp[$($listItem.Text)]) -eq $False)
                     {
@@ -1572,6 +1616,7 @@ To start, click the 'Set Check Location' button below...
     $cmo_t1_Language.DropDownStyle = 'DropDownList'
     $cmo_t1_Language.Enabled       = $False
     $cmo_t1_Language.TabIndex      = 1
+    $cmo_t1_Language.Add_SelectedIndexChanged($cmo_t1_Language_SelectedIndexChanged)
     $tab_Page1.Controls.Add($cmo_t1_Language)
     
     # lbl_t1_Language
@@ -1583,15 +1628,16 @@ To start, click the 'Set Check Location' button below...
 
     # cmo_t1_SettingsFile
     $cmo_t1_SettingsFile.Location      = '306, 423'
-    $cmo_t1_SettingsFile.Size          = "150,  $($cmo_t1_Language.Height)"
+    $cmo_t1_SettingsFile.Size          = "150,  21"
     $cmo_t1_SettingsFile.DropDownStyle = 'DropDownList'
     $cmo_t1_SettingsFile.Enabled       = $False
     $cmo_t1_SettingsFile.TabIndex      = 2
+    $cmo_t1_SettingsFile.Add_SelectedIndexChanged($cmo_t1_SettingsFile_SelectedIndexChanged)
     $tab_Page1.Controls.Add($cmo_t1_SettingsFile)
 
     # lbl_t1_SettingsFile
     $lbl_t1_SettingsFile.Location  = '  9, 423'
-    $lbl_t1_SettingsFile.Size      = "291,  $($cmo_t1_SettingsFile.Height)"
+    $lbl_t1_SettingsFile.Size      = "291,  21"
     $lbl_t1_SettingsFile.Text      = 'Base Settings File :'
     $lbl_t1_SettingsFile.TextAlign = 'MiddleRight'
     $tab_Page1.Controls.Add($lbl_t1_SettingsFile)
@@ -1675,7 +1721,7 @@ To start, click the 'Set Check Location' button below...
     $btn_t2_SelectAll.Size     = ' 50,  25'
     $btn_t2_SelectAll.Text     = 'All'
     $btn_t2_SelectAll.Enabled  = $False
-    $btn_t2_SelectAll.Add_Click($btn_t2_SelectAll_Click)
+    $btn_t2_SelectAll.Add_Click({btn_t2_SelectButtons -SourceButton 'SelectAll' })
     $tab_Page2.Controls.Add($btn_t2_SelectAll)
 
     # btn_t2_SelectAll
@@ -1683,7 +1729,7 @@ To start, click the 'Set Check Location' button below...
     $btn_t2_SelectInv.Size     = ' 50,  25'
     $btn_t2_SelectInv.Text     = 'Inv'
     $btn_t2_SelectInv.Enabled  = $False
-    $btn_t2_SelectInv.Add_Click($btn_t2_SelectInv_Click)
+    $btn_t2_SelectInv.Add_Click({btn_t2_SelectButtons -SourceButton 'SelectInv' })
     $tab_Page2.Controls.Add($btn_t2_SelectInv)
 
     # btn_t2_SelectAll
@@ -1691,7 +1737,7 @@ To start, click the 'Set Check Location' button below...
     $btn_t2_SelectNone.Size     = ' 50,  25'
     $btn_t2_SelectNone.Text     = 'None'
     $btn_t2_SelectNone.Enabled  = $False
-    $btn_t2_SelectNone.Add_Click($btn_t2_SelectNone_Click)
+    $btn_t2_SelectNone.Add_Click({btn_t2_SelectButtons -SourceButton 'SelectNone' })
     $tab_Page2.Controls.Add($btn_t2_SelectNone)
 
     # btn_t2_NextPage
