@@ -3,6 +3,9 @@ Set-StrictMode    -Version 2
 Remove-Variable * -ErrorAction SilentlyContinue
 Clear-Host
 
+Write-Host ''
+Write-Host '  Starting Server QA Settings Configurator...'
+
 # Icon Image Index: 0: Optional, 1: Gear, 2: Disabled Gear
 
 [Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')    | Out-Null
@@ -779,12 +782,12 @@ Function Display-MainForm
 
         # Set some specific fonts
         $lbl_t1_Welcome.Font         = $sysFontBold
-        $lbl_t1_MissingFile.Font     = $sysFontItalic
+        $lbl_t1_MissingFile.Font     = $sysFontItalic    # Hidden by default
         $lbl_t2_CheckSelection.Font  = $sysFontBold
         $lbl_t3_ScriptSelection.Font = $sysFontBold
         $lbl_t4_Complete.Font        = $sysFontBold
 
-        # Set some default sizes (due to theme elements)
+        # Set some default sizes (due to theme/font sizes)
         $lbl_t1_Language.Height     = $cmo_t1_Language.Height
         $lbl_t1_SettingsFile.Height = $cmo_t1_SettingsFile.Height
         $lbl_t1_MissingFile.Height  = $cmo_t1_SettingsFile.Height
@@ -792,7 +795,7 @@ Function Display-MainForm
         $lbl_t4_QAReport.Height     = $txt_t4_ReportTitle.Height
         $lbl_t4_ReportTitle.Height  = $txt_t4_ReportTitle.Height
 
-        # Setup default messages
+        # Setup default views/messages
         $lbl_t3_NoParameters.Visible    = $True
         $lst_t2_SelectChecks.CheckBoxes = $False
         $lst_t2_SelectChecks.Groups.Add('ErrorGroup','Please Note')
@@ -801,7 +804,7 @@ Function Display-MainForm
     }
 
     $MainFORM_FormClosing = [System.Windows.Forms.FormClosingEventHandler] {
-        $quit = [System.Windows.Forms.MessageBox]::Show($MainFORM, 'Are you sure you want to exit this form.?', ' Exit', 'YesNo', 'Question')
+        $quit = [System.Windows.Forms.MessageBox]::Show($MainFORM, 'Are you sure you want to exit this tool.?', ' Server QA Settings Configurator', 'YesNo', 'Question')
         If ($quit -eq 'No') { $_.Cancel = $True }
     }
 
@@ -932,7 +935,7 @@ Function Display-MainForm
         }
         Catch
         {
-            $cmo_t1_SettingsFile.Items.Insert(0, '* Use Check Defaults')
+            $cmo_t1_SettingsFile.Items.Insert(0, '* Use Default Settings')
             $cmo_t1_SettingsFile.SelectedIndex = 0
             $lbl_t1_MissingFile.Visible = $True
         }
@@ -1394,7 +1397,7 @@ Function Display-MainForm
         $lbl_t4_Generate.Text = 'Generating Runspace QA Script (proof of concept)'
         Invoke-Expression -Command "PowerShell -Command {& '$script:ExecutionFolder\CompilerRS.ps1' -Settings $(Split-Path -Path $script:saveFile -Leaf)}"    # Build Runspace QA Script
         $lbl_t4_Generate.Text = ''
-        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Custom QA Script generated.", ' Generate QA Script', 'OK', 'Information')
+        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Custom QA Script generated.", ' Server QA Settings Configurator', 'OK', 'Information')
 
         $btn_Exit.Enabled           = $True
         $btn_RestoreINI.Enabled     = $True
@@ -1477,90 +1480,22 @@ Function Display-MainForm
         $outputFile.ToString() | Out-File -FilePath "$(Split-Path -Path $originalQA -Parent)\RESTORED.ini" -Encoding ascii -Force
 
         $MainFORM.Cursor = 'Default'
-        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Restore Complete.`nThe file is called 'RESTORED.ini'.`n`nIt is located in the same folder as the QA script you selected.  Remember to move it to the settings folder for reuse.", ' Restore Settings File', 'OK', 'Information')
+        [System.Windows.Forms.MessageBox]::Show($MainFORM, "Restore Complete.`nThe file is called 'RESTORED.ini'.`n`nIt is located in the same folder as the QA script you selected.  Remember to move it to the settings folder for reuse.", ' Server QA Settings Configurator', 'OK', 'Information')
     }
 #endregion
 ###################################################################################################
 #region FORM ITEMS
 #region MAIN FORM
-    [System.Windows.Forms.Application]::EnableVisualStyles()
-    $MainFORM                     = New-Object 'System.Windows.Forms.Form'
-    $img_ListImages               = New-Object 'System.Windows.Forms.ImageList'
-    $img_Input                    = New-Object 'System.Windows.Forms.ImageList'
-    $tab_Pages                    = New-Object 'System.Windows.Forms.TabControl'
-    $tab_Page1                    = New-Object 'System.Windows.Forms.TabPage'
-    $tab_Page2                    = New-Object 'System.Windows.Forms.TabPage'
-    $tab_Page3                    = New-Object 'System.Windows.Forms.TabPage'
-    $tab_Page4                    = New-Object 'System.Windows.Forms.TabPage'
-    $lbl_ChangesMade              = New-Object 'System.Windows.Forms.Label'
-    $btn_RestoreINI               = New-Object 'System.Windows.Forms.Button'
-    $btn_Exit                     = New-Object 'System.Windows.Forms.Button'
-
-    # TAB 1
-    $lbl_t1_Welcome               = New-Object 'System.Windows.Forms.Label'
-    $lbl_t1_Introduction          = New-Object 'System.Windows.Forms.Label'
-    $lbl_t1_ScanningScripts       = New-Object 'System.Windows.Forms.Label'
-    $btn_t1_Search                = New-Object 'System.Windows.Forms.Button'
-    $lbl_t1_Language              = New-Object 'System.Windows.Forms.Label'
-    $cmo_t1_Language              = New-Object 'System.Windows.Forms.ComboBox'
-    $lbl_t1_SettingsFile          = New-Object 'System.Windows.Forms.Label'
-    $cmo_t1_SettingsFile          = New-Object 'System.Windows.Forms.ComboBox'
-    $lbl_t1_MissingFile           = New-Object 'System.Windows.Forms.Label'
-    $btn_t1_Import                = New-Object 'System.Windows.Forms.Button'
-
-    # TAB 2
-    $lbl_t2_CheckSelection        = New-Object 'System.Windows.Forms.Label'
-    $lst_t2_SelectChecks          = New-Object 'System.Windows.Forms.ListView'
-    $lst_t2_SelectChecks_CH_Code  = New-Object 'System.Windows.Forms.ColumnHeader'
-    $lst_t2_SelectChecks_CH_Name  = New-Object 'System.Windows.Forms.ColumnHeader'
-    $lst_t2_SelectChecks_CH_Desc  = New-Object 'System.Windows.Forms.ColumnHeader'
-    $lbl_t2_Description           = New-Object 'System.Windows.Forms.Label'
-    $lbl_t2_SelectedCount         = New-Object 'System.Windows.Forms.Label'
-    $lbl_t2_Select                = New-Object 'System.Windows.Forms.Label'
-    $btn_t2_SelectAll             = New-Object 'System.Windows.Forms.Button'
-    $btn_t2_SelectInv             = New-Object 'System.Windows.Forms.Button'
-    $btn_t2_SetValues             = New-Object 'System.Windows.Forms.Button'
-    $btn_t2_SelectNone            = New-Object 'System.Windows.Forms.Button'
-    $pic_t2_Background            = New-Object 'System.Windows.Forms.PictureBox'
-
-    # TAB 3 
-    $lbl_t3_ScriptSelection       = New-Object 'System.Windows.Forms.Label'
-    $lbl_t3_NoParameters          = New-Object 'System.Windows.Forms.Label'
-    $tab_t3_Pages                 = New-Object 'System.Windows.Forms.TabControl'    # TabPages are generated automatically
-    $btn_t3_PrevTab               = New-Object 'System.Windows.Forms.Button'
-    $btn_t3_NextTab               = New-Object 'System.Windows.Forms.Button'
-    $btn_t3_Complete              = New-Object 'System.Windows.Forms.Button'
-
-    # TAB 4
-    $lbl_t4_Complete              = New-Object 'System.Windows.Forms.Label'
-    $lbl_t4_Complete_Info         = New-Object 'System.Windows.Forms.Label'
-    $lbl_t4_ShortCode             = New-Object 'System.Windows.Forms.Label'
-    $lbl_t4_ReportTitle           = New-Object 'System.Windows.Forms.Label'
-    $lbl_t4_QAReport              = New-Object 'System.Windows.Forms.Label'
-    $txt_t4_ShortCode             = New-Object 'System.Windows.Forms.TextBox'
-    $txt_t4_ReportTitle           = New-Object 'System.Windows.Forms.TextBox'
-    $btn_t4_Options               = New-Object 'System.Windows.Forms.Button'
-    $btn_t4_Save                  = New-Object 'System.Windows.Forms.Button'
-    $btn_t4_Generate              = New-Object 'System.Windows.Forms.Button'
-    $lbl_t4_Generate              = New-Object 'System.Windows.Forms.Label'
-#endregion
-#region MAIN FORM 2
-    $MainFORM.SuspendLayout()
-    $tab_Pages.SuspendLayout()
-    $tab_Page1.SuspendLayout()
-    $tab_Page2.SuspendLayout()
-    $tab_Page3.SuspendLayout()
-    $tab_Page4.SuspendLayout()
-
-    # MainForm
-    $MainFORM.AutoScaleDimensions = '6, 13'
-    $MainFORM.AutoScaleMode       = 'None'
-    $MainFORM.ClientSize          = '794, 672'    # 800 x 700
-    $MainFORM.FormBorderStyle     = 'FixedSingle'
-    $MainFORM.MaximizeBox         = $False
-    $MainFORM.StartPosition       = 'CenterScreen'
-    $MainFORM.Text                = ' QA Scripts Customiser'
-    $MainFORM.Icon                = [System.Convert]::FromBase64String('
+    #
+    $MainFORM                           = New-Object 'System.Windows.Forms.Form'
+    $MainFORM.AutoScaleDimensions       = '6, 13'
+    $MainFORM.AutoScaleMode             = 'None'
+    $MainFORM.ClientSize                = '794, 672'    # 800 x 700
+    $MainFORM.FormBorderStyle           = 'FixedSingle'
+    $MainFORM.MaximizeBox               = $False
+    $MainFORM.StartPosition             = 'CenterScreen'
+    $MainFORM.Text                      = ' Server QA Settings Configurator '
+    $MainFORM.Icon                      = [System.Convert]::FromBase64String('
         AAABAAIAICAAAAEAIACoEAAAJgAAABAQAAABACAAaAQAAM4QAAAoAAAAIAAAAEAAAAABACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAANIAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA8AAAADcAAAAAAAAAAACZAD8A
         mQA9AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADXAAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAPAAAAA3AAAAAAAAAAAAmQBpAJkA/gCZAPwAmQA9AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAD/
         QEBA/39/f/9/f3//f39//39/f/9/f3//f39//39/f/9/f3//f39//39/f/9/f3//f39//39/f/9/f3//y8vL////////////ltWW/wGZAf8AmQD/AJkA/wCZAN0AmQAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/wAAAP9/f3//////////////////////////////////////////////////////
@@ -1593,399 +1528,85 @@ Function Display-MainForm
         ////EBAQ/wAAAFAAAAAAAAAAAAAAAAAAAAD/v7+//21tbf+Li4v/9vb2/xAQEP+2trb/HBwc/y8vL/+dnZ3//////xAQEP8AAABQAAAAAAAAAAAAAAAAAAAA/7+/v/+Ghob/UlJS/6qqqv8WFhb/+Pj4/ygoKP8cHBz/8/Pz//////8QEBD/AAAAUAAAAAAAAAAAAAAAAAAAAP+/v7//9/f3/3Fxcf9NTU3/
         wcHB//////+fn5//jIyM////////////EBAQ/wAAAFAAAAAAAAAAAAAAAAAAAAD/v7+//////////////////////////////////////////////////xAQEP8AAABQAAAAAAAAAAAAAAAAAAAA/4+Pj/+/v7//v7+//7+/v/+/v7//v7+//7+/v/+/v7//v7+//7+/v/8MDAz/AAAAUAAAAAAAAAAAAAAA
         AAAAALYAAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/GRkZ/wAAACAAAAAAAAAAAAAAAAAABwAAAAcAAAADAAAAAQAAAAEAAAAAAAAAAAAAAAQAAAAHAAAABwAAAAcAAAAHAAAABwAAAAcAAAAHAAAABwAA')
-    $MainFORM.CancelButton        = $btn_Exit
     $MainFORM.Add_Load($MainFORM_Load)
     $MainFORM.Add_FormClosing($MainFORM_FormClosing)
+    $MainFORM.SuspendLayout()
 
-    $tab_Pages.Location      = ' 12,  12'
-    $tab_Pages.Size          = '770, 608'
-    $tab_Pages.Padding       = ' 12,   6'
-    $tab_Pages.SelectedIndex = 0
-    $tab_Pages.TabIndex      = 0
-    $tab_Pages.Controls.Add($tab_Page1)    # Introduction
-    $tab_Pages.Controls.Add($tab_Page2)    # Select Required Checks
-    $tab_Pages.Controls.Add($tab_Page3)    # Specific QA Values
-    $tab_Pages.Controls.Add($tab_Page4)    # Generate QA
+    $tab_Pages                          = New-Object 'System.Windows.Forms.TabControl'
+    $tab_Pages.Location                 = ' 12,  12'
+    $tab_Pages.Size                     = '770, 608'
+    $tab_Pages.Padding                  = ' 12,   6'
+    $tab_Pages.SelectedIndex            = 0
+    $tab_Pages.TabIndex                 = 0
     $tab_Pages.Add_SelectedIndexChanged($tab_Pages_SelectedIndexChanged)
     $MainFORM.Controls.Add($tab_Pages)
+    $tab_Pages.SuspendLayout()
 
-    # tabpage1
-    $tab_Page1.TabIndex  = 0
-    $tab_Page1.BackColor = 'Control'
-    $tab_Page1.Text      = 'Introduction'
+    #
+    $tab_Page1                          = New-Object 'System.Windows.Forms.TabPage'
+    $tab_Page1.TabIndex                 = 0
+    $tab_Page1.BackColor                = 'Control'
+    $tab_Page1.Text                     = 'Introduction'
+    $tab_Pages.Controls.Add($tab_Page1)    # Introduction
+    $tab_Page1.SuspendLayout()
 
-    # tabpage2
-    $tab_Page2.TabIndex  = 1
-    $tab_Page2.BackColor = 'Control'
-    $tab_Page2.Text      = 'Select Required Checks'
+    #
+    $tab_Page2                          = New-Object 'System.Windows.Forms.TabPage'
+    $tab_Page2.TabIndex                 = 1
+    $tab_Page2.BackColor                = 'Control'
+    $tab_Page2.Text                     = 'Select Required Checks'
+    $tab_Pages.Controls.Add($tab_Page2)    # Select Required Checks
+    $tab_Page2.SuspendLayout()
 
-    # tabpage3
-    $tab_Page3.TabIndex  = 2
-    $tab_Page3.BackColor = 'Control'
-    $tab_Page3.Text      = 'QA Check Values'
+    #
+    $tab_Page3                          = New-Object 'System.Windows.Forms.TabPage'
+    $tab_Page3.TabIndex                 = 2
+    $tab_Page3.BackColor                = 'Control'
+    $tab_Page3.Text                     = 'QA Check Values'
+    $tab_Pages.Controls.Add($tab_Page3)    # Specific QA Values
+    $tab_Page3.SuspendLayout()
 
-    # tabpage4
-    $tab_Page4.TabIndex  = 3
-    $tab_Page4.BackColor = 'Control'
-    $tab_Page4.Text      = 'Generate QA'
-#endregion
-#region TAB 1 - Introduction / Select Location / Import
-    # lbl_t1_Welcome
-    $lbl_t1_Welcome.Location  = '  9,   9'
-    $lbl_t1_Welcome.Size      = '744,  20'
-    $lbl_t1_Welcome.Text      = 'Welcome.!'
-    $lbl_t1_Welcome.TextAlign = 'BottomLeft'
-    $tab_Page1.Controls.Add($lbl_t1_Welcome)
+    #
+    $tab_Page4                          = New-Object 'System.Windows.Forms.TabPage'
+    $tab_Page4.TabIndex                 = 3
+    $tab_Page4.BackColor                = 'Control'
+    $tab_Page4.Text                     = 'Generate QA'
+    $tab_Pages.Controls.Add($tab_Page4)    # Generate QA
+    $tab_Page4.SuspendLayout()
 
-    # lbl_t1_Introduction
-    $lbl_t1_Introduction.Location  = '9, 35'
-    $lbl_t1_Introduction.Size      = '744, 235'
-    $lbl_t1_Introduction.TextAlign = 'TopLeft'
-    $lbl_t1_Introduction.Text      = @"
-This script will help you create a custom settings file for the QA checks, one that is tailored for your environment.
-
-
-It will allow you to select which checks you want to use and which to skip.  You will also be able to set specific values for each of the check settings.  For a more detailed description on using this script, please read the documentation.
-
-
-
-
-
-To start, click the 'Set Check Location' button below...
-"@
-    $tab_Page1.Controls.Add($lbl_t1_Introduction)
-
-    # btn_t1_Search
-    $btn_t1_Search.Location = '306, 325'
-    $btn_t1_Search.Size     = '150, 35'
-    $btn_t1_Search.Text     = 'Set Check Location'
-    $btn_t1_Search.TabIndex = 0
-    $btn_t1_Search.Add_Click($btn_t1_Search_Click)
-    $tab_Page1.Controls.Add($btn_t1_Search)
-
-    # cmo_t1_Language
-    $cmo_t1_Language.Location      = '306, 387'
-    $cmo_t1_Language.Size          = '150,  21'
-    $cmo_t1_Language.DropDownStyle = 'DropDownList'
-    $cmo_t1_Language.Enabled       = $False
-    $cmo_t1_Language.TabIndex      = 1
-    $cmo_t1_Language.Add_SelectedIndexChanged({ cmo_t1_SelectedIndexChanged })
-    $tab_Page1.Controls.Add($cmo_t1_Language)
-    
-    # lbl_t1_Language
-    $lbl_t1_Language.Location  = '  9, 387'
-    $lbl_t1_Language.Size      = '291,  21'
-    $lbl_t1_Language.Text      = 'Language :'
-    $lbl_t1_Language.TextAlign = 'MiddleRight'
-    $tab_Page1.Controls.Add($lbl_t1_Language)
-
-    # cmo_t1_SettingsFile
-    $cmo_t1_SettingsFile.Location      = '306, 423'
-    $cmo_t1_SettingsFile.Size          = "150,  21"
-    $cmo_t1_SettingsFile.DropDownStyle = 'DropDownList'
-    $cmo_t1_SettingsFile.Enabled       = $False
-    $cmo_t1_SettingsFile.TabIndex      = 2
-    $cmo_t1_SettingsFile.Add_SelectedIndexChanged({ cmo_t1_SelectedIndexChanged })
-    $tab_Page1.Controls.Add($cmo_t1_SettingsFile)
-
-    # lbl_t1_SettingsFile
-    $lbl_t1_SettingsFile.Location  = '  9, 423'
-    $lbl_t1_SettingsFile.Size      = "291,  21"
-    $lbl_t1_SettingsFile.Text      = 'Base Settings File :'
-    $lbl_t1_SettingsFile.TextAlign = 'MiddleRight'
-    $tab_Page1.Controls.Add($lbl_t1_SettingsFile)
-
-    # lbl_t1_SettingsFile
-    $lbl_t1_MissingFile.Location  = '462, 423'
-    $lbl_t1_MissingFile.Size      = "291,  21"
-    $lbl_t1_MissingFile.Text      = 'Default Settings file not found'
-    $lbl_t1_MissingFile.TextAlign = 'MiddleLeft'
-    $lbl_t1_MissingFile.Visible   = $False
-    $tab_Page1.Controls.Add($lbl_t1_MissingFile)
-
-    # btn_t1_Import
-    $btn_t1_Import.Location = '306, 471'
-    $btn_t1_Import.Size     = '150,  35'
-    $btn_t1_Import.Text     = 'Import Settings'
-    $btn_t1_Import.Enabled  = $False
-    $btn_t1_Import.TabIndex = 3
-    $btn_t1_Import.Add_Click($btn_t1_Import_Click)
-    $tab_Page1.Controls.Add($btn_t1_Import)
-
-    # lbl_t1_ScanningScripts
-    $lbl_t1_ScanningScripts.Location  = '  9, 547'
-    $lbl_t1_ScanningScripts.Size      = '744,  20'
-    $lbl_t1_ScanningScripts.Text      = ''
-    $lbl_t1_ScanningScripts.TextAlign = 'BottomLeft'
-    $lbl_t1_ScanningScripts.Visible   = $False
-    $tab_Page1.Controls.Add($lbl_t1_ScanningScripts)
-#endregion
-#region TAB 2 - Select QA Checkes To Include
-    # lbl_t2_ScriptSelection
-    $lbl_t2_CheckSelection.Location  = '  9,   9'
-    $lbl_t2_CheckSelection.Size      = '744,  20'
-    $lbl_t2_CheckSelection.Text      = 'Select the QA checks you want to enable for this settings file:'
-    $lbl_t2_CheckSelection.TextAlign = 'BottomLeft'
-    $tab_Page2.Controls.Add($lbl_t2_CheckSelection)
-
-    # lst_t2_SelectChecks
-    $lst_t2_SelectChecks.CheckBoxes     = $True
-    $lst_t2_SelectChecks.HeaderStyle    = 'Nonclickable'
-    $lst_t2_SelectChecks.FullRowSelect  = $True
-    $lst_t2_SelectChecks.GridLines      = $False
-    $lst_t2_SelectChecks.LabelWrap      = $False
-    $lst_t2_SelectChecks.MultiSelect    = $False
-    $lst_t2_SelectChecks.Location       = '  9,  35'
-    $lst_t2_SelectChecks.Size           = '466, 492'
-    $lst_t2_SelectChecks.View           = 'Details'
-    $lst_t2_SelectChecks.SmallImageList = $img_ListImages
-    $lst_t2_SelectChecks.Sorting        = 'Ascending'
-    $lst_t2_SelectChecks.Columns.Add($lst_t2_SelectChecks_CH_Code) | Out-Null
-    $lst_t2_SelectChecks.Columns.Add($lst_t2_SelectChecks_CH_Name) | Out-Null
-    $lst_t2_SelectChecks.Columns.Add($lst_t2_SelectChecks_CH_Desc) | Out-Null
-    $lst_t2_SelectChecks_CH_Code.Text   = 'Check'
-    $lst_t2_SelectChecks_CH_Name.Text   = 'Name'
-    $lst_t2_SelectChecks_CH_Desc.Text   = ''         # Description
-    $lst_t2_SelectChecks_CH_Code.Width  = 100
-    $lst_t2_SelectChecks_CH_Name.Width  = 366 - ([System.Windows.Forms.SystemInformation]::VerticalScrollBarWidth + 4)
-    $lst_t2_SelectChecks_CH_Desc.Width  =   0
-    $lst_t2_SelectChecks.Add_Enter($lst_t2_SelectChecks_Enter)
-    $lst_t2_SelectChecks.Add_ItemChecked($lst_t2_SelectChecks_ItemChecked)
-    $lst_t2_SelectChecks.Add_SelectedIndexChanged($lst_t2_SelectChecks_SelectedIndexChanged)
-    $tab_Page2.Controls.Add($lst_t2_SelectChecks)
-
-    # lbl_Description
-    $lbl_t2_Description.BackColor   = 'Window'
-    $lbl_t2_Description.Location    = '475,  36'
-    $lbl_t2_Description.Size        = '277, 449'
-    $lbl_t2_Description.Padding     = '3, 3, 3, 3'    # Internal padding
-    $lbl_t2_Description.Text        = ''              # Description of the selected check - set via code
-    $lbl_t2_Description.TextAlign   = 'TopLeft'
-    $tab_Page2.Controls.Add($lbl_t2_Description)
-
-    # lbl_t2_SelectedCount
-    $lbl_t2_SelectedCount.Location  = '  9, 542'
-    $lbl_t2_SelectedCount.Size      = '189,  25'
-    $lbl_t2_SelectedCount.Text      = '0 of 0 checks selected'
-    $lbl_t2_SelectedCount.TextAlign = 'MiddleLeft'
-    $tab_Page2.Controls.Add($lbl_t2_SelectedCount)
-
-    # lbl_t2_Select
-    $lbl_t2_Select.Location  = '204, 542'
-    $lbl_t2_Select.Size      = ' 90,  25'
-    $lbl_t2_Select.Text      = 'Select :'
-    $lbl_t2_Select.TextAlign = 'MiddleRight'
-    $tab_Page2.Controls.Add($lbl_t2_Select)
-
-    # btn_t2_SelectAll
-    $btn_t2_SelectAll.Location = '300, 542'
-    $btn_t2_SelectAll.Size     = ' 50,  25'
-    $btn_t2_SelectAll.Text     = 'All'
-    $btn_t2_SelectAll.Enabled  = $False
-    $btn_t2_SelectAll.Add_Click({btn_t2_SelectButtons -SourceButton 'SelectAll' })
-    $tab_Page2.Controls.Add($btn_t2_SelectAll)
-
-    # btn_t2_SelectAll
-    $btn_t2_SelectInv.Location = '356, 542'
-    $btn_t2_SelectInv.Size     = ' 50,  25'
-    $btn_t2_SelectInv.Text     = 'Inv'
-    $btn_t2_SelectInv.Enabled  = $False
-    $btn_t2_SelectInv.Add_Click({btn_t2_SelectButtons -SourceButton 'SelectInv' })
-    $tab_Page2.Controls.Add($btn_t2_SelectInv)
-
-    # btn_t2_SelectAll
-    $btn_t2_SelectNone.Location = '412, 542'
-    $btn_t2_SelectNone.Size     = ' 50,  25'
-    $btn_t2_SelectNone.Text     = 'None'
-    $btn_t2_SelectNone.Enabled  = $False
-    $btn_t2_SelectNone.Add_Click({btn_t2_SelectButtons -SourceButton 'SelectNone' })
-    $tab_Page2.Controls.Add($btn_t2_SelectNone)
-
-    # btn_t2_SetValues
-    $btn_t2_SetValues.Location = '648, 542'
-    $btn_t2_SetValues.Size     = '105,  25'
-    $btn_t2_SetValues.Text     = 'Set Values  >'
-    $btn_t2_SetValues.Enabled  = $False
-    $btn_t2_SetValues.Add_Click($btn_t2_SetValues_Click)
-    $tab_Page2.Controls.Add($btn_t2_SetValues)
-    $btn_t2_SetValues.BringToFront()
-
-    # pic_Background
-    $pic_t2_Background.Location    = '474,  35'
-    $pic_t2_Background.Size        = '279, 492'
-    $pic_t2_Background.BackColor   = 'Window'
-    $pic_t2_Background.BorderStyle = 'FixedSingle'
-    $pic_t2_Background.SendToBack()
-    $tab_Page2.Controls.Add($pic_t2_Background)
-#endregion
-#region TAB 3 - Enter Values For Checks
-    # lbl_NoParameters
-    $lbl_t3_NoParameters.Location  = '19, 218'
-    $lbl_t3_NoParameters.Size      = '724, 50'
-    $lbl_t3_NoParameters.Text      = "Enabled QA checks have not been comfirmed yet.`nPlease click 'Set Values >' on the previous tab."
-    $lbl_t3_NoParameters.TextAlign = 'MiddleCenter'
-    $lbl_t3_NoParameters.BringToFront()
-    $lbl_t3_NoParameters.BackColor = 'Window'
-    $lbl_t3_NoParameters.Visible   = $True
-    $tab_Page3.Controls.Add($lbl_t3_NoParameters)
-
-    # lbl_t3_ScriptSelection
-    $lbl_t3_ScriptSelection.Location  = '  9,   9'
-    $lbl_t3_ScriptSelection.Size      = '744,  20'
-    $lbl_t3_ScriptSelection.Text      = 'Double-click an enabled entry to set its value'
-    $lbl_t3_ScriptSelection.TextAlign = 'BottomLeft'
-    $tab_Page3.Controls.Add($lbl_t3_ScriptSelection)
-
-    # tab_t3_Pages
-    $tab_t3_Pages.Location      = '  9,  35'
-    $tab_t3_Pages.Size          = '744, 492' # '744, 532'
-    $tab_t3_Pages.Padding       = '  8,   4'
-    $tab_t3_Pages.SelectedIndex = 0
-    $tab_t3_Pages.Add_SelectedIndexChanged($tab_t3_Pages_SelectedIndexChanged)
-    $tab_Page3.Controls.Add($tab_t3_Pages)
-
-    # btn_t3_PrevTab
-    $btn_t3_PrevTab.Location = '300, 542'
-    $btn_t3_PrevTab.Size     = ' 75,  25'
-    $btn_t3_PrevTab.Text     = '<  Prev'
-    $btn_t3_PrevTab.Add_Click($btn_t3_PrevTab_Click)
-    $tab_Page3.Controls.Add($btn_t3_PrevTab)
-
-    # btn_t3_PrevTab
-    $btn_t3_NextTab.Location = '387, 542'
-    $btn_t3_NextTab.Size     = ' 75,  25'
-    $btn_t3_NextTab.Text     = 'Next  >'
-    $btn_t3_NextTab.Add_Click($btn_t3_NextTab_Click)
-    $tab_Page3.Controls.Add($btn_t3_NextTab)
-
-    # btn_t3_Complete
-    $btn_t3_Complete.Location   = '648, 542'
-    $btn_t3_Complete.Size       = '105,  25'
-    $btn_t3_Complete.Text       = 'Complete  >'
-    $btn_t3_Complete.Enabled    = $False
-    $btn_t3_Complete.Add_Click($btn_t3_Complete_Click)
-    $tab_Page3.Controls.Add($btn_t3_Complete)
-#endregion
-#region TAB 4 - Generate Settings And QA Script
-    # lbl_t1_Welcome
-    $lbl_t4_Complete.Location  = '  9,   9'
-    $lbl_t4_Complete.Size      = '744,  20'
-    $lbl_t4_Complete.Text      = 'Complete.!'
-    $lbl_t4_Complete.TextAlign = 'BottomLeft'
-    $tab_Page4.Controls.Add($lbl_t4_Complete)
-
-    # lbl_t4_Complete_Info
-    $lbl_t4_Complete_Info.Location  = '  9,  35'
-    $lbl_t4_Complete_Info.Size      = '744, 233'
-    $lbl_t4_Complete_Info.TextAlign = 'TopLeft'
-    $lbl_t4_Complete_Info.Text      = @"
-Enter a short code for this settings file, this will save the QA script file with it as part of the name.
-For example: 'QA_ACME_v3.xx.xxxx.ps1'.
-
-Also enter a name or other label for the HTML results file.  This is automatically appended with 'QA Report'.
-For example: 'ACME QA Report'.
-
-Click 'Additional Options' to configure futher configuration settings.
-
-
-Click the 'Save Settings' button below to save your selections and values.
-Once done, you can then click 'Generate QA Script' to create the compiled QA script.
-"@
-    $tab_Page4.Controls.Add($lbl_t4_Complete_Info)
-
-    # lbl_t4_ShortCode
-    $lbl_t4_ShortCode.Location  = '  9, 295'
-    $lbl_t4_ShortCode.Size      = '291,  22'
-    $lbl_t4_ShortCode.TextAlign = 'MiddleRight'
-    $lbl_t4_ShortCode.Text      = 'Settings Short Code :'
-    $tab_Page4.Controls.Add($lbl_t4_ShortCode)
-
-    # txt_t4_ShortCode
-    $txt_t4_ShortCode.Location  = '306, 295'
-    $txt_t4_ShortCode.Size      = '150,  22'
-    $txt_t4_ShortCode.TextAlign = 'Center'
-    $tab_Page4.Controls.Add($txt_t4_ShortCode)
-
-    # lbl_t4_ReportTitle
-    $lbl_t4_ReportTitle.Location  = '  9, 332'
-    $lbl_t4_ReportTitle.Size      = '291,  22'
-    $lbl_t4_ReportTitle.TextAlign = 'MiddleRight'
-    $lbl_t4_ReportTitle.Text      = 'HTML Report Company Name :'
-    $tab_Page4.Controls.Add($lbl_t4_ReportTitle)
-
-    # lbl_t4_QAReport
-    $lbl_t4_QAReport.Location  = '462, 332'
-    $lbl_t4_QAReport.Size      = '291,  22'
-    $lbl_t4_QAReport.TextAlign = 'MiddleLeft'
-    $lbl_t4_QAReport.Text      = 'QA Report'
-    $tab_Page4.Controls.Add($lbl_t4_QAReport)
-
-    # txt_t4_ReportTitle
-    $txt_t4_ReportTitle.Location  = '306, 332'
-    $txt_t4_ReportTitle.Size      = '150,  22'
-    $txt_t4_ReportTitle.TextAlign = 'Center'
-    $tab_Page4.Controls.Add($txt_t4_ReportTitle)
-
-    # btn_t4_Options
-    $btn_t4_Options.Location      = '306, 369'
-    $btn_t4_Options.Size          = '150,  25'
-    $btn_t4_Options.TabIndex      = 97
-    $btn_t4_Options.Text          = 'Additonal Options'
-    $btn_t4_Options.Add_Click($btn_t4_Options_Click)
-    $tab_Page4.Controls.Add($btn_t4_Options)
-
-    # btn_t4_Save
-    $btn_t4_Save.Location = '306, 421'
-    $btn_t4_Save.Size     = '150,  35'
-    $btn_t4_Save.Text     = 'Save Settings'
-    $btn_t4_Save.Enabled  = $False
-    $btn_t4_Save.Add_Click($btn_t4_Save_Click)
-    $tab_Page4.Controls.Add($btn_t4_Save)
-
-    # btn_t4_Generate
-    $btn_t4_Generate.Location = '306, 471'
-    $btn_t4_Generate.Size     = '150,  35'
-    $btn_t4_Generate.Text     = 'Generate QA Script'
-    $btn_t4_Generate.Enabled  = $False
-    $btn_t4_Generate.Add_Click($btn_t4_Generate_Click)
-    $tab_Page4.Controls.Add($btn_t4_Generate)
-
-    # lbl_t4_Generate
-    $lbl_t4_Generate.Location  = '  9, 512'
-    $lbl_t4_Generate.Size      = '744,  20'
-    $lbl_t4_Generate.TextAlign = 'MiddleCenter'
-    $lbl_t4_Generate.Text      = ''
-    $tab_Page4.Controls.Add($lbl_t4_Generate)
-#endregion
-#region Common Controls
-    # btn_RestoreINI
-    $btn_RestoreINI.Location = ' 12, 635'
-    $btn_RestoreINI.Size     = '150,  25'
-    $btn_RestoreINI.TabIndex = 99
-    $btn_RestoreINI.Text     = 'Restore Settings File'
+    #
+    $btn_RestoreINI                     = New-Object 'System.Windows.Forms.Button'
+    $btn_RestoreINI.Location            = ' 12, 635'
+    $btn_RestoreINI.Size                = '150,  25'
+    $btn_RestoreINI.TabIndex            = 99
+    $btn_RestoreINI.Text                = 'Restore Settings File'
     $btn_RestoreINI.Add_Click($btn_RestoreINI_Click)
     $MainFORM.Controls.Add($btn_RestoreINI)
 
-    # btn_Cancel
-    $btn_Exit.Location = '707, 635'
-    $btn_Exit.Size     = '75, 25'
-    $btn_Exit.TabIndex = 98
-    $btn_Exit.Text     = 'Exit'
-    $btn_Exit.DialogResult = [System.Windows.Forms.DialogResult]::Cancel    # Use this instead of a 'Click' event
+    #
+    $btn_Exit                           = New-Object 'System.Windows.Forms.Button'
+    $btn_Exit.Location                  = '707, 635'
+    $btn_Exit.Size                      = '75, 25'
+    $btn_Exit.TabIndex                  = 98
+    $btn_Exit.Text                      = 'Exit'
+    $btn_Exit.DialogResult              = [System.Windows.Forms.DialogResult]::Cancel    # Use this instead of a 'Click' event
+    $MainFORM.CancelButton              = $btn_Exit
     $MainFORM.Controls.Add($btn_Exit)
 
-    # lbl_ChangesMade
-    $lbl_ChangesMade.Location  = ' 12, 625'    # 183
-    $lbl_ChangesMade.Size      = '680,  45'    # 509
-    $lbl_ChangesMade.Text      = "NOTE: If you make any selection changes and click 'Next', any unsaved changes will be lost."
-    $lbl_ChangesMade.TextAlign = 'MiddleLeft'
-    $lbl_ChangesMade.Visible   = $False
+    #
+    $lbl_ChangesMade                    = New-Object 'System.Windows.Forms.Label'
+    $lbl_ChangesMade.Location           = ' 12, 625'
+    $lbl_ChangesMade.Size               = '680,  45'
+    $lbl_ChangesMade.Text               = "NOTE: If you make any selection changes and click 'Next', any unsaved changes will be lost."
+    $lbl_ChangesMade.TextAlign          = 'MiddleLeft'
+    $lbl_ChangesMade.Visible            = $False
     $MainFORM.Controls.Add($lbl_ChangesMade)
 
-    # img_ListImages - All 16x16 Icons - 0: Optional, 1: Gear, 2: Disabled Gear
-    $img_ListImages.TransparentColor = 'Transparent'
-    $img_ListImages_binaryFomatter   = New-Object 'System.Runtime.Serialization.Formatters.Binary.BinaryFormatter'
-    $img_ListImages_MemoryStream     = New-Object 'System.IO.MemoryStream' (,[byte[]][System.Convert]::FromBase64String('
+    # All 16x16 Icons
+    $img_ListImages                     = New-Object 'System.Windows.Forms.ImageList'
+    $img_ListImages.TransparentColor    = 'Transparent'
+    $img_ListImages_binaryFomatter      = New-Object 'System.Runtime.Serialization.Formatters.Binary.BinaryFormatter'
+    $img_ListImages_MemoryStream        = New-Object 'System.IO.MemoryStream' (,[byte[]][System.Convert]::FromBase64String('
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkD
         AAAADwMAAACeCgAAAk1TRnQBSQFMAgEBAwEAAYgBAAGIAQABEAEAARABAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEoAwABQAMAARADAAEBAQABCAYAAQQYAAGAAgABgAMAAoABAAGAAwABgAEAAYABAAKAAgADwAEAAcAB3AHAAQAB8AHKAaYBAAEzBQABMwEAATMBAAEzAQACMwIAAxYBAAMcAQADIgEA
         AykBAANVAQADTQEAA0IBAAM5AQABgAF8Af8BAAJQAf8BAAGTAQAB1gEAAf8B7AHMAQABxgHWAe8BAAHWAucBAAGQAakBrQIAAf8BMwMAAWYDAAGZAwABzAIAATMDAAIzAgABMwFmAgABMwGZAgABMwHMAgABMwH/AgABZgMAAWYBMwIAAmYCAAFmAZkCAAFmAcwCAAFmAf8CAAGZAwABmQEzAgABmQFmAgAC
@@ -2003,9 +1624,385 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
         BAAB8QK7AbUB/wIAAf8C9AHzAfQEAAH0AfMB9AHzFAAB9AGvAYwBvAP0AbwBjAGvAfQDAAH/AfABCQHxAQkB9wEHAv8B7gG7AQcBuwG1AQcBAAH/BPQB8wH0Av8E9AHzAfQUAAH0Ae4BjAGvAfEBrwGMAe4B9AQAAf8CuwEJARkBvAG7ArUEuwG1AZEBAAH/BfQD8wP0A/MVAAL0AbUBjAG1AvQGAAP0AQkD
         8QHwAQkCuwHyAvQCAAP/CPQB9QL/FwAD9AoAAfQBuwQJAbsCtQHzBgAB/wX0A/MB/yYAAfQBBwH0Af8CuwH0AfIBuwH0BgAB/wH0Av8C9AH/AfUB9AH/KgAB7gG7DgAC9BcAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcAA/8BAAL/AfIBRwHyAU8CAAL/AeABBwHgAQcCAAH8AX8B4AEH
         AeABBwIAAfABHwGAAQEBgAEBAgAB4AEPBgABwAEHBIECAAHAAQcBgwHBAYMBwQIAAcACBwHAAQcBwAIAAcACBwHAAQcBwAIAAcABBwGDAcEBgwHDAgABwAEHAQABAQEAAQECAAHgAQ8BAAEBAQABAQIAAfABHwGAAQEBgAEBAgAB/AF/AeABBwHgAQcCAAL/AeABBwHgAQcCAAL/Af4BfwH+AX8CAAs='))
-    $img_ListImages.ImageStream      = $img_ListImages_binaryFomatter.Deserialize($img_ListImages_MemoryStream)
-    $img_ListImages_binaryFomatter   = $null
-    $img_ListImages_MemoryStream     = $null
+    $img_ListImages.ImageStream         = $img_ListImages_binaryFomatter.Deserialize($img_ListImages_MemoryStream)
+    $img_ListImages_binaryFomatter      = $null
+    $img_ListImages_MemoryStream        = $null
+#endregion
+#region TAB 1 - Introduction / Select Location / Import
+    #
+    $lbl_t1_Welcome                     = New-Object 'System.Windows.Forms.Label'
+    $lbl_t1_Welcome.Location            = '  9,   9'
+    $lbl_t1_Welcome.Size                = '744,  20'
+    $lbl_t1_Welcome.Text                = 'Welcome.!'
+    $lbl_t1_Welcome.TextAlign           = 'BottomLeft'
+    $tab_Page1.Controls.Add($lbl_t1_Welcome)
+
+    #
+    $lbl_t1_Introduction                = New-Object 'System.Windows.Forms.Label'
+    $lbl_t1_Introduction.Location       = '9, 35'
+    $lbl_t1_Introduction.Size           = '744, 235'
+    $lbl_t1_Introduction.TextAlign      = 'TopLeft'
+    $lbl_t1_Introduction.Text           = @"
+This script will help you create a custom settings file for the QA checks, one that is tailored for your environment.
+
+
+It will allow you to select which checks you want to use and which to skip.  You will also be able to set specific values for each of the check settings.  For a more detailed description on using this script, please read the documentation.
+
+
+
+
+
+To start, click the 'Set Check Location' button below...
+"@
+    $tab_Page1.Controls.Add($lbl_t1_Introduction)
+
+    #
+    $btn_t1_Search                      = New-Object 'System.Windows.Forms.Button'
+    $btn_t1_Search.Location             = '306, 325'
+    $btn_t1_Search.Size                 = '150, 35'
+    $btn_t1_Search.Text                 = 'Set Check Location'
+    $btn_t1_Search.TabIndex             = 0
+    $btn_t1_Search.Add_Click($btn_t1_Search_Click)
+    $tab_Page1.Controls.Add($btn_t1_Search)
+
+    #
+    $lbl_t1_Language                    = New-Object 'System.Windows.Forms.Label'
+    $lbl_t1_Language.Location           = '  9, 387'
+    $lbl_t1_Language.Size               = '291,  21'
+    $lbl_t1_Language.Text               = 'Language :'
+    $lbl_t1_Language.TextAlign          = 'MiddleRight'
+    $tab_Page1.Controls.Add($lbl_t1_Language)
+
+    #
+    $cmo_t1_Language                    = New-Object 'System.Windows.Forms.ComboBox'
+    $cmo_t1_Language.Location           = '306, 387'
+    $cmo_t1_Language.Size               = '150,  21'
+    $cmo_t1_Language.DropDownStyle      = 'DropDownList'
+    $cmo_t1_Language.Enabled            = $False
+    $cmo_t1_Language.TabIndex           = 1
+    $cmo_t1_Language.Add_SelectedIndexChanged({ cmo_t1_SelectedIndexChanged })
+    $tab_Page1.Controls.Add($cmo_t1_Language)
+    
+    # lbl_t1_SettingsFile
+    $lbl_t1_SettingsFile                = New-Object 'System.Windows.Forms.Label'
+    $lbl_t1_SettingsFile.Location       = '  9, 423'
+    $lbl_t1_SettingsFile.Size           = "291,  21"
+    $lbl_t1_SettingsFile.Text           = 'Base Settings File :'
+    $lbl_t1_SettingsFile.TextAlign      = 'MiddleRight'
+    $tab_Page1.Controls.Add($lbl_t1_SettingsFile)
+
+    #
+    $cmo_t1_SettingsFile                = New-Object 'System.Windows.Forms.ComboBox'
+    $cmo_t1_SettingsFile.Location       = '306, 423'
+    $cmo_t1_SettingsFile.Size           = "150,  21"
+    $cmo_t1_SettingsFile.DropDownStyle  = 'DropDownList'
+    $cmo_t1_SettingsFile.Enabled        = $False
+    $cmo_t1_SettingsFile.TabIndex       = 2
+    $cmo_t1_SettingsFile.Add_SelectedIndexChanged({ cmo_t1_SelectedIndexChanged })
+    $tab_Page1.Controls.Add($cmo_t1_SettingsFile)
+
+    #
+    $lbl_t1_MissingFile                 = New-Object 'System.Windows.Forms.Label'
+    $lbl_t1_MissingFile.Location        = '462, 423'
+    $lbl_t1_MissingFile.Size            = "291,  21"
+    $lbl_t1_MissingFile.Text            = "'default-settings.ini' file not found"
+    $lbl_t1_MissingFile.TextAlign       = 'MiddleLeft'
+    $lbl_t1_MissingFile.Visible         = $False
+    $tab_Page1.Controls.Add($lbl_t1_MissingFile)
+
+    #
+    $btn_t1_Import                      = New-Object 'System.Windows.Forms.Button'
+    $btn_t1_Import.Location             = '306, 471'
+    $btn_t1_Import.Size                 = '150,  35'
+    $btn_t1_Import.Text                 = 'Import Settings'
+    $btn_t1_Import.Enabled              = $False
+    $btn_t1_Import.TabIndex             = 3
+    $btn_t1_Import.Add_Click($btn_t1_Import_Click)
+    $tab_Page1.Controls.Add($btn_t1_Import)
+
+    #
+    $lbl_t1_ScanningScripts             = New-Object 'System.Windows.Forms.Label'
+    $lbl_t1_ScanningScripts.Location    = '  9, 547'
+    $lbl_t1_ScanningScripts.Size        = '744,  20'
+    $lbl_t1_ScanningScripts.Text        = ''
+    $lbl_t1_ScanningScripts.TextAlign   = 'BottomLeft'
+    $lbl_t1_ScanningScripts.Visible     = $False
+    $tab_Page1.Controls.Add($lbl_t1_ScanningScripts)
+#endregion
+#region TAB 2 - Select QA Checkes To Include
+    #
+    $lbl_t2_CheckSelection              = New-Object 'System.Windows.Forms.Label'
+    $lbl_t2_CheckSelection.Location     = '  9,   9'
+    $lbl_t2_CheckSelection.Size         = '744,  20'
+    $lbl_t2_CheckSelection.Text         = 'Select the QA checks you want to enable for this settings file:'
+    $lbl_t2_CheckSelection.TextAlign    = 'BottomLeft'
+    $tab_Page2.Controls.Add($lbl_t2_CheckSelection)
+
+    # lst_t2_SelectChecks
+    $lst_t2_SelectChecks                = New-Object 'System.Windows.Forms.ListView'
+    $lst_t2_SelectChecks_CH_Code        = New-Object 'System.Windows.Forms.ColumnHeader'
+    $lst_t2_SelectChecks_CH_Name        = New-Object 'System.Windows.Forms.ColumnHeader'
+    $lst_t2_SelectChecks_CH_Desc        = New-Object 'System.Windows.Forms.ColumnHeader'
+    $lst_t2_SelectChecks.CheckBoxes     = $True
+    $lst_t2_SelectChecks.HeaderStyle    = 'Nonclickable'
+    $lst_t2_SelectChecks.FullRowSelect  = $True
+    $lst_t2_SelectChecks.GridLines      = $False
+    $lst_t2_SelectChecks.LabelWrap      = $False
+    $lst_t2_SelectChecks.MultiSelect    = $False
+    $lst_t2_SelectChecks.Location       = '  9,  35'
+    $lst_t2_SelectChecks.Size           = '466, 492'
+    $lst_t2_SelectChecks.View           = 'Details'
+    $lst_t2_SelectChecks.SmallImageList = $img_ListImages
+    $lst_t2_SelectChecks.Sorting        = 'Ascending'
+    $lst_t2_SelectChecks_CH_Code.Text   = 'Check'
+    $lst_t2_SelectChecks_CH_Name.Text   = 'Name'
+    $lst_t2_SelectChecks_CH_Desc.Text   = ''         # Description
+    $lst_t2_SelectChecks_CH_Code.Width  = 100
+    $lst_t2_SelectChecks_CH_Name.Width  = 366 - ([System.Windows.Forms.SystemInformation]::VerticalScrollBarWidth + 4)
+    $lst_t2_SelectChecks_CH_Desc.Width  =   0
+    $lst_t2_SelectChecks.Columns.Add($lst_t2_SelectChecks_CH_Code) | Out-Null
+    $lst_t2_SelectChecks.Columns.Add($lst_t2_SelectChecks_CH_Name) | Out-Null
+    $lst_t2_SelectChecks.Columns.Add($lst_t2_SelectChecks_CH_Desc) | Out-Null
+    $lst_t2_SelectChecks.Add_Enter($lst_t2_SelectChecks_Enter)
+    $lst_t2_SelectChecks.Add_ItemChecked($lst_t2_SelectChecks_ItemChecked)
+    $lst_t2_SelectChecks.Add_SelectedIndexChanged($lst_t2_SelectChecks_SelectedIndexChanged)
+    $tab_Page2.Controls.Add($lst_t2_SelectChecks)
+
+    #
+    $lbl_t2_Description                 = New-Object 'System.Windows.Forms.Label'
+    $lbl_t2_Description.BackColor       = 'Window'
+    $lbl_t2_Description.Location        = '475,  36'
+    $lbl_t2_Description.Size            = '277, 449'
+    $lbl_t2_Description.Padding         = '3, 3, 3, 3'    # Internal padding
+    $lbl_t2_Description.Text            = ''              # Description of the selected check - set via code
+    $lbl_t2_Description.TextAlign       = 'TopLeft'
+    $tab_Page2.Controls.Add($lbl_t2_Description)
+
+    #
+    $lbl_t2_SelectedCount               = New-Object 'System.Windows.Forms.Label'
+    $lbl_t2_SelectedCount.Location      = '  9, 542'
+    $lbl_t2_SelectedCount.Size          = '189,  25'
+    $lbl_t2_SelectedCount.Text          = '0 of 0 checks selected'
+    $lbl_t2_SelectedCount.TextAlign     = 'MiddleLeft'
+    $tab_Page2.Controls.Add($lbl_t2_SelectedCount)
+
+    #
+    $lbl_t2_Select                      = New-Object 'System.Windows.Forms.Label'
+    $lbl_t2_Select.Location             = '204, 542'
+    $lbl_t2_Select.Size                 = ' 90,  25'
+    $lbl_t2_Select.Text                 = 'Select :'
+    $lbl_t2_Select.TextAlign            = 'MiddleRight'
+    $tab_Page2.Controls.Add($lbl_t2_Select)
+
+    #
+    $btn_t2_SelectAll                   = New-Object 'System.Windows.Forms.Button'
+    $btn_t2_SelectAll.Location          = '300, 542'
+    $btn_t2_SelectAll.Size              = ' 50,  25'
+    $btn_t2_SelectAll.Text              = 'All'
+    $btn_t2_SelectAll.Enabled           = $False
+    $btn_t2_SelectAll.Add_Click({ btn_t2_SelectButtons -SourceButton 'SelectAll' })
+    $tab_Page2.Controls.Add($btn_t2_SelectAll)
+
+    #
+    $btn_t2_SelectInv                   = New-Object 'System.Windows.Forms.Button'
+    $btn_t2_SelectInv.Location          = '356, 542'
+    $btn_t2_SelectInv.Size              = ' 50,  25'
+    $btn_t2_SelectInv.Text              = 'Inv'
+    $btn_t2_SelectInv.Enabled           = $False
+    $btn_t2_SelectInv.Add_Click({ btn_t2_SelectButtons -SourceButton 'SelectInv' })
+    $tab_Page2.Controls.Add($btn_t2_SelectInv)
+
+    #
+    $btn_t2_SelectNone                  = New-Object 'System.Windows.Forms.Button'
+    $btn_t2_SelectNone.Location         = '412, 542'
+    $btn_t2_SelectNone.Size             = ' 50,  25'
+    $btn_t2_SelectNone.Text             = 'None'
+    $btn_t2_SelectNone.Enabled          = $False
+    $btn_t2_SelectNone.Add_Click({ btn_t2_SelectButtons -SourceButton 'SelectNone' })
+    $tab_Page2.Controls.Add($btn_t2_SelectNone)
+
+    #
+    $btn_t2_SetValues                   = New-Object 'System.Windows.Forms.Button'
+    $btn_t2_SetValues.Location          = '648, 542'
+    $btn_t2_SetValues.Size              = '105,  25'
+    $btn_t2_SetValues.Text              = 'Set Values  >'
+    $btn_t2_SetValues.Enabled           = $False
+    $btn_t2_SetValues.Add_Click($btn_t2_SetValues_Click)
+    $tab_Page2.Controls.Add($btn_t2_SetValues)
+    $btn_t2_SetValues.BringToFront()
+
+    #
+    $pic_t2_Background                  = New-Object 'System.Windows.Forms.PictureBox'
+    $pic_t2_Background.Location         = '474,  35'
+    $pic_t2_Background.Size             = '279, 492'
+    $pic_t2_Background.BackColor        = 'Window'
+    $pic_t2_Background.BorderStyle      = 'FixedSingle'
+    $pic_t2_Background.SendToBack()
+    $tab_Page2.Controls.Add($pic_t2_Background)
+#endregion
+#region TAB 3 - Enter Values For Checks
+    #
+    $lbl_t3_NoParameters                = New-Object 'System.Windows.Forms.Label'
+    $lbl_t3_NoParameters.Location       = '19, 218'
+    $lbl_t3_NoParameters.Size           = '724, 50'
+    $lbl_t3_NoParameters.Text           = "Enabled QA checks have not been comfirmed yet.`nPlease click 'Set Values >' on the previous tab."
+    $lbl_t3_NoParameters.TextAlign      = 'MiddleCenter'
+    $lbl_t3_NoParameters.BackColor      = 'Window'
+    $lbl_t3_NoParameters.Visible        = $True
+    $lbl_t3_NoParameters.BringToFront()
+    $tab_Page3.Controls.Add($lbl_t3_NoParameters)
+
+    #
+    $lbl_t3_ScriptSelection             = New-Object 'System.Windows.Forms.Label'
+    $lbl_t3_ScriptSelection.Location    = '  9,   9'
+    $lbl_t3_ScriptSelection.Size        = '744,  20'
+    $lbl_t3_ScriptSelection.Text        = 'Double-click an enabled entry to set its value'
+    $lbl_t3_ScriptSelection.TextAlign   = 'BottomLeft'
+    $tab_Page3.Controls.Add($lbl_t3_ScriptSelection)
+
+    #
+    $tab_t3_Pages                       = New-Object 'System.Windows.Forms.TabControl'    # TabPages are generated automatically
+    $tab_t3_Pages.Location              = '  9,  35'
+    $tab_t3_Pages.Size                  = '744, 492'
+    $tab_t3_Pages.Padding               = '  8,   4'
+    $tab_t3_Pages.SelectedIndex         = 0
+    $tab_t3_Pages.Add_SelectedIndexChanged($tab_t3_Pages_SelectedIndexChanged)
+    $tab_Page3.Controls.Add($tab_t3_Pages)
+
+    #
+    $lbl_t3_Select                      = New-Object 'System.Windows.Forms.Label'
+    $lbl_t3_Select.Location             = '105, 542'
+    $lbl_t3_Select.Size                 = '189,  25'
+    $lbl_t3_Select.Text                 = 'Section Tabs :'
+    $lbl_t3_Select.TextAlign            = 'MiddleRight'
+    $tab_Page3.Controls.Add($lbl_t3_Select)
+
+    #
+    $btn_t3_PrevTab                     = New-Object 'System.Windows.Forms.Button'
+    $btn_t3_PrevTab.Location            = '300, 542'
+    $btn_t3_PrevTab.Size                = ' 75,  25'
+    $btn_t3_PrevTab.Text                = '<  Prev'
+    $btn_t3_PrevTab.Add_Click($btn_t3_PrevTab_Click)
+    $tab_Page3.Controls.Add($btn_t3_PrevTab)
+
+    #
+    $btn_t3_NextTab                     = New-Object 'System.Windows.Forms.Button'
+    $btn_t3_NextTab.Location            = '387, 542'
+    $btn_t3_NextTab.Size                = ' 75,  25'
+    $btn_t3_NextTab.Text                = 'Next  >'
+    $btn_t3_NextTab.Add_Click($btn_t3_NextTab_Click)
+    $tab_Page3.Controls.Add($btn_t3_NextTab)
+
+    #
+    $btn_t3_Complete                    = New-Object 'System.Windows.Forms.Button'
+    $btn_t3_Complete.Location           = '648, 542'
+    $btn_t3_Complete.Size               = '105,  25'
+    $btn_t3_Complete.Text               = 'Complete  >'
+    $btn_t3_Complete.Enabled            = $False
+    $btn_t3_Complete.Add_Click($btn_t3_Complete_Click)
+    $tab_Page3.Controls.Add($btn_t3_Complete)
+#endregion
+#region TAB 4 - Generate Settings And QA Script
+    #
+    $lbl_t4_Complete                    = New-Object 'System.Windows.Forms.Label'
+    $lbl_t4_Complete.Location           = '  9,   9'
+    $lbl_t4_Complete.Size               = '744,  20'
+    $lbl_t4_Complete.Text               = 'Complete.!'
+    $lbl_t4_Complete.TextAlign          = 'BottomLeft'
+    $tab_Page4.Controls.Add($lbl_t4_Complete)
+
+    #
+    $lbl_t4_Complete_Info               = New-Object 'System.Windows.Forms.Label'
+    $lbl_t4_Complete_Info.Location      = '  9,  35'
+    $lbl_t4_Complete_Info.Size          = '744, 233'
+    $lbl_t4_Complete_Info.TextAlign     = 'TopLeft'
+    $lbl_t4_Complete_Info.Text          = @"
+Enter a short code for this settings file, this will save the QA script file with it as part of the name.
+For example: 'QA_ACME_v3.xx.xxxx.ps1'.
+
+Also enter a name or other label for the HTML results file.  This is automatically appended with 'QA Report'.
+For example: 'ACME QA Report'.
+
+Click 'Additional Options' to configure futher configuration settings.
+
+
+Click the 'Save Settings' button below to save your selections and values.
+Once done, you can then click 'Generate QA Script' to create the compiled QA script.
+"@
+    $tab_Page4.Controls.Add($lbl_t4_Complete_Info)
+
+    #
+    $lbl_t4_ShortCode                   = New-Object 'System.Windows.Forms.Label'
+    $lbl_t4_ShortCode.Location          = '  9, 295'
+    $lbl_t4_ShortCode.Size              = '291,  22'
+    $lbl_t4_ShortCode.TextAlign         = 'MiddleRight'
+    $lbl_t4_ShortCode.Text              = 'Settings Short Code :'
+    $tab_Page4.Controls.Add($lbl_t4_ShortCode)
+
+    #
+    $txt_t4_ShortCode                   = New-Object 'System.Windows.Forms.TextBox'
+    $txt_t4_ShortCode.Location          = '306, 295'
+    $txt_t4_ShortCode.Size              = '150,  22'
+    $txt_t4_ShortCode.TextAlign         = 'Center'
+    $tab_Page4.Controls.Add($txt_t4_ShortCode)
+
+    #
+    $lbl_t4_ReportTitle                 = New-Object 'System.Windows.Forms.Label'
+    $lbl_t4_ReportTitle.Location        = '  9, 332'
+    $lbl_t4_ReportTitle.Size            = '291,  22'
+    $lbl_t4_ReportTitle.TextAlign       = 'MiddleRight'
+    $lbl_t4_ReportTitle.Text            = 'HTML Report Company Name :'
+    $tab_Page4.Controls.Add($lbl_t4_ReportTitle)
+
+    #
+    $lbl_t4_QAReport                    = New-Object 'System.Windows.Forms.Label'
+    $lbl_t4_QAReport.Location           = '462, 332'
+    $lbl_t4_QAReport.Size               = '291,  22'
+    $lbl_t4_QAReport.TextAlign          = 'MiddleLeft'
+    $lbl_t4_QAReport.Text               = 'QA Report'
+    $tab_Page4.Controls.Add($lbl_t4_QAReport)
+
+    #
+    $txt_t4_ReportTitle                 = New-Object 'System.Windows.Forms.TextBox'
+    $txt_t4_ReportTitle.Location        = '306, 332'
+    $txt_t4_ReportTitle.Size            = '150,  22'
+    $txt_t4_ReportTitle.TextAlign       = 'Center'
+    $tab_Page4.Controls.Add($txt_t4_ReportTitle)
+
+    #
+    $btn_t4_Options                     = New-Object 'System.Windows.Forms.Button'
+    $btn_t4_Options.Location            = '306, 369'
+    $btn_t4_Options.Size                = '150,  25'
+    $btn_t4_Options.TabIndex            = 97
+    $btn_t4_Options.Text                = 'Additonal Options'
+    $btn_t4_Options.Add_Click($btn_t4_Options_Click)
+    $tab_Page4.Controls.Add($btn_t4_Options)
+
+    #
+    $btn_t4_Save                        = New-Object 'System.Windows.Forms.Button'
+    $btn_t4_Save.Location               = '306, 421'
+    $btn_t4_Save.Size                   = '150,  35'
+    $btn_t4_Save.Text                   = 'Save Settings'
+    $btn_t4_Save.Enabled                = $False
+    $btn_t4_Save.Add_Click($btn_t4_Save_Click)
+    $tab_Page4.Controls.Add($btn_t4_Save)
+
+    #
+    $btn_t4_Generate                    = New-Object 'System.Windows.Forms.Button'
+    $btn_t4_Generate.Location           = '306, 471'
+    $btn_t4_Generate.Size               = '150,  35'
+    $btn_t4_Generate.Text               = 'Generate QA Script'
+    $btn_t4_Generate.Enabled            = $False
+    $btn_t4_Generate.Add_Click($btn_t4_Generate_Click)
+    $tab_Page4.Controls.Add($btn_t4_Generate)
+
+    #
+    $lbl_t4_Generate                    = New-Object 'System.Windows.Forms.Label'
+    $lbl_t4_Generate.Location           = '  9, 512'
+    $lbl_t4_Generate.Size               = '744,  20'
+    $lbl_t4_Generate.TextAlign          = 'MiddleCenter'
+    $lbl_t4_Generate.Text               = ''
+    $tab_Page4.Controls.Add($lbl_t4_Generate)
 #endregion
 #endregion
 ###################################################################################################
@@ -2026,3 +2023,5 @@ Try   { [string]  $script:ExecutionFolder     = (Split-Path -Path ((Get-Variable
 Catch { [string]  $script:ExecutionFolder     = '' }
 ###################################################################################################
 Display-MainForm | Out-Null
+Write-Host '  Goodbye.!'
+Write-Host ''
