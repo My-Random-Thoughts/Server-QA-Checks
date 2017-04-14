@@ -11,7 +11,7 @@ Write-Host '  Starting Server QA Settings Configurator...'
 [Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')    | Out-Null
 [Reflection.Assembly]::LoadWithPartialName('System.Data')             | Out-Null
 [Reflection.Assembly]::LoadWithPartialName('System.Drawing')          | Out-Null
-[System.Drawing.Font]$sysFont       =                                 [System.Drawing.SystemFonts]::MessageBoxFont
+[System.Drawing.Font]$sysFont       = [System.Drawing.SystemFonts]::MessageBoxFont
 [System.Drawing.Font]$sysFontBold   = New-Object 'System.Drawing.Font' ($sysFont.Name, $sysFont.SizeInPoints, [System.Drawing.FontStyle]::Bold)
 [System.Drawing.Font]$sysFontItalic = New-Object 'System.Drawing.Font' ($sysFont.Name, $sysFont.SizeInPoints, [System.Drawing.FontStyle]::Italic)
 [System.Windows.Forms.Application]::EnableVisualStyles()
@@ -926,6 +926,16 @@ Function Display-MainForm
         $script:scriptLocation = (Get-Folder -Description 'Select the QA checks root folder:' -InitialDirectory $script:ExecutionFolder -ShowNewFolderButton $False)
         If ([string]::IsNullOrEmpty($script:scriptLocation) -eq $True) { $btn_t1_Search.Enabled = $True; $MainFORM.Cursor = 'Default'; Return }
         If ($script:scriptLocation.EndsWith('\checks')) { $script:scriptLocation = $script:scriptLocation.TrimEnd('\checks') }
+
+        # Check there is a CHECKS folder with actual checks
+        [string[]]$checklist = ((Get-ChildItem -Path "$script:scriptLocation\checks" -Recurse | Where-Object { (-not $_.PSIsContainer) -and ($_.Name).StartsWith('c-') -and ($_.Name).EndsWith('.ps1') } ))
+        If (((Test-Path -Path "$script:scriptLocation\checks") -eq $False) -or ([string]::IsNullOrEmpty($checklist) -eq $True))
+        {
+            [System.Windows.Forms.MessageBox]::Show($MainFORM, "The CHECKS folder does not exist.  Please select the correct location.  Try downloading the source files again.", ' Server QA Settings Configurator', 'OK', 'Error')
+            $btn_t1_Search.Enabled = $True
+            $MainFORM.Cursor       = 'Default'
+            Return
+        }
 
         # Check SETTINGS file is loaded OK
         Try {

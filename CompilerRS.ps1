@@ -112,6 +112,18 @@ Set-StrictMode -Version 2
  
 '@
 
+# Get full list of checks...
+[object]$qaChecks = Get-ChildItem -Path ($path + '\checks') -Recurse | Where-Object { (-not $_.PSIsContainer) -and ($_.Name).StartsWith('c-') -and ($_.Name).EndsWith('.ps1') | Sort-Object $_.Name }
+If ([string]::IsNullOrEmpty($qaChecks) -eq $true)
+{
+    Write-Host '  ERROR: No checks found'                                         -ForegroundColor Red
+    Write-Host '  Please make sure you are running this from the correct folder.' -ForegroundColor Red
+    Write-Host ''
+    Break
+}
+
+###################################################################################################
+
 [string]$shortcode = ($iniSettings['settings']['shortcode'] + '_').ToString().Replace(' ', '-')
 If ($shortcode -eq '_') { $shortcode = '' }
 
@@ -119,16 +131,6 @@ Write-Host '  Removing Previous Check Versions...... ' -NoNewline -ForegroundCol
 [string]$outPath = "$path\QA_$shortcode$version-RS.ps1"
 If (Test-Path -Path $outPath) { Try { Remove-Item $outPath -Force } Catch { } }
 Write-host 'Done' -ForegroundColor Green
-
-###################################################################################################
-# Build CHECKs Script                                                                             #
-###################################################################################################
-
-# Get full list of checks...
-[object]$qaChecks = Get-ChildItem -Path ($path + '\checks') -Recurse |
-    Where-Object { (-not $_.PSIsContainer) -and ($_.Name).StartsWith('c-') -and ($_.Name).EndsWith('.ps1') -and (-not ($_.DirectoryName).Contains('-specific')) |
-    Sort-Object $_.Name
-}
 
 ###################################################################################################
 # CHECKS building                                                                                 #
