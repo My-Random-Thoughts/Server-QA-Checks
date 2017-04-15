@@ -197,7 +197,8 @@ ForEach ($qa In $qaChecks)
     If ($iniSettings["$checkName-skip"]) { $checkName += '-skip' }
 
     # Add each checks settings
-    Try {
+    Try
+    {
         ForEach ($key In ($iniSettings[$checkName].Keys | Sort-Object))
         {
             [string]$value = $iniSettings[$checkName][$key]
@@ -205,11 +206,29 @@ ForEach ($qa In $qaChecks)
             [string]$appSetting = ('$script:appSettings[' + "'{0}'] = {1}" -f $key, $value)
             Out-File -FilePath $outPath -InputObject $appSetting                                                       -Encoding utf8 -Append
         }
-    } Catch { }
+    }
+    Catch
+    {
+        # Missing INI Section for this check, read from the check script itself
+        [string]$getContent = ((Get-Content -Path ($qa.FullName) -TotalCount 50) -join "`n")
+        $regExV = [RegEx]::Match($getContent, "DEFAULT-VALUES:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
+        [string[]]$Values = ($regExV.Groups[1].Value.Trim()).Split("`n")
+        If (([string]::IsNullOrEmpty($Values) -eq $false) -and ($Values -ne 'None'))
+        {
+            ForEach ($EachValue In $Values)
+            {
+                [string]$key   = ($EachValue -split ' = ')[0].Trim()
+                [string]$value = ($EachValue -split ' = ')[1].Trim()
+                If ($value -eq '') { $value = "''" }
+
+                [string]$appSetting = ('$script:appSettings[' + "'{0}'] = {1}" -f $key, $value)
+                Out-File -FilePath $outPath -InputObject $appSetting                                                   -Encoding utf8 -Append
+            }
+        }
+    }
 
     # Add language specific strings to each check
-    Try
-    {
+    Try {
         ForEach ($key In ($lngStrings['common'].Keys | Sort-Object))
         {
             [string]$value = $lngStrings['common'][$key]
@@ -226,8 +245,7 @@ ForEach ($qa In $qaChecks)
             [string]$lang = ('$script:lang[' + "'{0}'] = {1}" -f $key, $value)
             Out-File -FilePath $outPath -InputObject $lang                                                             -Encoding utf8 -Append
         }
-    }
-    Catch { }
+    } Catch { }
 
     # Add the check itself
     Out-File -FilePath $outPath -InputObject (Get-Content -Path ($qa.FullName))                                        -Encoding utf8 -Append

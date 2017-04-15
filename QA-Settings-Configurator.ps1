@@ -1054,7 +1054,7 @@ Function Display-MainForm
                 Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', "`n`n"), "$folder\$script") -Group $guid -ImageIndex 1 -Enabled $True
                 Try
                 {
-                    If ($settingsINI.ContainsKey($checkCode) -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True }
+                    If ($settingsINI.ContainsKey($checkCode) -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True } Else { Throw '' }
                 }
                 Catch
                 {
@@ -1121,6 +1121,7 @@ Function Display-MainForm
         $btn_t2_SelectAll.Enabled              = $True
         $btn_t2_SelectInv.Enabled              = $True
         $btn_t2_SelectNone.Enabled             = $True
+        $btn_t2_SelectReset.Enabled            = $True
         $lst_t2_SelectChecks.Items[0].Selected = $True
         $lbl_t1_ScanningScripts.Visible        = $False
         Update-NavButtons
@@ -1136,13 +1137,21 @@ Function Display-MainForm
     {
         $MainFORM.Cursor = 'AppStarting'
         $script:UpdateSelectedCount = $False
-        ForEach ($item In $lst_t2_SelectChecks.Items)
+
+        If ($SourceButton -eq 'SelectReset')
         {
-            Switch ($SourceButton)
+            $btn_t1_Import_Click.Invoke()
+        }
+        Else
+        {
+            ForEach ($item In $lst_t2_SelectChecks.Items)
             {
-                'SelectAll'     { $item.Checked =       $True         ; Break }
-                'SelectInv'     { $item.Checked = (-not $item.Checked); Break }
-                'SelectNone'    { $item.Checked =       $False        ; Break }
+                Switch ($SourceButton)
+                {
+                    'SelectAll'     { $item.Checked =       $True         ; Break }
+                    'SelectInv'     { $item.Checked = (-not $item.Checked); Break }
+                    'SelectNone'    { $item.Checked =       $False        ; Break }
+                }
             }
         }
         Update-SelectedCount
@@ -1206,8 +1215,8 @@ Function Display-MainForm
                 {
                     # Missing INI Section for this check, read from the check script itself
                     [string]$getContent = ((Get-Content -Path "$script:scriptLocation\checks\$($listItem.SubItems[3].Text)" -TotalCount 50) -join "`n")
-                    $regEx = [RegEx]::Match($getContent,  "DEFAULT-VALUES:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
-                    [string[]]$Values = ($regEx.Groups[1].Value.Trim()).Split("`n")
+                    $regExV = [RegEx]::Match($getContent, "DEFAULT-VALUES:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
+                    [string[]]$Values = ($regExV.Groups[1].Value.Trim()).Split("`n")
                     If (([string]::IsNullOrEmpty($Values) -eq $false) -and ($Values -ne 'None'))
                     {
                         ForEach ($EachValue In $Values) { $iniKeys.Add((($EachValue -split ' = ')[0]).Trim(), (($EachValue -split ' = ')[1]).Trim()) }
@@ -1225,9 +1234,20 @@ Function Display-MainForm
                         Try {
                             [xml]$xmlDesc = New-Object 'System.Xml.XmlDataDocument'
                             $xmlDesc.LoadXml($script:qahelp[$($listItem.Text)])
-                            If ($xmlDesc.xml.RequiredInputs) { [string[]]$DescList = $($xmlDesc.xml.RequiredInputs).Replace('!n','#').Split('#') }
-                            ForEach ($DL In $DescList) { If (($DL.Trim()).StartsWith($item.Trim())) { $desc = ($DL.Trim()) } }
+                            If ($xmlDesc.xml.RequiredInputs) { [string[]]$DescList = $(($xmlDesc.xml.RequiredInputs) -split '!n') }
+                            ForEach ($DL In $DescList) { If (($DL.Trim()).StartsWith($item.Trim())) { $desc = ($DL.Trim()); Break } }
                         } Catch { }
+                    }
+                    Else
+                    {
+                        # No details in help file yet
+                        [string]$getContent = ((Get-Content -Path "$script:scriptLocation\checks\$($listItem.SubItems[3].Text)" -TotalCount 50) -join "`n")
+                        $regExI = [RegEx]::Match($getContent, "REQUIRED-INPUTS:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
+                        [string[]]$Inputs = ($regExI.Groups[1].Value.Trim()).Split("`n")
+                        If (([string]::IsNullOrEmpty($Inputs) -eq $false) -and ($Inputs -ne 'None'))
+                        {
+                            ForEach ($EachInput In $Inputs) { If (($EachInput.Trim()).StartsWith($item.Trim())) { $desc = ($EachInput.Trim()); Break } }
+                        }
                     }
 
                     # Remove all double spaces
@@ -1831,6 +1851,15 @@ To start, click the 'Set Check Location' button below...
     $btn_t2_SelectNone.Enabled          = $False
     $btn_t2_SelectNone.Add_Click({ btn_t2_SelectButtons -SourceButton 'SelectNone' })
     $tab_Page2.Controls.Add($btn_t2_SelectNone)
+
+    #
+    $btn_t2_SelectReset                 = New-Object 'System.Windows.Forms.Button'
+    $btn_t2_SelectReset.Location        = '518, 542'
+    $btn_t2_SelectReset.Size            = ' 75,  25'
+    $btn_t2_SelectReset.Text            = 'Reset'
+    $btn_t2_SelectReset.Enabled         = $False
+    $btn_t2_SelectReset.Add_Click({ btn_t2_SelectButtons -SourceButton 'SelectReset' })
+    $tab_Page2.Controls.Add($btn_t2_SelectReset)
 
     #
     $btn_t2_SetValues                   = New-Object 'System.Windows.Forms.Button'
