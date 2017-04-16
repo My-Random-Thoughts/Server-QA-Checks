@@ -70,7 +70,7 @@ Function c-hvh-01-server-core
     Else
     {
         $result.result  = $script:lang['Not-Applicable']
-        $result.message = 'Not a Hyper-V server'
+        $result.message = 'Not a Hyper-V host server'
     }
 
     Return $result

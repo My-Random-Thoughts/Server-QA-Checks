@@ -82,7 +82,7 @@ Function c-hvh-02-no-other-server-roles
     Else
     {
         $result.result  = $script:lang['Not-Applicable']
-        $result.message = 'Not a Hyper-V server'
+        $result.message = 'Not a Hyper-V host server'
     }
 
     Return $result

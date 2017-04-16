@@ -103,7 +103,7 @@ Function c-hvh-03-vm-location
     Else
     {
         $result.result  = $script:lang['Not-Applicable']
-        $result.message = 'Not a Hyper-V server'
+        $result.message = 'Not a Hyper-V host server'
     }
 
     Return $result
