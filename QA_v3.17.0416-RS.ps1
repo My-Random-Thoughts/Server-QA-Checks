@@ -6,7 +6,7 @@
     THIS FILE IS AUTO-COMPILED FROM SEVERAL SOURCE FILES
 
     VERSION : v3.17.0416
-    COMPILED: 2017/04/16 11:58
+    COMPILED: 2017/04/16 16:52
 #> 
 
 [CmdletBinding(DefaultParameterSetName = 'HLP')]
@@ -3588,10 +3588,10 @@ Function c-hvh-01-server-core
     {
         Try
         {
-            [string] $query   = 'SELECT Name FROM Win32_ServerFeature WHERE Name = "Server Graphical Shell"'
-            [string] $check   = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Name
+            [string]$query = 'SELECT Name FROM Win32_ServerFeature WHERE Name = "Server Graphical Shell"'
+            [string]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Name
 
-            If ([string]::IsNullOrEmpty($check) -eq $true)
+            If ($check.Trim() -eq 'Server Graphical Shell')
             {
                 $result.result  = $script:lang['Fail']
                 $result.message = 'Hyper-V is not using Windows Server Core'
@@ -3635,7 +3635,7 @@ Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
-$script:appSettings['IgnoreTheseRoleIDs'] = ('20', '67', '340', '417', '466', '477', '481', '487')
+$script:appSettings['IgnoreTheseRoleIDs'] = ('20', '33', '67', '340', '417', '466', '477', '481', '487')
 $script:lang['Error'] = 'Error'
 $script:lang['Fail'] = 'Fail'
 $script:lang['Manual'] = 'Manual'
@@ -3652,7 +3652,7 @@ $script:lang['Name'] = 'No Other Server Roles'
         IgnoreTheseRoleIDs - List of IDs that can be ignored|Integer
 
     DEFAULT-VALUES:
-        IgnoreTheseRoleIDs = ('20', '67', '340', '417', '466', '477', '481', '487')
+        IgnoreTheseRoleIDs = ('20', '33', '67', '340', '417', '466', '477', '481', '487')
 
     DEFAULT-STATE:
         Enabled
@@ -3806,10 +3806,8 @@ Function c-hvh-03-vm-location
     {
         Try
         {
-            [string]$query1 = 'SELECT SystemDrive FROM Win32_OperatingSystem'
-            [string]$check1 = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty SystemDrive
-            [string]$query2 = 'SELECT * FROM Msvm_ComputerSystem WHERE Caption="Virtual Machine"'
-            [object]$check2 = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Virtualization\v2
+            [string]$query = 'SELECT * FROM Msvm_ComputerSystem WHERE Caption="Virtual Machine"'
+            [object]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Virtualization\v2
         }
         Catch
         {
@@ -3819,27 +3817,29 @@ Function c-hvh-03-vm-location
             Return $result
         }
 
-        If ($check2.Count -ne 0)
+        If ($check.Count -ne 0)
         {
             [string]$result.data = ''
-            ForEach ($vm In $check2)
+            ForEach ($vm In $check)
             {
                 $VSSD = Get-WmiObject -ComputerName $serverName -Query "SELECT * FROM Msvm_VirtualSystemSettingData     WHERE ConfigurationID =              '$($VM.Name)'"  -Namespace ROOT\Virtualization\v2
                 $SASD = Get-WmiObject -ComputerName $serverName -Query "SELECT * FROM Msvm_StorageAllocationSettingData WHERE      InstanceID LIKE 'Microsoft:$($VM.Name)%'" -Namespace ROOT\Virtualization\v2
 
-                If ($($VSSD.ConfigurationDataRoot).Substring(0,2) -eq $check1) { $result.data += '{0} - Configuration,#' -f $VM.ElementName }
-                ForEach ($SA In $SASD) {
-                    [int]$driveNum = $(($SA.Parent).Split("\")[11])
-                    $item = $SA
-                    Do
-                    {
-                        $parent = ($item.Parent).Split('=')[1].Split('\\')[0].Split(':')[1].Trim('"')
-                        $item = Get-WmiObject -ComputerName $serverName -Query "SELECT * FROM Msvm_VirtualSystemSettingData     WHERE ConfigurationID LIKE           '$parent%'" -Namespace ROOT\Virtualization\v2
-                        $path = Get-WmiObject -ComputerName $serverName -Query "SELECT * FROM Msvm_StorageAllocationSettingData WHERE      InstanceID LIKE 'Microsoft:$parent%'" -Namespace ROOT\Virtualization\v2
+                # Check config location
+                If ((-not $($VSSD.ConfigurationDataRoot).StartsWith("$env:SystemDrive\ClusterStorage\")) -and ($($VSSD.ConfigurationDataRoot) -eq $env:SystemDrive))
+                {
+                    $result.data += '{0}: Configuration,#' -f $VM.ElementName
+                }
 
-                        If (($path.HostResource[$driveNum]).Substring(0,2) -eq $check1) { $result.data += '{0} - Disk {1},#' -f $VM.ElementName, $driveNum }
+                # Check hard disk location(s)
+                ForEach ($SA In $SASD)
+                {
+                    [int]   $driveNum  = $(($SA.Parent).Split('\')[11])
+                    [string]$drivePath = $SA.HostResource[$driveNum]
+                    If ((-not ($drivePath.StartsWith("$env:SystemDrive\ClusterStorage\"))) -and (-not ($drivePath.ToLower()).EndsWith('.iso')))
+                    {
+                        $result.data += '{0}: Disk {1},#' -f $VM.ElementName, $SA.HostResource[$driveNum]
                     }
-                    While ($item.Parent)
                 }
             }
 
@@ -3999,6 +3999,7 @@ $script:lang['Not-Applicable'] = 'N/A'
 $script:lang['Pass'] = 'Pass'
 $script:lang['Script-Error'] = 'SCRIPT ERROR'
 $script:lang['Warning'] = 'Warning'
+$script:lang['Name'] = 'Jumbo Frames Enabled'
 <#
     DESCRIPTION: 
         Check the network adapter jumbo frame setting.  Should be set to 9000 or more.

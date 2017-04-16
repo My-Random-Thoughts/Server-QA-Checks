@@ -45,10 +45,10 @@ Function c-hvh-01-server-core
     {
         Try
         {
-            [string] $query   = 'SELECT Name FROM Win32_ServerFeature WHERE Name = "Server Graphical Shell"'
-            [string] $check   = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Name
+            [string]$query = 'SELECT Name FROM Win32_ServerFeature WHERE Name = "Server Graphical Shell"'
+            [string]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Name
 
-            If ([string]::IsNullOrEmpty($check) -eq $true)
+            If ($check.Trim() -eq 'Server Graphical Shell')
             {
                 $result.result  = $script:lang['Fail']
                 $result.message = 'Hyper-V is not using Windows Server Core'

@@ -46,10 +46,8 @@ Function c-hvh-03-vm-location
     {
         Try
         {
-            [string]$query1 = 'SELECT SystemDrive FROM Win32_OperatingSystem'
-            [string]$check1 = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty SystemDrive
-            [string]$query2 = 'SELECT * FROM Msvm_ComputerSystem WHERE Caption="Virtual Machine"'
-            [object]$check2 = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Virtualization\v2
+            [string]$query = 'SELECT * FROM Msvm_ComputerSystem WHERE Caption="Virtual Machine"'
+            [object]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Virtualization\v2
         }
         Catch
         {
@@ -59,27 +57,29 @@ Function c-hvh-03-vm-location
             Return $result
         }
 
-        If ($check2.Count -ne 0)
+        If ($check.Count -ne 0)
         {
             [string]$result.data = ''
-            ForEach ($vm In $check2)
+            ForEach ($vm In $check)
             {
                 $VSSD = Get-WmiObject -ComputerName $serverName -Query "SELECT * FROM Msvm_VirtualSystemSettingData     WHERE ConfigurationID =              '$($VM.Name)'"  -Namespace ROOT\Virtualization\v2
                 $SASD = Get-WmiObject -ComputerName $serverName -Query "SELECT * FROM Msvm_StorageAllocationSettingData WHERE      InstanceID LIKE 'Microsoft:$($VM.Name)%'" -Namespace ROOT\Virtualization\v2
 
-                If ($($VSSD.ConfigurationDataRoot).Substring(0,2) -eq $check1) { $result.data += '{0} - Configuration,#' -f $VM.ElementName }
-                ForEach ($SA In $SASD) {
-                    [int]$driveNum = $(($SA.Parent).Split("\")[11])
-                    $item = $SA
-                    Do
-                    {
-                        $parent = ($item.Parent).Split('=')[1].Split('\\')[0].Split(':')[1].Trim('"')
-                        $item = Get-WmiObject -ComputerName $serverName -Query "SELECT * FROM Msvm_VirtualSystemSettingData     WHERE ConfigurationID LIKE           '$parent%'" -Namespace ROOT\Virtualization\v2
-                        $path = Get-WmiObject -ComputerName $serverName -Query "SELECT * FROM Msvm_StorageAllocationSettingData WHERE      InstanceID LIKE 'Microsoft:$parent%'" -Namespace ROOT\Virtualization\v2
+                # Check config location
+                If ((-not $($VSSD.ConfigurationDataRoot).StartsWith("$env:SystemDrive\ClusterStorage\")) -and ($($VSSD.ConfigurationDataRoot) -eq $env:SystemDrive))
+                {
+                    $result.data += '{0}: Configuration,#' -f $VM.ElementName
+                }
 
-                        If (($path.HostResource[$driveNum]).Substring(0,2) -eq $check1) { $result.data += '{0} - Disk {1},#' -f $VM.ElementName, $driveNum }
+                # Check hard disk location(s)
+                ForEach ($SA In $SASD)
+                {
+                    [int]   $driveNum  = $(($SA.Parent).Split('\')[11])
+                    [string]$drivePath = $SA.HostResource[$driveNum]
+                    If ((-not ($drivePath.StartsWith("$env:SystemDrive\ClusterStorage\"))) -and (-not ($drivePath.ToLower()).EndsWith('.iso')))
+                    {
+                        $result.data += '{0}: Disk {1},#' -f $VM.ElementName, $SA.HostResource[$driveNum]
                     }
-                    While ($item.Parent)
                 }
             }
 

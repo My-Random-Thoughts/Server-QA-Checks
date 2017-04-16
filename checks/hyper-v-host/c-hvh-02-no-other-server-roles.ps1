@@ -6,7 +6,7 @@
         IgnoreTheseRoleIDs - List of IDs that can be ignored|Integer
 
     DEFAULT-VALUES:
-        IgnoreTheseRoleIDs = ('20', '67', '340', '417', '466', '477', '481', '487')
+        IgnoreTheseRoleIDs = ('20', '33', '67', '340', '417', '466', '477', '481', '487')
 
     DEFAULT-STATE:
         Enabled
