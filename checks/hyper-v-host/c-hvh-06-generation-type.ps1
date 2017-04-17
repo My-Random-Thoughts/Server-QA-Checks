@@ -1,6 +1,6 @@
 <#
     DESCRIPTION: 
-        Check the version of the Integration Services installed on all VMs
+        Check that all Windows 2012+ VMs are built as generation 2 VMs
 
     REQUIRED-INPUTS:
         None
@@ -13,10 +13,10 @@
 
     RESULTS:
         PASS:    
-            All VMs are up to date
+            All VMs are the correct generation type
         WARNING:
         FAIL:
-            One or more VMs are not up to date, or do not have the integration services installed
+            One or more Windows 2012+ VMs are not generation 2 VMs
         MANUAL:
         NA:
             No VMs are located on this host
@@ -29,7 +29,7 @@
         Check-NameSpace
 #>
 
-Function c-hvh-04-integration-services
+Function c-hvh-06-generation-type
 {
     Param ( [string]$serverName, [string]$resultPath )
 
@@ -38,7 +38,7 @@ Function c-hvh-04-integration-services
     $result        = newResult
     $result.server = $serverName
     $result.name   = $script:lang['Name']
-    $result.check  = 'c-hvh-04-integration-services'
+    $result.check  = 'c-hvh-06-generation-type'
  
     #... CHECK STARTS HERE ...#
 
@@ -63,25 +63,23 @@ Function c-hvh-04-integration-services
             ForEach ($vm In $check)
             {
                 $VSMS = Get-WmiObject -Class 'Msvm_VirtualSystemManagementService' -Namespace ROOT\Virtualization\v2
-                $Info = $VSMS.GetSummaryInformation($vm.__PATH, 123)
+                $Info = $VSMS.GetSummaryInformation($vm.__PATH, (106, 135))
 
-                Switch ($Info.SummaryInformation[0].IntegrationServicesVersionState)
+                If ($($Info.SummaryInformation[0].GuestOperatingSystem) -like '*201*')    # 2012, 2016
                 {
-                    '0' { $result.data += "$($vm.ElementName): Unknown,#"     }    # Unknown
-                    '1' { $result.data += ''                                  }    # Up To Date
-                    '2' { $result.data += "$($vm.ElementName): Out of date,#" }    # Out Of Date
+                    If (($Info.SummaryInformation[0].VirtualSystemSubType).Split(':')[3] -eq '1') { $result.data += "$($vm.ElementName),#" }
                 }
             }
 
             If ($result.data -ne '')
             {
                 $result.result  = $script:lang['Fail']
-                $result.message = 'One or more VMs are not up to date, or do not have the integration services installed'
+                $result.message = 'One or more Windows 2012+ VMs are not generation 2 VMs'
             }
             ELse
             {
                 $result.result  = $script:lang['Pass']
-                $result.message = 'All VMs are up to date'
+                $result.message = 'All VMs are the correct generation type'
             }
         }
         Else
