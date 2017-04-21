@@ -101,8 +101,9 @@ Function c-drv-03-pagefile-size-location
             {
                 $result.result  = $script:lang['Fail']
                 $result.message = 'Pagefile should be set on the system drive, to Custom, with Initial and Maximum sizes set to ' + $script:appSettings['FixedPageFileSize'] + 'mb'
-                $result.data    = 'Location: {0},#Initial Size: {1}mb,#Maximum Size: {2}mb' -f $check2.Name, $check2.InitialSize, $check2.MaximumSize
             }
+
+            $result.data    = 'Location: {0},#Initial Size: {1}mb,#Maximum Size: {2}mb' -f $check2.Name, $check2.InitialSize, $check2.MaximumSize
         }
         Else
         {
