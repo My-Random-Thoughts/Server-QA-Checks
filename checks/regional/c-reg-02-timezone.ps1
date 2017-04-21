@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check that the server timezone is correct.  Default setting is "(GMT) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London"
         For Windows 2003, check is "(UTC) Dublin, Edinburgh, Lisbon, London"
@@ -63,8 +63,8 @@ Function c-reg-02-timezone
     {
         $result.result  = $script:lang['Fail']
         $result.message = 'Server timezone is incorrect and should be set to {0}' -f $script:appSettings['TimeZoneNames']
-        $result.data    = $check
     }
+    $result.data = $check
 
     Return $result
 }
