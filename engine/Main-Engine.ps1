@@ -1,4 +1,4 @@
-﻿Function Show-HelpScreen
+Function Show-HelpScreen
 {
     Clear-Host
     Write-Header -Message $($script:lang['Help_01']) -Width $script:screenwidth
@@ -698,6 +698,7 @@ Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width + 1, '─') }
 
 ###################################################################################################
 
+# COMPILER INSERT
 [int]      $script:waitTime       = 100    # Time to wait between starting new tasks (milliseconds)
 [int]      $script:screenwidth    = 120    #
 [int]      $script:failurecount   =   0    #
