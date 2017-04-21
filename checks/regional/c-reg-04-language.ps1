@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Ensure the Region and Language > keyboard and Languages is set correctly.  Default setting is "English (United Kingdom)".
 
@@ -43,11 +43,20 @@ Function c-reg-04-language
 
     Try
     {
-        $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('Users', $serverName)
-        $regKey = $reg.OpenSubKey('.DEFAULT\Keyboard Layout\Preload')
-        If ($regKey) { $keyVal = $regKey.GetValue('1') }
-        Try { $regKey.Close() } Catch { }
+        $reg     = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('Users', $serverName)
+        $regKey1 = $reg.OpenSubKey('.DEFAULT\Keyboard Layout\Preload')
+        If ($regKey1) { $keyVal1 = $regKey1.GetValue('1') }
+        Try { $regKey1.Close() } Catch { }
         $reg.Close()
+
+        If ([string]::IsNullOrEmpty($keyVal1) -eq $false)
+        {
+            $reg     = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
+            $regKey2 = $reg.OpenSubKey("SYSTEM\CurrentControlSet\Control\Keyboard Layouts\$keyVal1")
+            If ($regKey2) { $keyVal2 = $regKey2.GetValue('Layout Text') }
+            Try { $regKey2.Close() } Catch { }
+            $reg.Close()
+        }
     }
     Catch
     {
@@ -57,9 +66,9 @@ Function c-reg-04-language
         Return $result
     }
 
-    If ([string]::IsNullOrEmpty($keyVal) -eq $false)
+    If ([string]::IsNullOrEmpty($keyVal1) -eq $false)
     {
-        If ($keyVal -eq $script:appSettings['DefaultLanguage'])
+        If ($keyVal1 -eq $script:appSettings['DefaultLanguage'])
         {
             $result.result  = $script:lang['Pass']
             $result.message = 'Keyboard layout is set correctly'
@@ -68,8 +77,10 @@ Function c-reg-04-language
         {
             $result.result  = $script:lang['Fail']
             $result.message = 'Keyboard layout is not set correctly'
-            $result.data    =  $keyVal
         }
+        
+        $result.data = $keyVal1
+        If ([string]::IsNullOrEmpty($keyVal2) -eq $false) { $result.data += ",#$keyVal2" }
     }
     Else
     {
