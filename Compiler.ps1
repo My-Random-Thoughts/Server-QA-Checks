@@ -1,4 +1,4 @@
-﻿<#
+<#
     Compiles all the needed powershell files for QA checks into one master script.
 #>
 
@@ -27,7 +27,7 @@ Function Write-Header
 {
     Param ([string]$Message,[int]$Width); $underline=''.PadLeft($Width-16,'─')
     $q=('╔═══════════╗    ','','','','║           ║    ','','','','║  ','█▀█ █▀█','  ║    ','','║  ','█▄█ █▀█','  ║    ','','║  ',' ▀     ','  ║    ','','║  ',' CHECK ','  ║','  ██','║  ','       ','  ║',' ██ ','║  ','      ','','██▄ ██  ','╚════════','','',' ▀██▀ ')
-    $s=('QA Script Engine','Written by Mike @ My Random Thoughts','support@myrandomthoughts.co.uk','','','',$Message,$version,$underline)
+    $s=('QA Script Engine','Written by Mike @ My Random Thoughts','support@myrandomthoughts.co.uk','','Runspaces Proof Of Concept','',$Message,$version,$underline)
     [System.ConsoleColor[]]$c=('White','Gray','Gray','Red','Cyan','Red','Green','Yellow','Yellow');Write-Host ''
     For ($i=0;$i-lt$q.Length;$i+=4) { Write-Colr '  ',$q[$i],$q[$i+1],$q[$i+2],$q[$i+3],$s[$i/4].PadLeft($Width-19) -Colour Yellow,White,Cyan,White,Green,$c[$i/4] }
     Write-Host ''
@@ -93,7 +93,7 @@ Catch
 
     VERSION : $version
     COMPILED: $date
-#>
+#> 
 
 "@
 $scriptHeader += @' 
@@ -128,7 +128,7 @@ If ([string]::IsNullOrEmpty($qaChecks) -eq $true)
 If ($shortcode -eq '_') { $shortcode = '' }
 
 Write-Host '  Removing Previous Check Versions...... ' -NoNewline -ForegroundColor White
-[string]$outPath = "$path\QA_$shortcode$version.ps1"
+[string]$outPath = "$path\QA_$shortcode$version-RS.ps1"
 If (Test-Path -Path $outPath) { Try { Remove-Item $outPath -Force } Catch { } }
 Write-host 'Done' -ForegroundColor Green
 
@@ -188,7 +188,7 @@ Out-File -FilePath $outPath -InputObject ('# QA Check Script Blocks')           
 ForEach ($qa In $qaChecks)
 {
     Out-File -FilePath $outPath -InputObject "`$c$($qa.Name.Substring(2, 6).Replace('-','')) = {"                      -Encoding utf8 -Append
-
+    Out-File -FilePath $outPath -InputObject ('Param ($serverName,$resultPath)')                                       -Encoding utf8 -Append  # LINE ADDED FOR RUNSPACES
     Out-File -FilePath $outPath -InputObject ($shared)                                                                 -Encoding utf8 -Append
     
     Out-File -FilePath $outPath -InputObject '$script:lang        = @{}'                                               -Encoding utf8 -Append
@@ -283,7 +283,7 @@ ForEach ($qa In $qaChecks)
     $qaHelp.AppendLine('$script:qahelp[' + "'$checkName']='$xmlHelp'") | Out-Null
 
     # Complete this check
-
+    Out-File -FilePath $outPath -InputObject ("$($qa.BaseName) -serverName `$serverName -resultPath `$resultPath")     -Encoding utf8 -Append  # LINE ADDED FOR RUNSPACES
     Out-File -FilePath $outPath -InputObject '}'                                                                       -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Green
 }
 Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
@@ -307,12 +307,13 @@ Try
 }
 Catch { }
 Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('[string]$reportCompanyName   = "' + ($iniSettings['settings']['reportCompanyName']) + '"') -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('[string]$script:qaOutput     = "' + ($iniSettings['settings']['outputLocation'])    + '"') -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('[int]   $script:ccTasks      = "' + ($iniSettings['settings']['concurrent'])        + '"') -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('[int]   $script:checkTimeout = "' + ($iniSettings['settings']['timeout'])           + '"') -Encoding utf8 -Append
+[object]$engine = (Get-Content ($path + '\engine\Main-EngineRS.ps1'))
+$engine = $engine.Replace('# COMPILER INSERT', '[string]   $reportCompanyName     = "' + ($iniSettings['settings']['reportCompanyName'])            + '"' + "`n# COMPILER INSERT")
+$engine = $engine.Replace('# COMPILER INSERT', '[string]   $script:qaOutput       = "' + ($iniSettings['settings']['outputLocation']   )            + '"' + "`n# COMPILER INSERT")
+$engine = $engine.Replace('# COMPILER INSERT', '[int]      $script:ccTasks        = '  + ($iniSettings['settings']['concurrent']       ).PadLeft(3) +       "`n# COMPILER INSERT")
+$engine = $engine.Replace('# COMPILER INSERT', '[int]      $script:checkTimeout   = '  + ($iniSettings['settings']['timeout']          ).PadLeft(3) +       "`n")
+Out-File -FilePath $outPath -InputObject $engine                                                                       -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Cyan
 
-Out-File -FilePath $outPath -InputObject (Get-Content ($path + '\engine\Main-Engine.ps1'))                             -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Cyan
 Write-Host ''
 
 ###################################################################################################
