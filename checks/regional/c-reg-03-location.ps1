@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Ensure the Region and Language > Location is set correctly.  Default setting is "United Kingdom".
 
@@ -68,8 +68,8 @@ Function c-reg-03-location
         {
             $result.result  = $script:lang['Fail']
             $result.message = 'Regional location incorrectly set to {0}' -f $keyVal
-            $result.data    = $keyVal.toString()
         }
+        $result.data = $keyVal
     }
     Else
     {
