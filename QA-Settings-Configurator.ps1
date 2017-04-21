@@ -1007,109 +1007,113 @@ Function Display-MainForm
             $lbl_t1_ScanningScripts.Text = "Scanning check folders: $($folder.ToUpper())"
             $lbl_t1_ScanningScripts.Refresh(); [System.Windows.Forms.Application]::DoEvents()
 
-            # FOR TAB-2 LIST OF CHECKS
-            # Generate GUID for group IDs
-            [string]$guid = ([guid]::NewGuid() -as [string]).Split('-')[0]
-            $lst_t2_SelectChecks.Groups.Add("$guid", " $($folder.ToUpper())")
-
             [object[]]$scripts = (Get-ChildItem -Path "$script:scriptLocation\checks\$folder" -Filter 'c-*.ps1' | Select-Object -ExpandProperty Name | Sort-Object Name )
-            ForEach ($script In ($scripts | Sort-Object Name))
+
+            # Only run if the folder contains checks
+            If ([string]::IsNullOrEmpty($scripts) -eq $False)
             {
-                [string]$Name      =  $script.TrimEnd('.ps1')                         # Remove PS1.extension
-                [string]$checkCode = ($Name.Substring(2, 6).Replace('-',''))          # Get check code: c-acc-01-local-user  -->  acc01
-                [string]$checkName = ''
-                Try {   $checkName = ($languageINI.$($checkCode).Name) } Catch { }    # Get check name from INI file
+                # FOR TAB-2 LIST OF CHECKS
+                # Generate GUID for group IDs
+                [string]$guid = ([guid]::NewGuid() -as [string]).Split('-')[0]
+                $lst_t2_SelectChecks.Groups.Add("$guid", " $($folder.ToUpper())")
 
-                # Checks to see if the "checkName" value has been retreved or not
-                If ([string]::IsNullOrEmpty($checkName) -eq $True) { $checkName = '*' + $TextInfo.ToTitleCase($(($Name.Substring(9)).Replace('-', ' '))) }
-                Else                                               { $checkName = $checkName.Trim("'") }
-
-                # Load check description
-                [string]$checkDesc = ''
-                If ([string]::IsNullOrEmpty($script:qahelp[$checkCode]) -eq $False)
+                ForEach ($script In ($scripts | Sort-Object Name))
                 {
-                    # Load XML version of help
+                          [string]$Name      =  $script.TrimEnd('.ps1')                                                 # Remove PS1.extension
+                          [string]$checkCode = ($Name.Substring(2, 6).Replace('-',''))                                  # Get check code: c-acc-01-local-user  -->  acc01
+                    Try { [string]$checkName = ($languageINI.$($checkCode).Name) } Catch { [string]$checkName = '' }    # Get check name from INI file
+
+                    # Checks to see if the "checkName" value has been retreved or not
+                    If ([string]::IsNullOrEmpty($checkName) -eq $True) { $checkName = '*' + $TextInfo.ToTitleCase($(($Name.Substring(9)).Replace('-', ' '))) }
+                    Else                                               { $checkName = $checkName.Trim("'") }
+
+                    # Load check description
+                    [string]$checkDesc = ''
+                    If ([string]::IsNullOrEmpty($script:qahelp[$checkCode]) -eq $False)
+                    {
+                        # Load XML version of help
+                        Try
+                        {
+                            [xml]$xmlHelp = New-Object 'System.Xml.XmlDataDocument'
+                            $xmlHelp.LoadXml($script:qahelp[$checkCode])
+                            If ($xmlHelp.xml.Applies)     { $checkDesc  = "Applies To: $($xmlHelp.xml.Applies)"     }
+                            If ($xmlHelp.xml.Description) { $checkDesc +=             "$($xmlHelp.xml.Description)" }
+                        }
+                        Catch { }
+                    }
+
+                    # Default back to the scripts description of help if required
+                    If ($checkDesc -eq '')
+                    {
+                        [string]$content = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script") -TotalCount 50) -join "`n")
+                        $regExA = [RegEx]::Match($content,     "APPLIES:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
+                        $regExD = [RegEx]::Match($content, "DESCRIPTION:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
+
+                        [string]$checkDesc = "Applies To: $($regExA.Groups[1].Value.Trim())!n"
+                        ($regExD.Groups[1].Value.Trim().Split("`n")) | ForEach { $checkDesc += $_.Trim() + '  ' }
+                    }
+
+                    # Add check details to selection list, and check if required
+                    Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', "`n`n"), "$folder\$script") -Group $guid -ImageIndex 1 -Enabled $True
                     Try
                     {
-                        [xml]$xmlHelp = New-Object 'System.Xml.XmlDataDocument'
-                        $xmlHelp.LoadXml($script:qahelp[$checkCode])
-                        If ($xmlHelp.xml.Applies)     { $checkDesc  = "Applies To: $($xmlHelp.xml.Applies)"     }
-                        If ($xmlHelp.xml.Description) { $checkDesc +=             "$($xmlHelp.xml.Description)" }
+                        If ($settingsINI.ContainsKey($checkCode) -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True } Else { Throw '' }
                     }
-                    Catch { }
+                    Catch
+                    {
+                        # Load default "ENABLED/SKIPPED" value from the check
+                        [string]$content = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script") -TotalCount 50) -join "`n")
+                        $regExE = [RegEx]::Match($content, "DEFAULT-STATE:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
+                        If ($regExE.Groups[1].Value.Trim() -eq 'Enabled') { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True }
+                    }
                 }
 
-                # Default back to the scripts description of help if required
-                If ($checkDesc -eq '')
-                {
-                    [string]$content = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script") -TotalCount 50) -join "`n")
-                    $regExA = [RegEx]::Match($content,     "APPLIES:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
-                    $regExD = [RegEx]::Match($content, "DESCRIPTION:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
+                # #####################################################################################
+                # FOR TAB-3 OF MAIN TABPAGE CONTROL
+                # Add TabPage for folder
+                $newTab = New-Object 'System.Windows.Forms.TabPage'
+                $newTab.Font    = $sysFont
+                $newTab.Text    = $($TextInfo.ToTitleCase($folder))    # TitleCase section tabs
+                $newTab.Name    = "tab_$folder"
+                $newTab.Tag     = "tab_$folder"
+                $newTab.Margin  = '0, 0, 0, 0'
+                $newTab.Padding = '0, 0, 0, 0'
+                $tab_t3_Pages.TabPages.Add($newTab)
 
-                    [string]$checkDesc = "Applies To: $($regExA.Groups[1].Value.Trim())!n"
-                    ($regExD.Groups[1].Value.Trim().Split("`n")) | ForEach { $checkDesc += $_.Trim() + '  ' }
-                }
+                # Create a new ListView object
+                $newLVW = New-Object 'System.Windows.Forms.ListView'
+                $newLVW.Font           = $sysFont
+                $newLVW.Name           = "lvw_$folder"
+                $newLVW.HeaderStyle    = 'Nonclickable'
+                $newLVW.FullRowSelect  = $True
+                $newLVW.GridLines      = $False
+                $newLVW.LabelWrap      = $False
+                $newLVW.MultiSelect    = $False
+                $newLVW.Dock           = 'Fill'
+                $newLVW.BorderStyle    = 'None'
+                $newLVW.View           = 'Details'
+                $newLVW.SmallImageList = $img_ListImages
 
-                # Add check details to selection list, and check if required
-                Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', "`n`n"), "$folder\$script") -Group $guid -ImageIndex 1 -Enabled $True
-                Try
-                {
-                    If ($settingsINI.ContainsKey($checkCode) -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True } Else { Throw '' }
-                }
-                Catch
-                {
-                    # Load default "ENABLED/SKIPPED" value from the check
-                    [string]$content = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script") -TotalCount 50) -join "`n")
-                    $regExE = [RegEx]::Match($content, "DEFAULT-STATE:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
-                    If ($regExE.Groups[1].Value.Trim() -eq 'Enabled') { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True }
-                }
+                # Add columns
+                [int]$width = (($newTab.Width - 225) - [System.Windows.Forms.SystemInformation]::VerticalScrollBarWidth)
+                $newLVW_CH_Name = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Name.Text = 'Check'; $newLVW_CH_Name.Width =  225      # 
+                $newLVW_CH_Valu = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Valu.Text = 'Value'; $newLVW_CH_Valu.Width = $width    #
+                $newLVW_CH_Type = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Type.Text = ''     ; $newLVW_CH_Type.Width =   0       # Input type: List/Combo/Simple, etc
+                $newLVW_CH_Desc = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Desc.Text = ''     ; $newLVW_CH_Desc.Width =   0       # Description from check file
+                $newLVW_CH_Vali = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Vali.Text = ''     ; $newLVW_CH_Vali.Width =   0       # Validation type
+                $newLVW.Columns.Add($newLVW_CH_Name) | Out-Null
+                $newLVW.Columns.Add($newLVW_CH_Valu) | Out-Null
+                $newLVW.Columns.Add($newLVW_CH_Type) | Out-Null
+                $newLVW.Columns.Add($newLVW_CH_Desc) | Out-Null
+                $newLVW.Columns.Add($newLVW_CH_Vali) | Out-Null
+
+                # Add Events for each Listview
+                $newLVW.Add_KeyPress( { If ($_.KeyChar -eq 13) { ListView_DoubleClick -SourceControl $this } } )
+                $newLVW.Add_DoubleClick(                       { ListView_DoubleClick -SourceControl $this }   )
+
+                # Add new Listview to new folder
+                $newTab.Controls.Add($newLVW)
             }
-
-            # #####################################################################################
-            # FOR TAB-3 OF MAIN TABPAGE CONTROL
-            # Add TabPage for folder
-            $newTab = New-Object 'System.Windows.Forms.TabPage'
-            $newTab.Font    = $sysFont
-            $newTab.Text    = $($TextInfo.ToTitleCase($folder))    # TitleCase section tabs
-            $newTab.Name    = "tab_$folder"
-            $newTab.Tag     = "tab_$folder"
-            $newTab.Margin  = '0, 0, 0, 0'
-            $newTab.Padding = '0, 0, 0, 0'
-            $tab_t3_Pages.TabPages.Add($newTab)
-
-            # Create a new ListView object
-            $newLVW = New-Object 'System.Windows.Forms.ListView'
-            $newLVW.Font           = $sysFont
-            $newLVW.Name           = "lvw_$folder"
-            $newLVW.HeaderStyle    = 'Nonclickable'
-            $newLVW.FullRowSelect  = $True
-            $newLVW.GridLines      = $False
-            $newLVW.LabelWrap      = $False
-            $newLVW.MultiSelect    = $False
-            $newLVW.Dock           = 'Fill'
-            $newLVW.BorderStyle    = 'None'
-            $newLVW.View           = 'Details'
-            $newLVW.SmallImageList = $img_ListImages
-
-            # Add columns
-            [int]$width = (($newTab.Width - 225) - [System.Windows.Forms.SystemInformation]::VerticalScrollBarWidth)
-            $newLVW_CH_Name = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Name.Text = 'Check'; $newLVW_CH_Name.Width =  225      # 
-            $newLVW_CH_Valu = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Valu.Text = 'Value'; $newLVW_CH_Valu.Width = $width    #
-            $newLVW_CH_Type = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Type.Text = ''     ; $newLVW_CH_Type.Width =   0       # Input type: List/Combo/Simple, etc
-            $newLVW_CH_Desc = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Desc.Text = ''     ; $newLVW_CH_Desc.Width =   0       # Description from check file
-            $newLVW_CH_Vali = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Vali.Text = ''     ; $newLVW_CH_Vali.Width =   0       # Validation type
-            $newLVW.Columns.Add($newLVW_CH_Name) | Out-Null
-            $newLVW.Columns.Add($newLVW_CH_Valu) | Out-Null
-            $newLVW.Columns.Add($newLVW_CH_Type) | Out-Null
-            $newLVW.Columns.Add($newLVW_CH_Desc) | Out-Null
-            $newLVW.Columns.Add($newLVW_CH_Vali) | Out-Null
-
-            # Add Events for each Listview
-            $newLVW.Add_KeyPress( { If ($_.KeyChar -eq 13) { ListView_DoubleClick -SourceControl $this } } )
-            $newLVW.Add_DoubleClick(                       { ListView_DoubleClick -SourceControl $this }   )
-
-            # Add new Listview to new folder
-            $newTab.Controls.Add($newLVW)
         }
 
         $tab_Pages.SelectedIndex               = 1         # Change to the next tab
@@ -1138,10 +1142,7 @@ Function Display-MainForm
         $MainFORM.Cursor = 'AppStarting'
         $script:UpdateSelectedCount = $False
 
-        If ($SourceButton -eq 'SelectReset')
-        {
-            $btn_t1_Import_Click.Invoke()
-        }
+        If ($SourceButton -eq 'SelectReset') { $btn_t1_Import_Click.Invoke() }    # Reset the checkbox selection back to the INI settings
         Else
         {
             ForEach ($item In $lst_t2_SelectChecks.Items)
@@ -1153,8 +1154,8 @@ Function Display-MainForm
                     'SelectNone'    { $item.Checked =       $False        ; Break }
                 }
             }
+            Update-SelectedCount
         }
-        Update-SelectedCount
         $script:UpdateSelectedCount = $True
         $MainFORM.Cursor = 'Default'
     }
@@ -1167,6 +1168,7 @@ Function Display-MainForm
 
     $lst_t2_SelectChecks_SelectedIndexChanged = { If ($lst_t2_SelectChecks.SelectedItems.Count -eq 1) { $lbl_t2_Description.Text = ($lst_t2_SelectChecks.SelectedItems[0].SubItems[2].Text) } }
 
+    # Set focus to the exit button if there are no checks listed
     $lst_t2_SelectChecks_Enter = { If ($lst_t2_SelectChecks.Checkboxes -eq $False) { $btn_Exit.Focus() } }
 
     $btn_t2_SetValues_Click = {
