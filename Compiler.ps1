@@ -1,4 +1,4 @@
-<#
+﻿<#
     Compiles all the needed powershell files for QA checks into one master script.
 #>
 
@@ -16,6 +16,18 @@ If ($ws -lt 80) { $ws = 80 }
 # Required Functions                                                                              #
 ###################################################################################################
 
+[string]$F  = '█'    # Full   (ALT+219)
+[string]$T  = '▀'    # Top    (ALT+223)
+[string]$B  = '▄'    # Bottom (ALT+220)
+[string]$M  = '■'    # Middle (ALT+254)
+[string]$L  = '─'    # Line   (ALT+196)
+
+[string]$TL = '╔'    # (ALT+201)
+[string]$TR = '╗'    # (ALT+187)
+[string]$BL = '╚'    # (ALT+200)
+[string]$V  = '║'    # (ALT+186)
+[string]$H  = '═'    # (ALT+205)
+
 Function Write-Colr
 {
     Param ([String[]]$Text,[ConsoleColor[]]$Colour,[Switch]$NoNewline=$false)
@@ -25,15 +37,17 @@ Function Write-Colr
 
 Function Write-Header
 {
-    Param ([string]$Message,[int]$Width); $underline=''.PadLeft($Width-16,'─')
-    $q=('╔═══════════╗    ','','','','║           ║    ','','','','║  ','█▀█ █▀█','  ║    ','','║  ','█▄█ █▀█','  ║    ','','║  ',' ▀     ','  ║    ','','║  ',' CHECK ','  ║','  ██','║  ','       ','  ║',' ██ ','║  ','      ','','██▄ ██  ','╚════════','','',' ▀██▀ ')
-    $s=('QA Script Engine','Written by Mike @ My Random Thoughts','support@myrandomthoughts.co.uk','','Runspaces Proof Of Concept','',$Message,$version,$underline)
+    Param ([string]$Message,[int]$Width); $underline=''.PadLeft($Width-16,$L)
+    $q=("$TL$H$H$H$H$H$H$H$H$H$H$H$TR    ",'','','',        "$V           $V    ",'','','',        "$V  ","$F$T$F $F$T$F","  $V    ",'',
+        "$V  ","$F$B$F $F$T$F","  $V    ",'',        "$V  "," $T     ","  $V    ",'',        "$V  ",' CHECK ',"  $V","  $F$F",
+        "$V  ",'       ',"  $V"," $F$F ",        "$V  ",'      ','',"$F$F$B $F$F  ",        "$BL$H$H$H$H$H$H$H$H",'',''," $T$F$F$T ")
+    $s=('QA Script Engine','Written by Mike @ My Random Thoughts','support@myrandomthoughts.co.uk','','','',$Message,$version,$underline)
     [System.ConsoleColor[]]$c=('White','Gray','Gray','Red','Cyan','Red','Green','Yellow','Yellow');Write-Host ''
     For ($i=0;$i-lt$q.Length;$i+=4) { Write-Colr '  ',$q[$i],$q[$i+1],$q[$i+2],$q[$i+3],$s[$i/4].PadLeft($Width-19) -Colour Yellow,White,Cyan,White,Green,$c[$i/4] }
     Write-Host ''
 }
 
-Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width, '─') }
+Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width, $L) }
 Function Load-IniFile
 {
     Param ([string]$InputFile)
@@ -128,7 +142,7 @@ If ([string]::IsNullOrEmpty($qaChecks) -eq $true)
 If ($shortcode -eq '_') { $shortcode = '' }
 
 Write-Host '  Removing Previous Check Versions...... ' -NoNewline -ForegroundColor White
-[string]$outPath = "$path\QA_$shortcode$version-RS.ps1"
+[string]$outPath = "$path\QA_$shortcode$version.ps1"
 If (Test-Path -Path $outPath) { Try { Remove-Item $outPath -Force } Catch { } }
 Write-host 'Done' -ForegroundColor Green
 
@@ -138,7 +152,7 @@ Write-host 'Done' -ForegroundColor Green
 
 Write-Colr '  Generating New QA Check Script........ ', $qaChecks.Count, ' checks ' -Colour White, Green, White
 Write-Colr '  Using Settings File................... ', $Settings.ToUpper()         -Colour White, Green
-Write-Host '   ' -NoNewline; For ($j = 0; $j -lt ($qaChecks.Count + 5); $j++) { Write-Host '▄' -NoNewline -ForegroundColor DarkGray }; Write-Host ''
+Write-Host '   ' -NoNewline; For ($j = 0; $j -lt ($qaChecks.Count + 5); $j++) { Write-Host $B -NoNewline -ForegroundColor DarkGray }; Write-Host ''
 Write-Host '   ' -NoNewline
 
 # Start building the QA file
@@ -151,7 +165,7 @@ Out-File -FilePath $outPath -InputObject ('')                                   
 
 # Add the shared variables code
 Out-File -FilePath $outPath -InputObject ($shared)                                                                     -Encoding utf8 -Append
-Out-File -FilePath $outPath -InputObject ('')                                                                          -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Cyan
+Out-File -FilePath $outPath -InputObject ('')                                                                          -Encoding utf8 -Append; Write-Host $T -NoNewline -ForegroundColor Cyan
 
 # Get a list of all the checks, adding them into an array
 [string]$cList = '[array]$script:qaChecks = ('
@@ -177,7 +191,7 @@ If ($cLine.Length -gt 10)
 }
 
 $cList = $cList.Trim(',') + ')'
-Out-File -FilePath $outPath -InputObject $cList                                                                        -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Cyan
+Out-File -FilePath $outPath -InputObject $cList                                                                        -Encoding utf8 -Append; Write-Host $T -NoNewline -ForegroundColor Cyan
 Out-File -FilePath $outPath -InputObject ('')                                                                          -Encoding utf8 -Append
 Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
 Out-File -FilePath $outPath -InputObject ('# QA Check Script Blocks')                                                  -Encoding utf8 -Append
@@ -188,7 +202,7 @@ Out-File -FilePath $outPath -InputObject ('# QA Check Script Blocks')           
 ForEach ($qa In $qaChecks)
 {
     Out-File -FilePath $outPath -InputObject "`$c$($qa.Name.Substring(2, 6).Replace('-','')) = {"                      -Encoding utf8 -Append
-    Out-File -FilePath $outPath -InputObject ('Param ($serverName,$resultPath)')                                       -Encoding utf8 -Append  # LINE ADDED FOR RUNSPACES
+
     Out-File -FilePath $outPath -InputObject ($shared)                                                                 -Encoding utf8 -Append
     
     Out-File -FilePath $outPath -InputObject '$script:lang        = @{}'                                               -Encoding utf8 -Append
@@ -283,17 +297,17 @@ ForEach ($qa In $qaChecks)
     $qaHelp.AppendLine('$script:qahelp[' + "'$checkName']='$xmlHelp'") | Out-Null
 
     # Complete this check
-    Out-File -FilePath $outPath -InputObject ("$($qa.BaseName) -serverName `$serverName -resultPath `$resultPath")     -Encoding utf8 -Append  # LINE ADDED FOR RUNSPACES
-    Out-File -FilePath $outPath -InputObject '}'                                                                       -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Green
+
+    Out-File -FilePath $outPath -InputObject '}'                                                                       -Encoding utf8 -Append; Write-Host $T -NoNewline -ForegroundColor Green
 }
 Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
 
 # Write out the EN-GB help file
-Out-File -FilePath "$path\i18n\en-gb_help.ps1" -InputObject ($qaHelp.ToString()) -Force                                -Encoding utf8;         Write-Host '▀' -NoNewline -ForegroundColor Cyan
+Out-File -FilePath "$path\i18n\en-gb_help.ps1" -InputObject ($qaHelp.ToString()) -Force                                -Encoding utf8;         Write-Host $T -NoNewline -ForegroundColor Cyan
 
 [string]$language = ($iniSettings['settings']['language'])
 If (($language -eq '') -or ((Test-Path -Path "$path\i18n\$language.ini") -eq $false)) { $language = 'en-gb' }
-Out-File -FilePath $outPath -InputObject (Get-Content ("$path\i18n\$language" + "_help.ps1"))                          -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Cyan
+Out-File -FilePath $outPath -InputObject (Get-Content ("$path\i18n\$language" + "_help.ps1"))                          -Encoding utf8 -Append; Write-Host $T -NoNewline -ForegroundColor Cyan
 Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
 Try
 {
@@ -307,12 +321,12 @@ Try
 }
 Catch { }
 Out-File -FilePath $outPath -InputObject (''.PadLeft(190, '#'))                                                        -Encoding utf8 -Append
-[object]$engine = (Get-Content ($path + '\engine\Main-EngineRS.ps1'))
+[object]$engine = (Get-Content ($path + '\engine\Main-Engine.ps1'))
 $engine = $engine.Replace('# COMPILER INSERT', '[string]   $reportCompanyName     = "' + ($iniSettings['settings']['reportCompanyName'])            + '"' + "`n# COMPILER INSERT")
 $engine = $engine.Replace('# COMPILER INSERT', '[string]   $script:qaOutput       = "' + ($iniSettings['settings']['outputLocation']   )            + '"' + "`n# COMPILER INSERT")
 $engine = $engine.Replace('# COMPILER INSERT', '[int]      $script:ccTasks        = '  + ($iniSettings['settings']['concurrent']       ).PadLeft(3) +       "`n# COMPILER INSERT")
 $engine = $engine.Replace('# COMPILER INSERT', '[int]      $script:checkTimeout   = '  + ($iniSettings['settings']['timeout']          ).PadLeft(3) +       "`n")
-Out-File -FilePath $outPath -InputObject $engine                                                                       -Encoding utf8 -Append; Write-Host '▀' -NoNewline -ForegroundColor Cyan
+Out-File -FilePath $outPath -InputObject $engine                                                                       -Encoding utf8 -Append; Write-Host $T -NoNewline -ForegroundColor Cyan
 
 Write-Host ''
 

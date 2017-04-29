@@ -1,4 +1,4 @@
-Function Show-HelpScreen
+﻿Function Show-HelpScreen
 {
     Clear-Host
     Write-Header -Message $($script:lang['Help_01']) -Width $script:screenwidth
@@ -94,10 +94,10 @@ Function Start-QAProcess
     [string]$lP = $script:lang['Passed']; [string]$lW = $script:lang['Warning']       ; [string]$lF = $script:lang['Failed']
     [string]$lM = $script:lang['Manual']; [string]$lN = $script:lang['Not-Applicable']; [string]$lE = $script:lang['Error']
     Write-Host ('')
-    Write-Host ('     ■ ' + $lP) -NoNewline -ForegroundColor Green; Write-Host ('     ■ ' + $lW) -NoNewline -ForegroundColor Yellow
-    Write-Host ('     ■ ' + $lF) -NoNewline -ForegroundColor Red  ; Write-Host ('     ■ ' + $lM) -NoNewline -ForegroundColor Cyan
-    Write-Host ('     ■ ' + $lN) -NoNewline -ForegroundColor Gray ; Write-Host ('     ■ ' + $lE)            -ForegroundColor Magenta
-    Write-Host (DivLine -Width $script:screenwidth)                                                         -ForegroundColor Yellow
+    Write-Host ("     $M $lP") -NoNewline -ForegroundColor Green; Write-Host ("     $M $lW") -NoNewline -ForegroundColor Yellow
+    Write-Host ("     $M $lF") -NoNewline -ForegroundColor Red  ; Write-Host ("     $M $lM") -NoNewline -ForegroundColor Cyan
+    Write-Host ("     $M $lN") -NoNewline -ForegroundColor Gray ; Write-Host ("     $M $lE")            -ForegroundColor Magenta
+    Write-Host (DivLine -Width $script:screenwidth)                                                     -ForegroundColor Yellow
 
     [string]$ServerCounts = ''
     [string]$DebugMessage = ''
@@ -112,7 +112,7 @@ Function Start-QAProcess
 
     # Create required output folders
     New-Item -ItemType Directory -Force -Path ($script:qaOutput) | Out-Null
-    If ($verbose -eq $true) { $pBlock = '■' } Else { $pBlock = '▀' }
+    If ($verbose -eq $true) { $pBlock = $M } Else { $pBlock = $T }
     If ($GenerateCSV -eq $true) { If (Test-Path -Path ($script:qaOutput + 'QA_Results.csv')) { Try { Remove-Item ($script:qaOutput + 'QA_Results.csv') -Force } Catch {} } }
     If ($GenerateXML -eq $true) { If (Test-Path -Path ($script:qaOutput + 'QA_Results.xml')) { Try { Remove-Item ($script:qaOutput + 'QA_Results.xml') -Force } Catch {} } }
 
@@ -135,7 +135,7 @@ Function Start-QAProcess
             If (($debug -eq $true) -or ((Check-Port -ServerName $server -Port 135) -eq $true))
             {
                 If ($verbose -eq $true) { Write-Host $script:lang['Verbose-Info'] -ForegroundColor Yellow -NoNewline }
-                Else {  For ([int]$i = 0; $i -lt $count; $i++) { Write-Host '▄' -ForegroundColor DarkGray -NoNewline }
+                Else {  For ([int]$i = 0; $i -lt $count; $i++) { Write-Host $B -ForegroundColor DarkGray -NoNewline }
                     Write-Host ''
                     Write-Host '   ' -ForegroundColor DarkGray -NoNewline
                 }
@@ -169,20 +169,20 @@ Function Start-QAProcess
                                 # provide some pretty output on the console
                                 Switch ($result.result)
                                 {
-                                    $script:lang['Pass']           { Write-Host $pBlock -ForegroundColor Green  -NoNewline ; Break }
-                                    $script:lang['Warning']        { Write-Host $pBlock -ForegroundColor Yellow -NoNewline ; Break }
-                                    $script:lang['Fail']           { Write-Host $pBlock -ForegroundColor Red    -NoNewline ; Break }
-                                    $script:lang['Manual']         { Write-Host $pBlock -ForegroundColor Cyan   -NoNewline ; Break }
-                                    $script:lang['Not-Applicable'] { Write-Host $pBlock -ForegroundColor Gray   -NoNewline ; Break }
+                                    $script:lang['Pass']           { Write-Host $pBlock -ForegroundColor Green  -NoNewline; Break }
+                                    $script:lang['Warning']        { Write-Host $pBlock -ForegroundColor Yellow -NoNewline; Break }
+                                    $script:lang['Fail']           { Write-Host $pBlock -ForegroundColor Red    -NoNewline; Break }
+                                    $script:lang['Manual']         { Write-Host $pBlock -ForegroundColor Cyan   -NoNewline; Break }
+                                    $script:lang['Not-Applicable'] { Write-Host $pBlock -ForegroundColor Gray   -NoNewline; Break }
                                     $script:lang['Error']          { If ($result.data -like '*Access is denied*') {
                                                                          If ($workComplete -eq $false) {
                                                                              $result.message = $script:lang['AD-Message']    # ACCESS DENIED
                                                                              $script:failurecount++
-                                                                             Write-Host ('■ ' + $script:lang['AD-Write-Host']) -ForegroundColor Magenta -NoNewline
+                                                                             Write-Host ("$M " + $script:lang['AD-Write-Host']) -ForegroundColor Magenta -NoNewline
                                                                              $workComplete = $true } }
-                                                                     Else { If ($workComplete -eq $false) { Write-Host '█' -ForegroundColor Magenta -NoNewline } }
+                                                                     Else { If ($workComplete -eq $false) { Write-Host $F -ForegroundColor Magenta -NoNewline } }
                                                                    }
-                                    Default                        { Write-Host '█' -ForegroundColor DarkGray -NoNewline; Break }
+                                    Default                        { Write-Host $F -ForegroundColor DarkGray -NoNewline; Break }
                                 }
                             }
                             Else
@@ -197,7 +197,7 @@ Function Start-QAProcess
                                 $result.data     = $script:lang['ND-Message']
                                 $script:results += $result
                                 $serverresults  += $result
-                                Write-Host '█' -ForegroundColor Magenta -NoNewline
+                                Write-Host $F -ForegroundColor Magenta -NoNewline
                             }
                             $workItems.Remove($key)
                         
@@ -214,7 +214,7 @@ Function Start-QAProcess
                             $result.data     = $script:lang['FD-Message']
                             $script:results += $result
                             $serverresults  += $result
-                            Write-Host ('■ ' + $script:lang['FD-Write-Host']) -ForegroundColor Magenta -NoNewline
+                            Write-Host ("$M " + $script:lang['FD-Write-Host']) -ForegroundColor Magenta -NoNewline
                             $workItems.Remove($key)
                             $script:failurecount++
                             $workComplete = $true
@@ -235,7 +235,7 @@ Function Start-QAProcess
                                 $script:results += $result
                                 $serverresults  += $result
                                 Try { Stop-Job -Job $workItems[$key]; Remove-Job -Job $workItems[$key] } Catch { }
-                                Write-Host '█' -ForegroundColor Magenta -NoNewline
+                                Write-Host $F -ForegroundColor Magenta -NoNewline
                                 $workItems.Remove($key)
                             }
                         }
@@ -284,7 +284,7 @@ Function Start-QAProcess
                 $script:results += $result
                 $serverresults  += $result
                 $script:failurecount++
-                Write-Host ('■ ' + $script:lang['RPC-Write-Host']) -ForegroundColor Magenta -NoNewline
+                Write-Host ("$M " + $script:lang['RPC-Write-Host']) -ForegroundColor Magenta -NoNewline
             }
         }
         Else
@@ -299,7 +299,7 @@ Function Start-QAProcess
             $script:results += $result
             $serverresults  += $result
             $script:failurecount++
-            Write-Host ('■ ' + $script:lang['CF-Write-Host']) -ForegroundColor Magenta -NoNewline
+            Write-Host ("$M " + $script:lang['CF-Write-Host']) -ForegroundColor Magenta -NoNewline
         }
 
         Write-Host ''
@@ -676,6 +676,18 @@ Function Check-Port
     } } Catch { Return $false }
 }
 
+[string]$F  = '█'    # Full   (ALT+219)
+[string]$T  = '▀'    # Top    (ALT+223)
+[string]$B  = '▄'    # Bottom (ALT+220)
+[string]$M  = '■'    # Middle (ALT+254)
+[string]$L  = '─'    # Line   (ALT+196)
+
+[string]$TL = '╔'    # (ALT+201)
+[string]$TR = '╗'    # (ALT+187)
+[string]$BL = '╚'    # (ALT+200)
+[string]$V  = '║'    # (ALT+186)
+[string]$H  = '═'    # (ALT+205)
+
 Function Write-Colr
 {
     Param ([String[]]$Text,[ConsoleColor[]]$Colour,[Switch]$NoNewline=$false)
@@ -685,16 +697,17 @@ Function Write-Colr
 
 Function Write-Header
 {
-    Param ([string]$Message,[int]$Width); $underline=''.PadLeft($Width-16,'─')
-    $q=('╔═══════════╗    ','','','','║           ║    ','','','','║  ','█▀█ █▀█','  ║    ','','║  ','█▄█ █▀█','  ║    ','','║  ',' ▀     ','  ║    ','',
-        '║  ',' CHECK ','  ║','  ██','║  ','       ','  ║',' ██ ','║  ','      ','','██▄ ██  ','╚════════','','',' ▀██▀ ')
+    Param ([string]$Message,[int]$Width); $underline=''.PadLeft($Width-16,$L)
+    $q=("$TL$H$H$H$H$H$H$H$H$H$H$H$TR    ",'','','',        "$V           $V    ",'','','',        "$V  ","$F$T$F $F$T$F","  $V    ",'',
+        "$V  ","$F$B$F $F$T$F","  $V    ",'',        "$V  "," $T     ","  $V    ",'',        "$V  ",' CHECK ',"  $V","  $F$F",
+        "$V  ",'       ',"  $V"," $F$F ",        "$V  ",'      ','',"$F$F$B $F$F  ",        "$BL$H$H$H$H$H$H$H$H",'',''," $T$F$F$T ")
     $s=('QA Script Engine','Written by Mike @ My Random Thoughts','support@myrandomthoughts.co.uk','','','',$Message,$version,$underline)
     [System.ConsoleColor[]]$c=('White','Gray','Gray','Red','Cyan','Red','Green','Yellow','Yellow');Write-Host ''
     For ($i=0;$i-lt$q.Length;$i+=4) { Write-Colr '  ',$q[$i],$q[$i+1],$q[$i+2],$q[$i+3],$s[$i/4].PadLeft($Width-19) -Colour Yellow,White,Cyan,White,Green,$c[$i/4] }
     Write-Host ''
 }
 
-Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width + 1, '─') }
+Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width + 1, $L) }
 
 ###################################################################################################
 
