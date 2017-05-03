@@ -1055,11 +1055,11 @@ Function Display-MainForm
 
                     # Add check details to selection list, and check if required
                     Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', "`n`n"), "$folder\$script") -Group $guid -ImageIndex 1 -Enabled $True
-                    Try
-                    {
-                        If ($settingsINI.ContainsKey($checkCode) -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True } Else { Throw '' }
-                    }
-                    Catch
+
+                    [int]$notFound = 0
+                    If ($settingsINI.ContainsKey($checkCode)        -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True  } Else { $notFound++ }
+                    If ($settingsINI.ContainsKey("$checkCode-skip") -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $False } Else { $notFound++ }
+                    If ($notFound -eq 2)
                     {
                         # Load default "ENABLED/SKIPPED" value from the check
                         [string]$content = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script") -TotalCount 50) -join "`n")
