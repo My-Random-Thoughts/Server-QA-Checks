@@ -8,9 +8,9 @@ Write-Host '  Starting Server QA Settings Configurator...'
 
 # Icon Image Index: 0: Optional, 1: Gear, 2: Disabled Gear
 
-[Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms')    | Out-Null
-[Reflection.Assembly]::LoadWithPartialName('System.Data')             | Out-Null
-[Reflection.Assembly]::LoadWithPartialName('System.Drawing')          | Out-Null
+[Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null
+[Reflection.Assembly]::LoadWithPartialName('System.Data')          | Out-Null
+[Reflection.Assembly]::LoadWithPartialName('System.Drawing')       | Out-Null
 [System.Drawing.Font]$sysFont       = [System.Drawing.SystemFonts]::MessageBoxFont
 [System.Drawing.Font]$sysFontBold   = New-Object 'System.Drawing.Font' ($sysFont.Name, $sysFont.SizeInPoints, [System.Drawing.FontStyle]::Bold)
 [System.Drawing.Font]$sysFontItalic = New-Object 'System.Drawing.Font' ($sysFont.Name, $sysFont.SizeInPoints, [System.Drawing.FontStyle]::Italic)
@@ -145,12 +145,6 @@ Function Show-InputForm
 
     # [ValidateSet('Simple', 'Check', 'Option', 'List', 'Large')]
     # [ValidateSet('None', 'AZ', 'Numeric', 'Integer', 'Decimal', 'Symbol', 'File', 'URL', 'Email', 'IPv4', 'IPv6')]
-
-    [Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null
-    [Reflection.Assembly]::LoadWithPartialName('System.Data')          | Out-Null
-    [Reflection.Assembly]::LoadWithPartialName('System.Drawing')       | Out-Null
-    [System.Drawing.Font]$sysFont = [System.Drawing.SystemFonts]::MessageBoxFont
-    [System.Windows.Forms.Application]::EnableVisualStyles()
 
 #region Form Scripts
     $ChkButton_Click = {
@@ -622,12 +616,6 @@ Function Show-ExtraSettingsForm
         [parameter(Mandatory=$false)][string]$OutputLocation
     )
 
-    [Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null
-    [Reflection.Assembly]::LoadWithPartialName('System.Data')          | Out-Null
-    [Reflection.Assembly]::LoadWithPartialName('System.Drawing')       | Out-Null
-    [System.Drawing.Font]$sysFont = [System.Drawing.SystemFonts]::MessageBoxFont
-    [System.Windows.Forms.Application]::EnableVisualStyles()
-
 #region MAIN FORM
     $frm_Main = New-Object 'System.Windows.Forms.Form'
     $frm_Main.FormBorderStyle      = 'FixedDialog'
@@ -786,7 +774,7 @@ Function Display-MainForm
 
         # Set some specific fonts
         $lbl_t1_Welcome.Font         = $sysFontBold
-        $lbl_t1_MissingFile.Font     = $sysFontItalic    # Hidden by default
+        $lbl_t1_MissingFile.Font     = $sysFontItalic    # Hidden by default ("'default-settings.ini' file not found")
         $lbl_t2_CheckSelection.Font  = $sysFontBold
         $lbl_t3_ScriptSelection.Font = $sysFontBold
         $lbl_t4_Complete.Font        = $sysFontBold
@@ -804,7 +792,7 @@ Function Display-MainForm
         $lst_t2_SelectChecks.CheckBoxes = $False
         $lst_t2_SelectChecks.Groups.Add('ErrorGroup','Please Note')
         Add-ListViewItem -ListView $lst_t2_SelectChecks -Items '' -SubItems ('','')                                   -ImageIndex -1 -Group 'ErrorGroup' -Enabled $True
-        Add-ListViewItem -ListView $lst_t2_SelectChecks -Items '' -SubItems ('Select your scripts location first','') -ImageIndex -1 -Group 'ErrorGroup' -Enabled $True 
+        Add-ListViewItem -ListView $lst_t2_SelectChecks -Items '' -SubItems ('Select your scripts location first','') -ImageIndex -1 -Group 'ErrorGroup' -Enabled $True
     }
 
     $MainFORM_FormClosing = [System.Windows.Forms.FormClosingEventHandler] {
@@ -946,6 +934,7 @@ Function Display-MainForm
         }
         Catch
         {
+            # We are fine if it does not exist, just carry on
             $cmo_t1_SettingsFile.Items.Insert(0, '* Use Default Settings')
             $cmo_t1_SettingsFile.SelectedIndex = 0
             $lbl_t1_MissingFile.Visible = $True
@@ -957,6 +946,7 @@ Function Display-MainForm
             [string[]]$langList = (Get-ChildItem -Path "$script:scriptLocation\i18n" -Filter '*_text.ini' -ErrorAction Stop | Select-Object -ExpandProperty Name | Sort-Object Name | ForEach { $_.Replace('_text.ini','') } )
             Load-ComboBox -ComboBox $cmo_t1_Language -Items ($langList | Sort-Object Name) -SelectedItem 'en-gb' -Clear
         } Catch {
+            # No language file, stop import!
             Load-ComboBox -ComboBox $cmo_t1_Language -Items ('Unknown') -SelectedItem 'Unknown' -Clear
             $iniLoadOK = $False
         }
@@ -1057,10 +1047,10 @@ Function Display-MainForm
                     Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', "`n`n"), "$folder\$script") -Group $guid -ImageIndex 1 -Enabled $True
 
                     [int]$notFound = 0
-                    If ($settingsINI.ContainsKey($checkCode)        -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True  } Else { $notFound++ }
-                    If ($settingsINI.ContainsKey("$checkCode-skip") -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $False } Else { $notFound++ }
+                    If ($settingsINI.ContainsKey($checkCode)        -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True  } Else { $notFound++ }    # Enabled checks
+                    If ($settingsINI.ContainsKey("$checkCode-skip") -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $False } Else { $notFound++ }    # Skipped checks
                     If ($notFound -eq 2)
-                    {
+                    {                                                                                                                                                # Unknown checks
                         # Load default "ENABLED/SKIPPED" value from the check
                         [string]$content = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script") -TotalCount 50) -join "`n")
                         $regExE = [RegEx]::Match($content, "DEFAULT-STATE:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
@@ -1142,7 +1132,10 @@ Function Display-MainForm
         $MainFORM.Cursor = 'AppStarting'
         $script:UpdateSelectedCount = $False
 
-        If ($SourceButton -eq 'SelectReset') { $btn_t1_Import_Click.Invoke() }    # Reset the checkbox selection back to the INI settings
+        If ($SourceButton -eq 'SelectReset')
+        {
+            $btn_t1_Import_Click.Invoke()    # Reset the checkbox selection back to the INI settings
+        }
         Else
         {
             ForEach ($item In $lst_t2_SelectChecks.Items)
@@ -1425,10 +1418,14 @@ Function Display-MainForm
         $txt_t4_ShortCode.Enabled   = $False
         $txt_t4_ReportTitle.Enabled = $False
 
+        # Build Standard QA Script
         $lbl_t4_Generate.Text = 'Generating Standard QA Script'
-        Invoke-Expression -Command "PowerShell -Command {& '$script:ExecutionFolder\Compiler.ps1'   -Settings $(Split-Path -Path $script:saveFile -Leaf)}"    # Build Standard QA Script
+        Invoke-Expression -Command "PowerShell -NoProfile -NonInteractive -Command {& '$script:ExecutionFolder\Compiler.ps1'   -Settings $(Split-Path -Path $script:saveFile -Leaf) -Silent }"
+
+        # Build Runspace QA Script
         $lbl_t4_Generate.Text = 'Generating Runspace QA Script (proof of concept)'
-        Invoke-Expression -Command "PowerShell -Command {& '$script:ExecutionFolder\CompilerRS.ps1' -Settings $(Split-Path -Path $script:saveFile -Leaf)}"    # Build Runspace QA Script
+        Invoke-Expression -Command "PowerShell -NoProfile -NonInteractive -Command {& '$script:ExecutionFolder\CompilerRS.ps1' -Settings $(Split-Path -Path $script:saveFile -Leaf) -Silent }"
+
         $lbl_t4_Generate.Text = ''
         [System.Windows.Forms.MessageBox]::Show($MainFORM, "Custom QA Script generated.", ' Server QA Settings Configurator', 'OK', 'Information')
 
@@ -1638,7 +1635,7 @@ Function Display-MainForm
     # All 16x16 Icons
     $img_ListImages                     = New-Object 'System.Windows.Forms.ImageList'
     $img_ListImages.TransparentColor    = 'Transparent'
-    $img_ListImages_binaryFomatter      = New-Object 'System.Runtime.Serialization.Formatters.Binary.BinaryFormatter'
+    $img_ListImages_BinaryFomatter      = New-Object 'System.Runtime.Serialization.Formatters.Binary.BinaryFormatter'
     $img_ListImages_MemoryStream        = New-Object 'System.IO.MemoryStream' (,[byte[]][System.Convert]::FromBase64String('
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkD
         AAAADwMAAACeCgAAAk1TRnQBSQFMAgEBAwEAAYgBAAGIAQABEAEAARABAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEoAwABQAMAARADAAEBAQABCAYAAQQYAAGAAgABgAMAAoABAAGAAwABgAEAAYABAAKAAgADwAEAAcAB3AHAAQAB8AHKAaYBAAEzBQABMwEAATMBAAEzAQACMwIAAxYBAAMcAQADIgEA
@@ -1657,8 +1654,8 @@ Function Display-MainForm
         BAAB8QK7AbUB/wIAAf8C9AHzAfQEAAH0AfMB9AHzFAAB9AGvAYwBvAP0AbwBjAGvAfQDAAH/AfABCQHxAQkB9wEHAv8B7gG7AQcBuwG1AQcBAAH/BPQB8wH0Av8E9AHzAfQUAAH0Ae4BjAGvAfEBrwGMAe4B9AQAAf8CuwEJARkBvAG7ArUEuwG1AZEBAAH/BfQD8wP0A/MVAAL0AbUBjAG1AvQGAAP0AQkD
         8QHwAQkCuwHyAvQCAAP/CPQB9QL/FwAD9AoAAfQBuwQJAbsCtQHzBgAB/wX0A/MB/yYAAfQBBwH0Af8CuwH0AfIBuwH0BgAB/wH0Av8C9AH/AfUB9AH/KgAB7gG7DgAC9BcAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcAA/8BAAL/AfIBRwHyAU8CAAL/AeABBwHgAQcCAAH8AX8B4AEH
         AeABBwIAAfABHwGAAQEBgAEBAgAB4AEPBgABwAEHBIECAAHAAQcBgwHBAYMBwQIAAcACBwHAAQcBwAIAAcACBwHAAQcBwAIAAcABBwGDAcEBgwHDAgABwAEHAQABAQEAAQECAAHgAQ8BAAEBAQABAQIAAfABHwGAAQEBgAEBAgAB/AF/AeABBwHgAQcCAAL/AeABBwHgAQcCAAL/Af4BfwH+AX8CAAs='))
-    $img_ListImages.ImageStream         = $img_ListImages_binaryFomatter.Deserialize($img_ListImages_MemoryStream)
-    $img_ListImages_binaryFomatter      = $null
+    $img_ListImages.ImageStream         = $img_ListImages_BinaryFomatter.Deserialize($img_ListImages_MemoryStream)
+    $img_ListImages_BinaryFomatter      = $null
     $img_ListImages_MemoryStream        = $null
 #endregion
 #region TAB 1 - Introduction / Select Location / Import
