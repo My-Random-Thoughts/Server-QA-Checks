@@ -61,9 +61,9 @@ Function c-sec-15-firewall-state
     }
 
     $result.data = ''
-    If ($regDP -ne $global:appSettings['DomainProfile']  ) { $result.data += (  'Domain profile is {0}, but should be {1},#' -f $regDP, $global:appSettings['DomainProfile']  ) }
-    If ($regSP -ne $global:appSettings['StandardProfile']) { $result.data += ('Standard profile is {0}, but should be {1},#' -f $regSP, $global:appSettings['StandardProfile']) }
-    If ($regPP -ne $global:appSettings['PublicProfile']  ) { $result.data += (  'Public profile is {0}, but should be {1},#' -f $regPP, $global:appSettings['PublicProfile']  ) }
+    If ($regDP -ne $script:appSettings['DomainProfile']  ) { $result.data += (  'Domain profile is {0}, but should be {1},#' -f $regDP, $script:appSettings['DomainProfile']  ) }
+    If ($regSP -ne $script:appSettings['StandardProfile']) { $result.data += ('Standard profile is {0}, but should be {1},#' -f $regSP, $script:appSettings['StandardProfile']) }
+    If ($regPP -ne $script:appSettings['PublicProfile']  ) { $result.data += (  'Public profile is {0}, but should be {1},#' -f $regPP, $script:appSettings['PublicProfile']  ) }
 
     If ($result.data -eq '')
     {
