@@ -2,7 +2,7 @@
 
 - Updated NET-01 check so that it now takes an option.  IPv6State = 'Enabled|Disabled'.  Will check to see if IPv6 is enalbed or disabled for the server being tested.  Please manually update your INI settings with the new entry.  default-settings.ini has the correct entry.
 
-- ...
+- New check: SEC-17 - Check SMBv1 Is Disabled
 
 ─────────────────────────────────────────────────────────────────────────────
 
