@@ -88,15 +88,20 @@ Function c-net-01-ipv6-status
     }
 
     # Separate IPv6 enabled adapters
-    [System.Collections.ArrayList]$ipv6d = $adapters.NetConnectionID    # To hold list of IPv6 DISABLED adapters
-    [System.Collections.ArrayList]$ipv6e = @()                          # To hold list of IPv6 ENABLED  adapters
+    [System.Collections.ArrayList]$ipv6d = @()                           # To hold list of IPv6 DISABLED adapters
+    [System.Collections.ArrayList]$ipv6e = @()                           # To hold list of IPv6 ENABLED  adapters
+    $adapters | ForEach { $ipv6d.Add($_.NetConnectionID) | Out-Null }    # 
+
     ForEach ($bind In $keyVal2)
     {
         [string]$deviceid = $bind.split('\')[2]
-        If ($adapters.GUID -contains $deviceid)
+        [string]$found = ''
+        $adapters | ForEach { If ($_.GUID -eq $deviceid) { $found = $_.NetConnectionID } }
+
+        If ($found -ne '')
         {
-            $ipv6e.Add(   $adapters.Where({$_.GUID -eq $deviceid}).NetConnectionID) | Out-Null
-            $ipv6d.Remove($adapters.Where({$_.GUID -eq $deviceid}).NetConnectionID) | Out-Null
+            $ipv6e.Add(   $found) | Out-Null
+            $ipv6d.Remove($found) | Out-Null
         }
     }
 
