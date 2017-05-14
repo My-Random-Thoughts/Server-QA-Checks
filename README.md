@@ -1,7 +1,10 @@
-# Runspaces Proof Of Concept
-I have included a separate compiler to build a POC check that uses Runspace Pools instead of PowerShell Jobs to run each check.  Runspaces have the advantage of being extremely fast compared to Jobs.  A full scan drops from about 60 seconds to just 12.
+# Basic Change Log
 
+- Updated NET-01 check so that it now takes an option.  IPv6State = 'Enabled|Disabled'.  Will check to see if IPv6 is enalbed or disabled for the server being tested.
 
+- ...
+
+─────────────────────────────────────────────────────────────────────────────
 
 # Server QA Checks
 
@@ -44,3 +47,8 @@ The scripts can be run on any Windows operating system, either locally or remote
 This is a GUI form (written entirely in PowerShell) that makes it easier for you to enable/disable specific checks as well as configure the specific settings for each QA check.
 
 http://myrandomthoughts.co.uk/2017/02/server-qa-scripts-settings-configuration-tool/
+
+─────────────────────────────────────────────────────────────────────────────
+
+# Runspaces Proof Of Concept
+I have included a separate compiler to build a POC check that uses Runspace Pools instead of PowerShell Jobs to run each check.  Runspaces have the advantage of being extremely fast compared to Jobs.  A full scan drops from about 60 seconds to just 12.
