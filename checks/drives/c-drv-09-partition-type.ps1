@@ -61,6 +61,7 @@ Function c-drv-09-partition-type
         {
             If (($part.Type).StartsWith('GPT: Basic'))   { $gptA++ }    # BASIC   + GPT
             If (($part.Type).StartsWith('GPT: Logical')) { $gptC++ }    # DYNAMIC + GPT
+            If (($part.Type).StartsWith('GPT: Unknown')) { $gptD++ }    # OFFLINE + GPT
             If (($part.Type).StartsWith('Logical'))      { $gptB++ }    # DYNAMIC + MBR
             $data += ($($part.Name).Split(',')[0])
         }
@@ -69,7 +70,8 @@ Function c-drv-09-partition-type
         $result.data    = (($data | Select-Object -Unique) -join ', ')
 
         If (($gptA -gt 0) -or ($gptC -gt 0)) { $result.message += 'One or more partition styles are not MBR,#' }
-        If (($gptB -gt 0) -or ($gptC -gt 0)) { $result.message += 'One or more drives types are not BASIC'     }
+        If (($gptB -gt 0) -or ($gptC -gt 0)) { $result.message += 'One or more drives types are not BASIC,#'   }
+        If  ($gptD -gt 0)                    { $result.message += 'One of more drives are unknown,#'           }
     }
     Else
     {
