@@ -46,7 +46,7 @@ Function c-vmw-05-scsi-drive-count
     {
         Try
         {
-            [string]$query = "SELECT SCSIPort, SCSITargetID FROM Win32_DiskDrive"
+            [string]$query = "SELECT SCSIPort, SCSITargetID FROM Win32_DiskDrive WHERE Caption <> 'Microsoft Virtual Disk'"
             [array] $check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object SCSIPort, SCSITargetID
         }
         Catch
