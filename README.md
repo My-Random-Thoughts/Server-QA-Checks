@@ -4,6 +4,9 @@
 
 - New check: SEC-17 - Check SMBv1 Is Disabled
 
+- New check: SEC-19 - Check HP SMH Version
+- New check: SEC-20 - Check Dell OMA Version
+
 ─────────────────────────────────────────────────────────────────────────────
 
 # Server QA Checks
