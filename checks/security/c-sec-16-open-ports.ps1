@@ -44,6 +44,7 @@ Function c-sec-16-open-ports
 
     # List of well known exclusions
     $script:appSettings['IgnoreThesePorts'] += '47001'    # WinRM Listener - 5985 and 5986 are in settings file
+    $script:appSettings['IgnoreThesePorts'] +=  '1311'    # Dell OpenManage Server Administrator
     $script:appSettings['IgnoreThesePorts'] +=  '1556'    # NetBackup Agent
     $script:appSettings['IgnoreThesePorts'] +=  '2381'    # HPE System Management Home Page
     $script:appSettings['IgnoreThesePorts'] +=  '4750'    # BladeLogic Agent
