@@ -53,7 +53,7 @@ Function c-sys-18-check-current-ou
 
             $objDomain   = New-Object System.DirectoryServices.DirectoryEntry
             $objSearcher = New-Object System.DirectoryServices.DirectorySearcher
-            $strFilter   = "(&(objectCategory=computer)(name=$env:ComputerName))"
+            $strFilter   = "(&(objectCategory=computer)(name=$serverName))"
             $objSearcher.SearchRoot = $objDomain
             $objSearcher.Filter     = $strFilter
             [string]$strPath = ($objSearcher.FindOne().Path).ToLower()
