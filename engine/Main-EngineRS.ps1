@@ -663,17 +663,17 @@ Function Check-Port
     } } Catch { Return $false }
 }
 
-[string]$F  = '█'    # Full   (ALT+219)
-[string]$T  = '▀'    # Top    (ALT+223)
-[string]$B  = '▄'    # Bottom (ALT+220)
-[string]$M  = '■'    # Middle (ALT+254)
-[string]$L  = '─'    # Line   (ALT+196)
+[string]$F  = ([char]9608).ToString()
+[string]$T  = ([char]9600).ToString()
+[string]$B  = ([char]9604).ToString()
+[string]$M  = ([char]9632).ToString()
+[string]$L  = ([char]9472).ToString()
 
-[string]$TL = '╔'    # (ALT+201)
-[string]$TR = '╗'    # (ALT+187)
-[string]$BL = '╚'    # (ALT+200)
-[string]$V  = '║'    # (ALT+186)
-[string]$H  = '═'    # (ALT+205)
+[string]$TL = ([char]9556).ToString()
+[string]$TR = ([char]9559).ToString()
+[string]$BL = ([char]9562).ToString()
+[string]$V  = ([char]9553).ToString()
+[string]$H  = ([char]9552).ToString()
 
 Function Write-Colr
 {
