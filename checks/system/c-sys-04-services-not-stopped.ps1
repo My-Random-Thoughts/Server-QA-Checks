@@ -6,7 +6,7 @@
         CheckTheseServices - List of known serivces that should be in a disabled state
 
     DEFAULT-VALUES:
-        CheckTheseServices = ('HP System Management Homepage')
+        CheckTheseServices = ('')
 
     DEFAULT-STATE:
         Enabled
