@@ -13,6 +13,14 @@
     DEFAULT-STATE:
         Enabled
 
+    INPUT-DESCRIPTION:
+        0: No elevated prompt
+        1: Prompt for password on a secure desktop
+        2: Show Permit/Deny on a secure desktop
+        3: Prompt for password on a normal desktop
+        4: Show Permit/Deny on a normal desktop
+        5: Permit/Deny for non-Windows binaries on a secure desktop
+
     RESULTS:
         PASS:
             Prompt for credentials is enabled
