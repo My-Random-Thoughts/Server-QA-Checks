@@ -1,13 +1,15 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check the page file is located on the system drive and is a fixed size.  The default setting is 4096MB (4GB).
         If the page file is larger a document detailing the tuning process used must exist and should follow Microsoft best tuning practices (http://support.microsoft.com/kb/2021748).
 
     REQUIRED-INPUTS:
         FixedPageFileSize - Fixed size in MB of the page file|Integer
+        PageFileLocation  - Drive location of the page file
 
     DEFAULT-VALUES:
         FixedPageFileSize = '4096'
+        PageFileLocation  = 'C:\'
 
     DEFAULT-STATE:
         Enabled
@@ -17,9 +19,8 @@
             Pagefile is set correctly
         WARNING: 
         FAIL:
-            Pagefile is system managed, it should be set to a custom size of {size}mb
-            Pagefile should be set on the system drive, to Custom, with Initial and Maximum sizes set to {size}mb
-            Pagefile does not exist on {letter} drive
+            Pagefile is system managed
+            Pagefile is not set correctly
         MANUAL:
             Unable to get page file information, please check manually
         NA:
@@ -46,23 +47,10 @@ Function c-drv-03-pagefile-size-location
 
     Try
     {
-        [string]$query1 = 'SELECT SystemDrive FROM Win32_OperatingSystem'
-        [string]$check1 = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty SystemDrive
-        If ([string]::IsNullOrEmpty($check1) -eq $false)
-        {
-            If ((Get-WmiObject -ComputerName $serverName -Namespace ROOT\Cimv2 -List 'Win32_PageFileSetting').Name -eq 'Win32_PageFileSetting')
-            {
-                [string]$query2 = 'SELECT Name, InitialSize, MaximumSize FROM Win32_PageFileSetting'
-                [string]$query3 = 'SELECT AutomaticManagedPagefile FROM Win32_ComputerSystem'
-                [object]$check2 = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Cimv2                               | Select-Object Name, InitialSize, MaximumSize
-                [string]$check3 = Get-WmiObject -ComputerName $serverName -Query $query3 -Namespace ROOT\Cimv2 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty AutomaticManagedPagefile
-            }
-        }
-        Else
-        {
-            [object] $check2 = $null
-            [boolean]$check3 = $false
-        }
+        [string]$query1 = 'SELECT Name, InitialSize, MaximumSize FROM Win32_PageFileSetting'
+        [string]$query2 = 'SELECT AutomaticManagedPagefile FROM Win32_ComputerSystem'
+        [object]$check1 = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2                               | Select-Object Name, InitialSize, MaximumSize
+        [string]$check2 = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Cimv2 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty AutomaticManagedPagefile
     }
     Catch
     {
@@ -72,45 +60,41 @@ Function c-drv-03-pagefile-size-location
         Return $result
     }
 
-    If ($check3 -eq $true)
+    If ($check2 -eq $true)
     {
         $result.result  = $script:lang['Fail']
-        $result.message = 'Pagefile is system managed, it should be set to a custom size of {0}mb' -f $script:appSettings['FixedPageFileSize']
+        $result.message = 'Pagefile is system managed'
+        $result.data    = ''    # Set below
     }
     Else
     {
-        If (($check2 -eq $null) -and ($check3 -eq $false))
+        If (($check1 -eq $null) -and ($check2 -eq $false))
         {
             $result.result  = $script:lang['Manual']
             $result.message = 'Unable to get page file information, please check manually'
-            $result.data    = 'Pagefile should be set to Custom,#with Initial and Maximum sizes set to ' + $script:appSettings['FixedPageFileSize'] + 'mb'
+            $result.data    = ''    # Set below
         }
-        ElseIf ($check2 -ne $null)
+        If ($check1 -ne $null)
         {
-            If ($check2.MaximumSize -eq 0) 
-            {
-                $result.result  = $script:lang['Fail']
-                $result.message = 'Pagefile is system managed, it should be set to a custom size of {0}mb' -f $script:appSettings['FixedPageFileSize']
-            }
-            ElseIf (($check2.MaximumSize -eq $script:appSettings['FixedPageFileSize']) -and ($check2.InitialSize -eq $script:appSettings['FixedPageFileSize'])) 
+            If (($check1[0].MaximumSize -eq $script:appSettings['FixedPageFileSize']) -and ($check1[0].InitialSize -eq $script:appSettings['FixedPageFileSize']) -and ($check1[0].Name.ToLower().StartsWith($script:appSettings['PageFileLocation'].ToLower())))
             {
                 $result.result  = $script:lang['Pass']
                 $result.message = 'Pagefile is set correctly'
+                $result.data    = 'Location: {0},#Fixed Size: {1}mb' -f $script:appSettings['PageFileLocation'], $script:appSettings['FixedPageFileSize']
             }
             Else
             {
                 $result.result  = $script:lang['Fail']
-                $result.message = 'Pagefile should be set on the system drive, to Custom, with Initial and Maximum sizes set to ' + $script:appSettings['FixedPageFileSize'] + 'mb'
+                $result.message = 'Pagefile is not set correctly'
+                $result.data    = 'Location: {0},#Initial Size: {1}mb, Maximum Size: {2}mb' -f $check1[0].Name, $check1[0].InitialSize, $check1[0].MaximumSize
             }
+        }
+    }
 
-            $result.data    = 'Location: {0},#Initial Size: {1}mb,#Maximum Size: {2}mb' -f $check2.Name, $check2.InitialSize, $check2.MaximumSize
-        }
-        Else
-        {
-            $result.result  = $script:lang['Fail']
-            $result.message = 'Pagefile does not exist on {0} drive' -f $check1
-            $result.data    = ''
-        }
+    If ($result.data -eq '')
+    {
+        $result.message += ',#It should be: location: {0}, fixed Size: {1}mb' -f $script:appSettings['PageFileLocation'], $script:appSettings['FixedPageFileSize']
+        $result.data = ('It should be set as follows,#A fixed custom size of {0}mb and located on the {1} drive' -f $script:appSettings['FixedPageFileSize'], $script:appSettings['PageFileLocation'])
     }
 
     Return $result
