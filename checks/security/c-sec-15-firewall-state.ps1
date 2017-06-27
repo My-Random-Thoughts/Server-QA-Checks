@@ -15,6 +15,10 @@
     DEFAULT-STATE:
         Enabled
 
+    INPUT-DESCRIPTION:
+        0: Disabled
+        1: Enabled
+
     RESULTS:
         PASS:
             Windows firewall is set correctly
