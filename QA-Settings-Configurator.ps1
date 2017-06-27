@@ -140,7 +140,8 @@ Function Show-InputForm
         [parameter(Mandatory=$True )][string]  $Description,
         [parameter(Mandatory=$false)][string]  $Validation = 'None',
         [parameter(Mandatory=$false)][string[]]$InputList,
-        [parameter(Mandatory=$false)][string[]]$CurrentValue
+        [parameter(Mandatory=$false)][string[]]$CurrentValue,
+        [parameter(Mandatory=$false)][string  ]$InputDescription = ''
     )
 
     # [ValidateSet('Simple', 'Check', 'Option', 'List', 'Large')]
@@ -149,19 +150,19 @@ Function Show-InputForm
 #region Form Scripts
     $ChkButton_Click = {
         If ($ChkButton.Text -eq 'Check All') { $ChkButton.Text = 'Check None'; [boolean]$checked = $True } Else { $ChkButton.Text = 'Check All'; [boolean]$checked = $False }
-        ForEach ($Control In $frm_Main.Controls) { If ($control -is [System.Windows.Forms.CheckBox]) { $control.Checked = $checked } }
+        ForEach ($Control In $frm_Input.Controls) { If ($control -is [System.Windows.Forms.CheckBox]) { $control.Checked = $checked } }
     }
 
     [int]$numberOfTextBoxes = 0
     $AddButton_Click = { AddButton_Click -Value '' -Override $false -Type 'TEXT' }
-    Function AddButton_Click ( [string]$Value, [boolean]$Override, [string]$Type )
+    Function AddButton_Click ( [string]$Value, [boolean]$Override, [string]$Type, [string]$ItemTip )
     {
         [int]$BoxNumber = 0
-        ForEach ($Control In $frm_Main.Controls) { If (($Control -is [System.Windows.Forms.TextBox]) -or ($Control -is [System.Windows.Forms.CheckBox])) { $BoxNumber++ } }
+        ForEach ($Control In $frm_Input.Controls) { If (($Control -is [System.Windows.Forms.TextBox]) -or ($Control -is [System.Windows.Forms.CheckBox])) { $BoxNumber++ } }
 
         If ($Type -eq 'TEXT')
         {
-            ForEach ($control In $frm_Main.Controls) {
+            ForEach ($control In $frm_Input.Controls) {
                 If ($control -is [System.Windows.Forms.TextBox]) {
                     [System.Windows.Forms.TextBox]$isEmtpy = $null
                     If ([string]::IsNullOrEmpty($control.Text) -eq $True) { $isEmtpy = $control; Break }
@@ -179,7 +180,7 @@ Function Show-InputForm
 
         # Increase form size, move buttons down, add new field
         $numberOfTextBoxes++
-        $frm_Main.ClientSize        = "394, $(147 + ($BoxNumber * 26))"
+        $frm_Input.ClientSize       = "394, $(147 + ($BoxNumber * 26))"
         $btn_Accept.Location        = "307, $(110 + ($BoxNumber * 26))"
         $btn_Cancel.Location        = "220, $(110 + ($BoxNumber * 26))"
 
@@ -194,7 +195,7 @@ Function Show-InputForm
             $labelCounter.Font      = $sysFont
             $labelCounter.Text      = "$($BoxNumber + 1):"
             $labelCounter.TextAlign = 'MiddleRight'
-            $frm_Main.Controls.Add($labelCounter)
+            $frm_Input.Controls.Add($labelCounter)
 
             # Add new text box and select it for focus
             $textBox                = New-Object 'System.Windows.Forms.TextBox'
@@ -203,8 +204,8 @@ Function Show-InputForm
             $textBox.Font           = $sysFont
             $textBox.Name           = "textBox$BoxNumber"
             $textBox.Text           = $Value.Trim()
-            $frm_Main.Controls.Add($textBox)
-            $frm_Main.Controls["textbox$BoxNumber"].Select()
+            $frm_Input.Controls.Add($textBox)
+            $frm_Input.Controls["textbox$BoxNumber"].Select()
         }
         ElseIf ($Type -eq 'CHECK')
         {
@@ -214,10 +215,10 @@ Function Show-InputForm
             $chkBox.Size            = '370,   20'
             $chkBox.Font            = $sysFont
             $chkBox.Name            = "chkBox$BoxNumber"
-            $chkBox.Text            = $Value
+            $chkBox.Text            = $Value + $ItemTip
             $chkBox.TextAlign       = 'MiddleLeft'
-            $frm_Main.Controls.Add($chkBox)
-            $frm_Main.Controls["chkbox$BoxNumber"].Select()
+            $frm_Input.Controls.Add($chkBox)
+            $frm_Input.Controls["chkbox$BoxNumber"].Select()
         }
         Else { }
     }
@@ -234,7 +235,7 @@ Function Show-InputForm
             $textBox.Select()
 
             # Resize form
-            $frm_Main.ClientSize      = "394, $(147 + 104)"
+            $frm_Input.ClientSize     = "394, $(147 + 104)"
             $btn_Accept.Location      = "307, $(110 + 104)"
             $btn_Cancel.Location      = "220, $(110 + 104)"
         }
@@ -248,7 +249,7 @@ Function Show-InputForm
             $textBox.Select()
 
             # Resize form
-            $frm_Main.ClientSize      = '394, 147'
+            $frm_Input.ClientSize     = '394, 147'
             $btn_Accept.Location      = '307, 110'
             $btn_Cancel.Location      = '220, 110'
         }
@@ -259,7 +260,7 @@ Function Show-InputForm
         [string[]]$currentValues  = @('')
         [boolean] $ValidatedInput = $True
 
-        ForEach ($Control In $frm_Main.Controls)
+        ForEach ($Control In $frm_Input.Controls)
         {
             If (($Control -is [System.Windows.Forms.TextBox]) -and ($Control.Visible -eq $True))
             {
@@ -274,7 +275,7 @@ Function Show-InputForm
         }
 
         # Reset Control Loop for any new fields that may have been added
-        ForEach ($Control In $frm_Main.Controls)
+        ForEach ($Control In $frm_Input.Controls)
         {
             If (($Control -is [System.Windows.Forms.TextBox]) -and ($Control.Visible -eq $True))
             {
@@ -310,7 +311,7 @@ Function Show-InputForm
         }
 
         $currentValues = $null
-        If ($ValidatedInput -eq $True) { $frm_Main.DialogResult = [System.Windows.Forms.DialogResult]::OK }
+        If ($ValidatedInput -eq $True) { $frm_Input.DialogResult = [System.Windows.Forms.DialogResult]::OK }
     }
 
     Function ValidateInputBox ([System.Windows.Forms.Control]$Control)
@@ -375,27 +376,27 @@ Function Show-InputForm
         Return $ValidateResult
     }
 
-    $frm_Main_Cleanup_FormClosed = {
+    $frm_Input_Cleanup_FormClosed = {
         Try {
             $btn_Accept.Remove_Click($btn_Accept_Click)
             $AddButton.Remove_Click($AddButton_Click)
         } Catch {}
-        $frm_Main.Remove_FormClosed($frm_Main_Cleanup_FormClosed)
+        $frm_Input.Remove_FormClosed($frm_Input_Cleanup_FormClosed)
     }
 #endregion
 #region Input Form Controls
     [System.Windows.Forms.Application]::EnableVisualStyles()
-    $frm_Main = New-Object 'System.Windows.Forms.Form'
-    $frm_Main.FormBorderStyle      = 'FixedDialog'
-    $frm_Main.MaximizeBox          = $False
-    $frm_Main.MinimizeBox          = $False
-    $frm_Main.ControlBox           = $False
-    $frm_Main.Text                 = " $Title"
-    $frm_Main.ShowInTaskbar        = $False
-    $frm_Main.AutoScaleDimensions  = '6, 13'
-    $frm_Main.AutoScaleMode        = 'None'
-    $frm_Main.ClientSize           = '394, 147'    # 400 x 175
-    $frm_Main.StartPosition        = 'CenterParent'
+    $frm_Input = New-Object 'System.Windows.Forms.Form'
+    $frm_Input.FormBorderStyle      = 'FixedDialog'
+    $frm_Input.MaximizeBox          = $False
+    $frm_Input.MinimizeBox          = $False
+    $frm_Input.ControlBox           = $False
+    $frm_Input.Text                 = " $Title"
+    $frm_Input.ShowInTaskbar        = $False
+    $frm_Input.AutoScaleDimensions  = '6, 13'
+    $frm_Input.AutoScaleMode        = 'None'
+    $frm_Input.ClientSize           = '394, 147'    # 400 x 175
+    $frm_Input.StartPosition        = 'CenterParent'
 
     $ToolTip                       = New-Object 'System.Windows.Forms.ToolTip'
 
@@ -433,14 +434,14 @@ Function Show-InputForm
     $pic_InvalidValue.Visible      = $false
     $pic_InvalidValue.TabStop      = $False
     $pic_InvalidValue.BringToFront()
-    $frm_Main.Controls.Add($pic_InvalidValue)
+    $frm_Input.Controls.Add($pic_InvalidValue)
 
     $lbl_Description               = New-Object 'System.Windows.Forms.Label'
     $lbl_Description.Location      = ' 12,  12'
     $lbl_Description.Size          = '370,  48'
     $lbl_Description.Font          = $sysFont
     $lbl_Description.Text          = $($Description.Trim())
-    $frm_Main.Controls.Add($lbl_Description)
+    $frm_Input.Controls.Add($lbl_Description)
 
     If ($Validation -ne 'None')
     {
@@ -450,7 +451,7 @@ Function Show-InputForm
         $lbl_Validation.Font       = $sysFont
         $lbl_Validation.Text       = "Validation: $($Validation.ToUpper())"
         $lbl_Validation.TextAlign  = 'BottomRight'
-        $frm_Main.Controls.Add($lbl_Validation)
+        $frm_Input.Controls.Add($lbl_Validation)
     }
 
     $btn_Accept                    = New-Object 'System.Windows.Forms.Button'
@@ -460,8 +461,8 @@ Function Show-InputForm
     $btn_Accept.Text               = 'OK'
     $btn_Accept.TabIndex           = '97'
     $btn_Accept.Add_Click($btn_Accept_Click)
-    If ($Type -ne 'LARGE') { $frm_Main.AcceptButton = $btn_Accept }
-    $frm_Main.Controls.Add($btn_Accept)
+    If ($Type -ne 'LARGE') { $frm_Input.AcceptButton = $btn_Accept }
+    $frm_Input.Controls.Add($btn_Accept)
 
     $btn_Cancel                    = New-Object 'System.Windows.Forms.Button'
     $btn_Cancel.Location           = '220, 110'
@@ -470,11 +471,12 @@ Function Show-InputForm
     $btn_Cancel.Text               = 'Cancel'
     $btn_Cancel.TabIndex           = '98'
     $btn_Cancel.DialogResult       = [System.Windows.Forms.DialogResult]::Cancel
-    $frm_Main.CancelButton         = $btn_Cancel
-    $frm_Main.Controls.Add($btn_Cancel)
-    $frm_Main.Add_FormClosed($frm_Main_Cleanup_FormClosed)
+    $frm_Input.CancelButton         = $btn_Cancel
+    $frm_Input.Controls.Add($btn_Cancel)
+    $frm_Input.Add_FormClosed($frm_Input_Cleanup_FormClosed)
 #endregion
 #region Input Form Controls Part 2
+    [string]$ItemTip = ''
     Switch ($Type)
     {
         'LIST' {
@@ -490,11 +492,11 @@ Function Show-InputForm
             $AddButton.Font         = $sysFont
             $AddButton.Text         = 'Add'
             $AddButton.Add_Click($AddButton_Click)
-            $frm_Main.Controls.Add($AddButton)
+            $frm_Input.Controls.Add($AddButton)
 
             # Add initial textboxes
             For ($i = 0; $i -le $numberOfTextBoxes; $i++) { AddButton_Click -Value ($CurrentValue[$i]) -Override $True -Type 'TEXT' }
-            $frm_Main.Controls['textbox0'].Select()
+            $frm_Input.Controls['textbox0'].Select()
             Break
         }
 
@@ -506,14 +508,15 @@ Function Show-InputForm
             $ChkButton.Font         = $sysFont
             $ChkButton.Text         = 'Check All'
             $ChkButton.Add_Click($ChkButton_Click)
-            $frm_Main.Controls.Add($ChkButton)
+            $frm_Input.Controls.Add($ChkButton)
 
             # Add initial textboxes
             [int]$i = 0
+            If ($InputDescription -ne '') { For ($x=0;$x-lt$InputList.Count;$x++) { ForEach ($iDec In $InputDescription.Split('|')) { If ($iDec.StartsWith($InputList[$x] + ': ') -eq $true) { $InputList[$x] = $iDec } } } }
             ForEach ($item In $InputList)
             {
                 AddButton_Click -Value ($item.Trim()) -Override $True -Type 'CHECK'
-                If ([string]::IsNullOrEmpty($CurrentValue) -eq $false) { If ($CurrentValue.Contains($item.Trim())) { $frm_Main.Controls["chkBox$i"].Checked = $True } }
+                If ([string]::IsNullOrEmpty($CurrentValue) -eq $false) { If ($CurrentValue.Contains($item.Split(':')[0].Trim())) { $frm_Input.Controls["chkBox$i"].Checked = $True } }
                 $i++
             }
             Break
@@ -521,15 +524,18 @@ Function Show-InputForm
 
         'OPTION' {
             # Drop down selection list
+            If ($InputDescription -ne '') { For ($x=0;$x-lt$InputList.Count;$x++) { ForEach ($iDec In $InputDescription.Split('|')) { If ($iDec.StartsWith($InputList[$x] + ': ') -eq $true) { $InputList[$x] = $iDec } } } }
+
             $comboBox               = New-Object 'System.Windows.Forms.ComboBox'
             $comboBox.Location      = ' 12,  75'
             $comboBox.Size          = '370,  21'
             $comboBox.Font          = $sysFont
             $comboBox.DropDownStyle = 'DropDownList'
-            $frm_Main.Controls.Add($comboBox)
+            $frm_Input.Controls.Add($comboBox)
             $comboBox.Items.AddRange(($InputList.Trim())) | Out-Null
-            $frm_Main.Add_Shown({$comboBox.Select()})
-            If ([string]::IsNullOrEmpty($CurrentValue) -eq $false) { $comboBox.SelectedItem = $CurrentValue[0] } Else { $comboBox.SelectedIndex = -1 }
+            $frm_Input.Add_Shown({$comboBox.Select()})
+            $comboBox.SelectedIndex = -1
+            ForEach ($item In $InputList) { If ([string]::IsNullOrEmpty($CurrentValue) -eq $false) { if ($CurrentValue[0].Contains($item.Split(':')[0].Trim())) { $comboBox.SelectedItem = $item } } }
             Break
         }
 
@@ -541,12 +547,12 @@ Function Show-InputForm
             $textBox.Font           = $sysFont
             $textBox.Multiline      = $True
             $textBox.ScrollBars     = 'Vertical'
-            $frm_Main.Controls.Add($textBox)
-            $frm_Main.Add_Shown({$textBox.Select()})
+            $frm_Input.Controls.Add($textBox)
+            $frm_Input.Add_Shown({$textBox.Select()})
             $textBox.Select()
 
             # Resize form
-            $frm_Main.Height       += 104                    # 
+            $frm_Input.Height      += 104                    # 
             $btn_Accept.Location    = "307, $(110 + 104)"    # 104 comes from 4 x 26
             $btn_Cancel.Location    = "220, $(110 + 104)"    #
             Break
@@ -558,7 +564,7 @@ Function Show-InputForm
             $textBox.Location       = ' 12,  75'
             $textBox.Size           = '370,  20'
             $textBox.Font           = $sysFont
-            $frm_Main.Controls.Add($textBox)
+            $frm_Input.Controls.Add($textBox)
             $textBox.Select()
             Break
         }
@@ -572,8 +578,8 @@ Function Show-InputForm
     }
 #endregion
 #region Show Form And Return Value
-    ForEach ($control In $frm_Main.Controls) { $control.Font = $sysFont; Try { $control.FlatStyle = 'Standard' } Catch {} }
-    $result = $frm_Main.ShowDialog($MainForm)
+    ForEach ($control In $frm_Input.Controls) { $control.Font = $sysFont; Try { $control.FlatStyle = 'Standard' } Catch {} }
+    $result = $frm_Input.ShowDialog($MainForm)
 
     If ($result -eq [System.Windows.Forms.DialogResult]::OK)
     {
@@ -581,14 +587,14 @@ Function Show-InputForm
         {
             'LIST'   {
                 [string[]]$return = @()
-                ForEach ($control In $frm_Main.Controls) { If ($control -is [System.Windows.Forms.TextBox]) {
+                ForEach ($control In $frm_Input.Controls) { If ($control -is [System.Windows.Forms.TextBox]) {
                     If ([string]::IsNullOrEmpty($control.Text) -eq $false) { $return += ($($control.Text.Trim())) } }
                 } Return $return
             }
             'CHECK'  {
                 [string[]]$return = @()
-                ForEach ($Control In $frm_Main.Controls) { If ($control -is [System.Windows.Forms.CheckBox]) {
-                    If ($control.Checked -eq $True) { $return += ($($control.Text.Trim())) } }
+                ForEach ($Control In $frm_Input.Controls) { If ($control -is [System.Windows.Forms.CheckBox]) {
+                    If ($control.Checked -eq $True) { $return += ($($control.Text.Split(':')[0].Trim())) } }
                 } Return $return
             }
             'LARGE'  {
@@ -599,7 +605,7 @@ Function Show-InputForm
                 Do { [string]$return = $($textBox.Text.Trim()).Replace("`r`n", ' ') }
                 While ( $return.IndexOf("`r`n") -gt -1 ); Return ($return.Trim("`r`n"))
             }
-            'OPTION' { Return $($comboBox.SelectedItem) }
+            'OPTION' { Return $($comboBox.SelectedItem.Split(':')[0].Trim()) }
             Default  { Return "Invalid return type: $Type" }
         }
     }
@@ -617,23 +623,23 @@ Function Show-ExtraSettingsForm
     )
 
 #region MAIN FORM
-    $frm_Main = New-Object 'System.Windows.Forms.Form'
-    $frm_Main.FormBorderStyle      = 'FixedDialog'
-    $frm_Main.MaximizeBox          = $False
-    $frm_Main.MinimizeBox          = $False
-    $frm_Main.ControlBox           = $False
-    $frm_Main.Text                 = ' Additional Settings'
-    $frm_Main.ShowInTaskbar        = $False
-    $frm_Main.AutoScaleDimensions  = '6, 13'
-    $frm_Main.AutoScaleMode        = 'None'
-    $frm_Main.ClientSize           = '444, 222'    # 450 x 250
-    $frm_Main.StartPosition        = 'CenterParent'
+    $frm_Extra = New-Object 'System.Windows.Forms.Form'
+    $frm_Extra.FormBorderStyle      = 'FixedDialog'
+    $frm_Extra.MaximizeBox          = $False
+    $frm_Extra.MinimizeBox          = $False
+    $frm_Extra.ControlBox           = $False
+    $frm_Extra.Text                 = ' Additional Settings'
+    $frm_Extra.ShowInTaskbar        = $False
+    $frm_Extra.AutoScaleDimensions  = '6, 13'
+    $frm_Extra.AutoScaleMode        = 'None'
+    $frm_Extra.ClientSize           = '444, 222'    # 450 x 250
+    $frm_Extra.StartPosition        = 'CenterParent'
 
     $lbl_Description               = New-Object 'System.Windows.Forms.Label'
     $lbl_Description.Location      = ' 12,  12'
     $lbl_Description.Size          = '420,  33'
     $lbl_Description.Text          = 'This form allows you to set any additional settings that help control the QA scripts and its output.'
-    $frm_Main.Controls.Add($lbl_Description)
+    $frm_Extra.Controls.Add($lbl_Description)
 
     $btn_Reset                     = New-Object 'System.Windows.Forms.Button'
     $btn_Reset.Location           = ' 12, 185'
@@ -642,7 +648,7 @@ Function Show-ExtraSettingsForm
     $btn_Reset.Text               = 'Reset'
     $btn_Reset.TabIndex           = '99'
     $btn_Reset.Add_Click({ $cmo_Timeout.SelectedItem = '60'; $cmo_Concurrent.SelectedItem = '5'; $txt_Location.Text = '$env:SystemDrive\QA\Results\' })
-    $frm_Main.Controls.Add($btn_Reset)
+    $frm_Extra.Controls.Add($btn_Reset)
 
     $btn_Accept                    = New-Object 'System.Windows.Forms.Button'
     $btn_Accept.Location           = '357, 185'
@@ -651,8 +657,8 @@ Function Show-ExtraSettingsForm
     $btn_Accept.Text               = 'Save'
     $btn_Accept.TabIndex           = '97'
     $btn_Accept.DialogResult       = [System.Windows.Forms.DialogResult]::OK
-    $frm_Main.AcceptButton         = $btn_Accept
-    $frm_Main.Controls.Add($btn_Accept)
+    $frm_Extra.AcceptButton         = $btn_Accept
+    $frm_Extra.Controls.Add($btn_Accept)
 
     $btn_Cancel                    = New-Object 'System.Windows.Forms.Button'
     $btn_Cancel.Location           = '267, 185'
@@ -661,8 +667,8 @@ Function Show-ExtraSettingsForm
     $btn_Cancel.Text               = 'Cancel'
     $btn_Cancel.TabIndex           = '98'
     $btn_Cancel.DialogResult       = [System.Windows.Forms.DialogResult]::Cancel
-    $frm_Main.CancelButton         = $btn_Cancel
-    $frm_Main.Controls.Add($btn_Cancel)
+    $frm_Extra.CancelButton         = $btn_Cancel
+    $frm_Extra.Controls.Add($btn_Cancel)
 #endregion
 #region OPTIONS
     # Option 1
@@ -671,14 +677,14 @@ Function Show-ExtraSettingsForm
     $lbl_TimeOut1.Size             = '150,  21'
     $lbl_TimeOut1.Text             = 'Check Timeout :'
     $lbl_TimeOut1.TextAlign        = 'MiddleRight'
-    $frm_Main.Controls.Add($lbl_Timeout1)
+    $frm_Extra.Controls.Add($lbl_Timeout1)
 
     [string[]]$TimeOutList         = @('30','45','60','75','90','120')
     $cmo_TimeOut                   = New-Object 'System.Windows.Forms.ComboBox'
     $cmo_TimeOut.Location          = '168,  66'
     $cmo_TimeOut.Size              = ' 50,  21'
     $cmo_TimeOut.DropDownStyle     = 'DropDownList'
-    $frm_Main.Controls.Add($cmo_TimeOut)
+    $frm_Extra.Controls.Add($cmo_TimeOut)
     $cmo_TimeOut.Items.AddRange($TimeOutList) | Out-Null
     $cmo_TimeOut.SelectedItem      = '60'
     If ($Timeout -ne '') { $cmo_TimeOut.SelectedItem = $Timeout }
@@ -688,7 +694,7 @@ Function Show-ExtraSettingsForm
     $lbl_TimeOut2.Size             = '208,  21'
     $lbl_TimeOut2.Text             = 'Seconds'
     $lbl_TimeOut2.TextAlign        = 'MiddleLeft'
-    $frm_Main.Controls.Add($lbl_TimeOut2)
+    $frm_Extra.Controls.Add($lbl_TimeOut2)
 
     # Option 2
     $lbl_Concurrent1               = New-Object 'System.Windows.Forms.Label'
@@ -696,14 +702,14 @@ Function Show-ExtraSettingsForm
     $lbl_Concurrent1.Size          = '150,  21'
     $lbl_Concurrent1.Text          = 'Check Concurrency :'
     $lbl_Concurrent1.TextAlign     = 'MiddleRight'
-    $frm_Main.Controls.Add($lbl_Concurrent1)
+    $frm_Extra.Controls.Add($lbl_Concurrent1)
 
     [string[]]$ConCurrentList      = @('2', '3', '4', '5', '7', '10', '15')
     $cmo_Concurrent                = New-Object 'System.Windows.Forms.ComboBox'
     $cmo_Concurrent.Location       = '168, 102'
     $cmo_Concurrent.Size           = ' 50,  21'
     $cmo_Concurrent.DropDownStyle  = 'DropDownList'
-    $frm_Main.Controls.Add($cmo_Concurrent)
+    $frm_Extra.Controls.Add($cmo_Concurrent)
     $cmo_Concurrent.Items.AddRange($ConCurrentList) | Out-Null
     $cmo_Concurrent.SelectedItem   = '5'
     If ($Concurrent -ne '') { $cmo_Concurrent.SelectedItem = $Concurrent }
@@ -713,7 +719,7 @@ Function Show-ExtraSettingsForm
     $lbl_Concurrent2.Size          = '208,  21'
     $lbl_Concurrent2.Text          = 'At a time'
     $lbl_Concurrent2.TextAlign     = 'MiddleLeft'
-    $frm_Main.Controls.Add($lbl_Concurrent2)
+    $frm_Extra.Controls.Add($lbl_Concurrent2)
 
     # Option 3
     $lbl_Location                  = New-Object 'System.Windows.Forms.Label'
@@ -721,26 +727,26 @@ Function Show-ExtraSettingsForm
     $lbl_Location.Size             = '150,  20'
     $lbl_Location.Text             = 'Report Location :'
     $lbl_Location.TextAlign        = 'MiddleRight'
-    $frm_Main.Controls.Add($lbl_Location)
+    $frm_Extra.Controls.Add($lbl_Location)
 
     $txt_Location                  = New-Object 'System.Windows.Forms.Textbox'
     $txt_Location.Location         = '168, 138'
     $txt_Location.Size             = '264,  20'
     $txt_Location.TextAlign        = 'Left'
     If ($OutputLocation -ne '') { $txt_Location.Text = $OutputLocation } Else { $txt_Location.Text = '$env:SystemDrive\QA\Results\' }
-    $frm_Main.Controls.Add($txt_Location)
+    $frm_Extra.Controls.Add($txt_Location)
 #endregion
 #region FORM STARTUP / SHUTDOWN
-    $frm_Main_Cleanup_FormClosed = {
+    $frm_Extra_Cleanup_FormClosed = {
         Try {
             $btn_Accept.Remove_Click($btn_Accept_Click)
         } Catch {}
-        $frm_Main.Remove_FormClosed($frm_Main_Cleanup_FormClosed)
-        $frm_Main.Dispose()
+        $frm_Extra.Remove_FormClosed($frm_Extra_Cleanup_FormClosed)
+        $frm_Extra.Dispose()
     }
 
-    ForEach ($control In $frm_Main.Controls) { $control.Font = $sysFont; Try { $control.FlatStyle = 'Standard' } Catch {} }
-    [string]$result = $frm_Main.ShowDialog()
+    ForEach ($control In $frm_Extra.Controls) { $control.Font = $sysFont; Try { $control.FlatStyle = 'Standard' } Catch {} }
+    [string]$result = $frm_Extra.ShowDialog()
 
     If ($result -eq 'OK')
     {
@@ -854,7 +860,7 @@ Function Display-MainForm
             'COMBO*' {
                 [string[]]$currentVal  =   $($selectedItem.SubItems[1].Text.Trim("'"))
                 [string[]]$selections  = (($($selectedItem.SubItems[2].Text).Split('-')[1]).Split('|'))
-                [string[]]$returnValue = (Show-InputForm -Type 'Option' -Title $($selectedItem.Group.Header) -Description "$($selectedItem.SubItems[0].Text)`n$($selectedItem.SubItems[3].Text)" -CurrentValue $currentVal -InputList $selections)
+                [string[]]$returnValue = (Show-InputForm -Type 'Option' -Title $($selectedItem.Group.Header) -Description "$($selectedItem.SubItems[0].Text)`n$($selectedItem.SubItems[3].Text)" -CurrentValue $currentVal -InputList $selections -InputDescription $($selectedItem.SubItems[5].Text))
                 If ($returnValue -ne '!!-CANCELLED-!!') { $SourceControl.SelectedItems[0].SubItems[1].Text = "'$returnValue'" }
                 Break
             }
@@ -863,7 +869,7 @@ Function Display-MainForm
                 [string[]]$currentVal  =   $($selectedItem.SubItems[1].Text).Split(';')
                           $currentVal  = ($currentVal.Trim().Replace("'",'').Replace('(','').Replace(')',''))
                 [string[]]$selections  = (($($selectedItem.SubItems[2].Text).Split('-')[1]).Split(','))
-                [string[]]$returnValue = (Show-InputForm -Type 'Check'  -Title $($selectedItem.Group.Header) -Description "$($selectedItem.SubItems[0].Text)`n$($selectedItem.SubItems[3].Text)" -CurrentValue $currentVal -InputList $selections)
+                [string[]]$returnValue = (Show-InputForm -Type 'Check'  -Title $($selectedItem.Group.Header) -Description "$($selectedItem.SubItems[0].Text)`n$($selectedItem.SubItems[3].Text)" -CurrentValue $currentVal -InputList $selections -InputDescription $($selectedItem.SubItems[5].Text))
                 If ($returnValue -ne '!!-CANCELLED-!!') { $SourceControl.SelectedItems[0].SubItems[1].Text = ("('{0}')" -f $($returnValue -join ';').Replace(';', "'; '")) }
                 Break
             }
@@ -1091,11 +1097,13 @@ Function Display-MainForm
                 $newLVW_CH_Type = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Type.Text = ''     ; $newLVW_CH_Type.Width =   0       # Input type: List/Combo/Simple, etc
                 $newLVW_CH_Desc = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Desc.Text = ''     ; $newLVW_CH_Desc.Width =   0       # Description from check file
                 $newLVW_CH_Vali = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Vali.Text = ''     ; $newLVW_CH_Vali.Width =   0       # Validation type
+                $newLVW_CH_Vdsc = New-Object 'System.Windows.Forms.ColumnHeader'; $newLVW_CH_Vdsc.Text = ''     ; $newLVW_CH_Vdsc.Width =   0       # Value Description
                 $newLVW.Columns.Add($newLVW_CH_Name) | Out-Null
                 $newLVW.Columns.Add($newLVW_CH_Valu) | Out-Null
                 $newLVW.Columns.Add($newLVW_CH_Type) | Out-Null
                 $newLVW.Columns.Add($newLVW_CH_Desc) | Out-Null
                 $newLVW.Columns.Add($newLVW_CH_Vali) | Out-Null
+                $newLVW.Columns.Add($newLVW_CH_Vdsc) | Out-Null
 
                 # Add Events for each Listview
                 $newLVW.Add_KeyPress( { If ($_.KeyChar -eq 13) { ListView_DoubleClick -SourceControl $this } } )
@@ -1245,6 +1253,13 @@ Function Display-MainForm
                         }
                     }
 
+                    # Get any input descriptions (if any exist)
+                    [string]$idsc = ""
+                    [string]$getContent = ((Get-Content -Path "$script:scriptLocation\checks\$($listItem.SubItems[3].Text)" -TotalCount 50) -join "`n")
+                    $regExD = [RegEx]::Match($getContent, "INPUT-DESCRIPTION:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
+                    [string[]]$Inputs = ($regExD.Groups[1].Value.Trim()).Split("`n")
+                    ForEach ($EachInput In $Inputs) { If ($EachInput -ne '') { $idsc += $EachInput.Trim() + '|' } }
+
                     # Remove all double spaces
                     Do { $desc = $desc.Replace('  ', ' ') } While ($desc.Contains('  '))
 
@@ -1291,7 +1306,7 @@ Function Display-MainForm
                         [string]$vali = 'None'
                     }
 
-                    Add-ListViewItem -ListView $lvwObject -Items $item -SubItems ($value, $type, $desc, $vali) -Group $guid -ImageIndex 1 -Enabled $($listItem.Checked)
+                    Add-ListViewItem -ListView $lvwObject -Items $item -SubItems ($value, $type, $desc, $vali, $idsc) -Group $guid -ImageIndex 1 -Enabled $($listItem.Checked)
                 }
 
                 # Add 'spacing' gap between groups
