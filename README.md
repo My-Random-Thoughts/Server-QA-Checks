@@ -2,6 +2,11 @@
 
 - Updated NET-01 check so that it now takes an option.  IPv6State = 'Enabled|Disabled'.  Will check to see if IPv6 is enalbed or disabled for the server being tested.  Please manually update your INI settings with the new entry.  default-settings.ini has the correct entry.
 
+2017/06/27
+- Added functionality to allow checkbox and dropdown list options to have descriptions for each item.  An example of this is SEC-09 and SEC-15.
+- Changed the default setting of SYS-04, as it's now covered by SYS-19
+
+Older
 - New check: SEC-17 - Check SMBv1 Is Disabled
 - New check: SEC-19 - Check HP SMH Version
 - New check: SEC-20 - Check Dell OMA Version
