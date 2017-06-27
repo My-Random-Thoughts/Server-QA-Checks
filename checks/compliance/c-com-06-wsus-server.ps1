@@ -45,7 +45,7 @@ Function c-com-06-wsus-server
     {
         $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
         $regKey = $reg.OpenSubKey('Software\Policies\Microsoft\Windows\WindowsUpdate')
-        If ($regKey) { [string]$keyVal = $regKey.GetValue('WUServer') }
+        If ($regKey) { [string]$keyVal = ($regKey.GetValue('WUServer')).ToLower() }
         Try { $regKey.Close() } Catch { }
         $reg.Close()
     }
@@ -61,7 +61,7 @@ Function c-com-06-wsus-server
     {
         $result.result  = $script:lang['Pass']
         $result.message = 'WSUS server configured'
-        $result.data    = $keyVal.ToLower()
+        $result.data    = $keyVal
 
         $keyVal = $keyVal.Replace('http://', '').Replace('https://', '')
         If ($keyVal.Contains(':') -eq $true) { [string]$name = ($keyVal.Split(':')[0]); [string]$port = $keyVal.Split(':')[1] }
