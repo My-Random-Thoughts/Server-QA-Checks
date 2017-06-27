@@ -74,7 +74,7 @@ Function c-drv-03-pagefile-size-location
             $result.message = 'Unable to get page file information, please check manually'
             $result.data    = ''    # Set below
         }
-        If ($check1 -ne $null)
+        ElseIf ($check1 -ne $null)
         {
             If (($check1[0].MaximumSize -eq $script:appSettings['FixedPageFileSize']) -and ($check1[0].InitialSize -eq $script:appSettings['FixedPageFileSize']) -and ($check1[0].Name.ToLower().StartsWith($script:appSettings['PageFileLocation'].ToLower())))
             {
@@ -88,6 +88,12 @@ Function c-drv-03-pagefile-size-location
                 $result.message = 'Pagefile is not set correctly'
                 $result.data    = 'Location: {0},#Initial Size: {1}mb, Maximum Size: {2}mb' -f $check1[0].Name, $check1[0].InitialSize, $check1[0].MaximumSize
             }
+        }
+        Else
+        {
+            $result.result  = $script:lang['Fail']
+            $result.message = 'Pagefile does not exist on {0} drive' -f $script:appSettings['PageFileLocation']
+            $result.data    = ''    # Set below
         }
     }
 
