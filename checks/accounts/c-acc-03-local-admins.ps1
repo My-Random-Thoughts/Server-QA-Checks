@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check the local administrators group to ensure no non-standard accounts exist.
         If there is a specific application requirement for local administration access then these need to be well documented.
@@ -44,15 +44,20 @@ Function c-acc-03-local-admins
 
     Try
     {
-        [string]$query1    = 'SELECT * FROM Win32_Group WHERE SID="S-1-5-32-544" AND LocalAccount="True"'
-        [object]$WMIObject = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2
-        [array] $check     = $WMIObject.GetRelated('Win32_Account', 'Win32_GroupUser', '', '', 'PartComponent', 'GroupComponent', $false, $null) | Select-Object -ExpandProperty Name
+        [string] $query  = "SELECT PartOfDomain FROM Win32_ComputerSystem"
+        [boolean]$domain = Get-WmiObject -ComputerName $serverName -Query $query  -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty PartOfDomain
 
-        [System.Collections.ArrayList]$check2 = @()
-        $check | ForEach { $check2 += $_ }
+        [string]$query1  = 'SELECT * FROM Win32_Group WHERE SID="S-1-5-32-544" AND LocalAccount="True"'
+        [object]$object1 = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2
 
-        [string] $query2 = "SELECT PartOfDomain FROM Win32_ComputerSystem"
-        [boolean]$domain = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty PartOfDomain
+        [string]$query2  = "SELECT PartComponent FROM Win32_GroupUser WHERE GroupComponent=`"Win32_Group.Domain='$serverName',Name='$($object1.Name)'`""
+        [object]$object2 = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Cimv2
+
+        [System.Collections.ArrayList]$members = @()
+        $object2 | ForEach { 
+            [string]$item = (($_.PartComponent).Split('"')[3])
+            If (-not $script:appSettings['IgnoreTheseUsers'].Contains($item)) { $members += $item }
+        }
     }
     Catch
     {
@@ -64,19 +69,11 @@ Function c-acc-03-local-admins
  
     If ($domain -eq $true)
     {
-        ForEach ($ck In $check)
-        {
-            ForEach ($exc In $script:appSettings['IgnoreTheseUsers'])
-            {
-                If ($ck -eq $exc) { $check2.Remove($ck) }
-            }
-        }
-
-        If ($check2.count -gt 0)
+        If ($members.count -gt 0)
         {
             $result.result  = $script:lang['Fail']
             $result.message = 'One or more local administrator accounts exist'
-            $check2 | ForEach { $result.data += '{0},#' -f $_ }
+            $members | ForEach { $result.data += '{0},#' -f $_ }
         }
         Else
         {
