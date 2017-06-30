@@ -11,7 +11,9 @@
     NET-09 - Static Routes - Fixed detection method
     NET-11 - DNS Settings - Fixed entire script.!
     SYS-05 - System Event Log - Added new options to check log size and rotation type
+        Please make sure you update your settings.ini file for the new settings
     SYS-06 - Application Event Log - Added new options to check log size and rotation type
+        Please make sure you update your settings.ini file for the new settings
 
 2017/06/27
 - Added functionality to allow checkbox and dropdown list options to have descriptions for each item.  An example of this is SEC-09 and SEC-15.
