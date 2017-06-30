@@ -116,5 +116,5 @@ Function c-sys-20-dell-oma-version
 Function isDELLServer
 {
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object Manufacturer
-    If ($wmiBIOS.Manufacturer -like 'Dell*') { Return $true } Else { Return $false }        
+    If ($wmiBIOS.Manufacturer -like 'Dell*') { Return $true } Else { Return $false }
 }

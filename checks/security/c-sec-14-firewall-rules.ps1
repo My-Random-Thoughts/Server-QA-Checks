@@ -6,7 +6,7 @@
         IgnoreTheseFirewallAppRules - List of known firewall rules to ignore
 
     DEFAULT-VALUES:
-        IgnoreTheseFirewallAppRules = ('Microsoft', 'McAfee', 'macmnsvc', 'System Center', 'nbwin', 'Java', 'Firefox', 'Chrome')
+        IgnoreTheseFirewallAppRules = ('MSExchange', 'Microsoft', 'McAfee', 'macmnsvc', 'System Center', 'nbwin', 'Java', 'Firefox', 'Chrome')
 
     DEFAULT-STATE:
         Enabled

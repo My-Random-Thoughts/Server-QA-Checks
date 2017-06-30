@@ -1,6 +1,6 @@
 ﻿<#
     DESCRIPTION: 
-        Check that the latest vmware tools are installed.
+        Check that the latest VMware tools or Microsoft integration services are installed.
 
     REQUIRED-INPUTS:
         None
@@ -16,8 +16,10 @@
             VMware tools are up to date
         WARNING:
         FAIL:
+            Integration services not installed
             VMware tools can be upgraded
         MANUAL:
+            Integration services found
             Unable to check the VMware Tools upgrade status
         NA:
             Not a virtual machine
@@ -26,6 +28,7 @@
         Virtual Servers
 
     REQUIRED-FUNCTIONS:
+        Check-HyperV
         Check-VMware
 #>
 
@@ -42,7 +45,38 @@ Function c-vmw-01-tools-version
 
     #... CHECK STARTS HERE ...#
 
-    If ((Check-VMware $serverName) -eq $true)
+    If ((Check-HyperV $serverName) -eq $true)
+    {
+        Try
+        {
+            $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
+            $regKey = $reg.OpenSubKey('SOFTWARE\Microsoft\Virtual Machine\Auto')
+            If ($regKey) { [string]$keyVal = $regKey.GetValue('IntegrationServicesVersion') }
+            Try { $regKey.Close() } Catch { }
+            $reg.Close()
+        }
+        Catch
+        {
+            $result.result  = $script:lang['Error']
+            $result.message = $script:lang['Script-Error']
+            $result.data    = $_.Exception.Message
+            Return $result
+        }
+
+        If ([string]::IsNullOrEmpty($keyVal) -eq $false)
+        {
+            $result.result  = $script:lang['Manual']
+            $result.message = 'Integration services found'
+            $result.data    = ('Version: {0}' -f $keyVal)
+        }
+        Else
+        {
+            $result.result  = $script:lang['fail']
+            $result.message = 'Integration services not installed'
+        }
+    }
+    
+    ElseIf ((Check-VMware $serverName) -eq $true)
     {
         Try
         {
@@ -92,6 +126,7 @@ Function c-vmw-01-tools-version
             $result.data    = 'Open vSphere client, locate "{0}", check to see if the VMware tools can be upgraded, and do so if needed' -f $serverName
         }
     }
+
     Else
     {
         $result.result  = $script:lang['Not-Applicable']

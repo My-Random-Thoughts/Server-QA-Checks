@@ -25,6 +25,7 @@
         Virtual Servers
 
     REQUIRED-FUNCTIONS:
+        Check-HyperV
         Check-VMware
 #>
 
@@ -41,7 +42,7 @@ Function c-vmw-06-total-vm-size
 
     #... CHECK STARTS HERE ...#
 
-    If ((Check-VMware $serverName) -eq $true)
+    If (((Check-VMware $serverName) -eq $true) -or ((Check-HyperV $serverName) -eq $true))
     {
         Try
         {

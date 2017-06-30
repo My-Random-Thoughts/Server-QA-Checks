@@ -722,11 +722,10 @@ Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width + 1, $L) }
                                       'drv' = $script:lang['Drives'];          # List of sections, matched
                                       'hvh' = $script:lang['HyperV-Host'];     # with the check short name
                                       'net' = $script:lang['Network'];         # 
-                                      'reg' = $script:lang['Regional'];        #
-                                      'sec' = $script:lang['Security'];        # These are displayed in
-                                      'sys' = $script:lang['System'];          # the HTML report file
-                                      'vhv' = $script:lang['VMs-HyperV'];      #
-                                      'vmw' = $script:lang['VMs-VMware'];     #
+                                      'reg' = $script:lang['Regional'];        # These are displayed in
+                                      'sec' = $script:lang['Security'];        # the HTML report file
+                                      'sys' = $script:lang['System'];          #
+                                      'vmw' = $script:lang['Virtual'];        #
                                      }
 $tt = [System.Diagnostics.StopWatch]::StartNew()
 Check-CommandLine

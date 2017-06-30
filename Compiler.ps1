@@ -42,7 +42,7 @@ Function Write-Colr
 
 Function Write-Header
 {
-    Param ([string]$Message,[int]$Width); $underline=''.PadLeft($Width-16,$H)
+    Param ([string]$Message,[int]$Width); $underline=''.PadLeft($Width-16,$L)
     $q=("$TL$H$H$H$H$H$H$H$H$H$H$H$TR    ",'','','',        "$V           $V    ",'','','',        "$V  ","$F$T$F $F$T$F","  $V    ",'',
         "$V  ","$F$B$F $F$T$F","  $V    ",'',        "$V  "," $T     ","  $V    ",'',        "$V  ",' CHECK ',"  $V","  $F$F",
         "$V  ",'       ',"  $V"," $F$F ",        "$V  ",'      ','',"$F$F$B $F$F  ",        "$BL$H$H$H$H$H$H$H$H",'',''," $T$F$F$T ")

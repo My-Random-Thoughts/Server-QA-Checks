@@ -794,7 +794,7 @@ Function Display-MainForm
         $lbl_t4_ReportTitle.Height  = $txt_t4_ReportTitle.Height
 
         # Setup default views/messages
-        $lbl_t3_NoParameters.Visible    = $True
+        $lbl_t3_NoChecks.Visible    = $True
         $lst_t2_SelectChecks.CheckBoxes = $False
         $lst_t2_SelectChecks.Groups.Add('ErrorGroup','Please Note')
         Add-ListViewItem -ListView $lst_t2_SelectChecks -Items '' -SubItems ('','')                                   -ImageIndex -1 -Group 'ErrorGroup' -Enabled $True
@@ -836,6 +836,12 @@ Function Display-MainForm
 #endregion
 ###################################################################################################
 #region FORM Scripts
+    # Timer to enable the "Complete" button on Tab 3.  This helps to stop double-clicks 
+    $tim_CompleteTimer_Tick = {
+        $TimerTick++
+        If ($TimerTick -ge 1) { $btn_t3_Complete.Enabled = $True; $tim_CompleteTimer.Stop }
+    }
+
     $tab_Pages_SelectedIndexChanged = {
         If ($tab_Pages.SelectedIndex -eq 0) {  $btn_RestoreINI.Visible = $True                   } Else {  $btn_RestoreINI.Visible = $False }    # Show/Hide 'Restore INI' button
         If ($tab_Pages.SelectedIndex -eq 1) { $lbl_ChangesMade.Visible = $script:ShowChangesMade } Else { $lbl_ChangesMade.Visible = $False }    # Show/Hide 'Selection Changes' Label
@@ -1000,6 +1006,7 @@ Function Display-MainForm
         [System.Globalization.TextInfo]$TextInfo = (Get-Culture).TextInfo    # Used for 'ToTitleCase' below
         ForEach ($folder In ($folders | Sort-Object Name))
         {
+            $folder = $folder.ToLower()
             $lbl_t1_ScanningScripts.Text = "Scanning check folders: $($folder.ToUpper())"
             $lbl_t1_ScanningScripts.Refresh(); [System.Windows.Forms.Application]::DoEvents()
 
@@ -1015,8 +1022,8 @@ Function Display-MainForm
 
                 ForEach ($script In ($scripts | Sort-Object Name))
                 {
-                          [string]$Name      =  $script.TrimEnd('.ps1')                                                 # Remove PS1.extension
-                          [string]$checkCode = ($Name.Substring(2, 6).Replace('-',''))                                  # Get check code: c-acc-01-local-user  -->  acc01
+                    [string]$Name      =  $script.TrimEnd('.ps1')                                                       # Remove PS1.extension
+                    [string]$checkCode = ($Name.Substring(2, 6).Replace('-',''))                                        # Get check code: c-acc-01-local-user  -->  acc01
                     Try { [string]$checkName = ($languageINI.$($checkCode).Name) } Catch { [string]$checkName = '' }    # Get check name from INI file
 
                     # Checks to see if the "checkName" value has been retreved or not
@@ -1038,12 +1045,13 @@ Function Display-MainForm
                         Catch { }
                     }
 
+                    [string]$getContent = ''
                     # Default back to the scripts description of help if required
                     If ($checkDesc -eq '')
                     {
-                        [string]$content = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script") -TotalCount 50) -join "`n")
-                        $regExA = [RegEx]::Match($content,     "APPLIES:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
-                        $regExD = [RegEx]::Match($content, "DESCRIPTION:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
+                        $getContent = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script") -TotalCount 50) -join "`n")
+                        $regExA = [RegEx]::Match($getContent,     "APPLIES:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
+                        $regExD = [RegEx]::Match($getContent, "DESCRIPTION:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
 
                         [string]$checkDesc = "Applies To: $($regExA.Groups[1].Value.Trim())!n"
                         ($regExD.Groups[1].Value.Trim().Split("`n")) | ForEach { $checkDesc += $_.Trim() + '  ' }
@@ -1052,14 +1060,18 @@ Function Display-MainForm
                     # Add check details to selection list, and check if required
                     Add-ListViewItem -ListView $lst_t2_SelectChecks -Items $checkCode -SubItems ($checkName, $checkDesc.Replace('!n', "`n`n"), "$folder\$script") -Group $guid -ImageIndex 1 -Enabled $True
 
-                    [int]$notFound = 0
-                    If ($settingsINI.ContainsKey($checkCode)        -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True  } Else { $notFound++ }    # Enabled checks
-                    If ($settingsINI.ContainsKey("$checkCode-skip") -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $False } Else { $notFound++ }    # Skipped checks
-                    If ($notFound -eq 2)
-                    {                                                                                                                                                # Unknown checks
-                        # Load default "ENABLED/SKIPPED" value from the check
-                        [string]$content = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script") -TotalCount 50) -join "`n")
-                        $regExE = [RegEx]::Match($content, "DEFAULT-STATE:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
+                    [int]$notFound = 2
+                    If ([string]::IsNullOrEmpty($settingsINI) -eq $False)
+                    {
+                        If ($settingsINI.ContainsKey("$checkCode")      -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True ; $notFound-- }    # Enabled checks
+                        If ($settingsINI.ContainsKey("$checkCode-skip") -eq $True) { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $False; $notFound-- }    # Skipped checks
+                    }
+
+                    If ($notFound -eq 2)                                                                                                                         # Unknown State
+                    {
+                        # Load default "ENABLED/SKIPPED" value from the check itself
+                        If ($getContent -eq '') { $getContent = ((Get-Content -Path ("$script:scriptLocation\checks\$folder\$script") -TotalCount 50) -join "`n") }
+                        $regExE = [RegEx]::Match($getContent, "DEFAULT-STATE:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
                         If ($regExE.Groups[1].Value.Trim() -eq 'Enabled') { $lst_t2_SelectChecks.Items["$checkCode"].Checked = $True }
                     }
                 }
@@ -1068,12 +1080,12 @@ Function Display-MainForm
                 # FOR TAB-3 OF MAIN TABPAGE CONTROL
                 # Add TabPage for folder
                 $newTab = New-Object 'System.Windows.Forms.TabPage'
-                $newTab.Font    = $sysFont
-                $newTab.Text    = $($TextInfo.ToTitleCase($folder))    # TitleCase section tabs
-                $newTab.Name    = "tab_$folder"
-                $newTab.Tag     = "tab_$folder"
-                $newTab.Margin  = '0, 0, 0, 0'
-                $newTab.Padding = '0, 0, 0, 0'
+                $newTab.Font           = $sysFont
+                $newTab.Text           = $($TextInfo.ToTitleCase($folder))    # TitleCase section tabs
+                $newTab.Name           = "tab_$folder"
+                $newTab.Tag            = "tab_$folder"
+                $newTab.Margin         = '0, 0, 0, 0'
+                $newTab.Padding        = '0, 0, 0, 0'
                 $tab_t3_Pages.TabPages.Add($newTab)
 
                 # Create a new ListView object
@@ -1126,8 +1138,8 @@ Function Display-MainForm
         $btn_t2_SelectReset.Enabled            = $True
         $lst_t2_SelectChecks.Items[0].Selected = $True
         $lbl_t1_ScanningScripts.Visible        = $False
-        Update-NavButtons
         Update-SelectedCount
+        Update-NavButtons
         $script:ShowChangesMade                = $False
         $script:UpdateSelectedCount            = $True
         $MainFORM.Cursor                       = 'Default'
@@ -1181,7 +1193,7 @@ Function Display-MainForm
 
         If ($script:ShowChangesMade -eq $True)
         {
-            $msgbox = ([System.Windows.Forms.MessageBox]::Show($MainFORM, "Any unsaved changes will be lost.`nAre you sure you want to continue.?`n`nTo save your current changes: Click 'No',`nChange to the 'Generate QA' tab, click 'Save Settings'.", ' Warning', 'YesNo', 'Warning', 'Button2'))
+            $msgbox = ([System.Windows.Forms.MessageBox]::Show($MainFORM, "Any unsaved changes will be lost.`nAre you sure you want to continue.?`n`nTo save your current changes: Click 'No',`nChange to the 'Generate QA' tab, click 'Save Settings'.", ' Selection Change', 'YesNo', 'Warning', 'Button2'))
             If ($msgbox -eq 'No') { Return }
         }
 
@@ -1203,6 +1215,9 @@ Function Display-MainForm
 
             ForEach ($listItem In $folder.Items)
             {
+                # Read in the entire file - it's needed upto three times
+                [string]$getContent = ((Get-Content -Path "$script:scriptLocation\checks\$($listItem.SubItems[3].Text)" -TotalCount 50) -join "`n")
+
                 # Create group for the checks
                 [string]$guid = $($listItem.Text)
                 $lvwObject.Groups.Add($guid, " $($listItem.SubItems[1].Text) ($($listItem.Text.ToUpper()))")
@@ -1217,7 +1232,7 @@ Function Display-MainForm
                 Catch
                 {
                     # Missing INI Section for this check, read from the check script itself
-                    [string]$getContent = ((Get-Content -Path "$script:scriptLocation\checks\$($listItem.SubItems[3].Text)" -TotalCount 50) -join "`n")
+                    # Using '$getContent' from above
                     $regExV = [RegEx]::Match($getContent, "DEFAULT-VALUES:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
                     [string[]]$Values = ($regExV.Groups[1].Value.Trim()).Split("`n")
                     If (([string]::IsNullOrEmpty($Values) -eq $false) -and ($Values -ne 'None'))
@@ -1244,7 +1259,7 @@ Function Display-MainForm
                     Else
                     {
                         # No details in help file yet
-                        [string]$getContent = ((Get-Content -Path "$script:scriptLocation\checks\$($listItem.SubItems[3].Text)" -TotalCount 50) -join "`n")
+                        # Using '$getContent' from above
                         $regExI = [RegEx]::Match($getContent, "REQUIRED-INPUTS:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
                         [string[]]$Inputs = ($regExI.Groups[1].Value.Trim()).Split("`n")
                         If (([string]::IsNullOrEmpty($Inputs) -eq $false) -and ($Inputs -ne 'None'))
@@ -1255,7 +1270,6 @@ Function Display-MainForm
 
                     # Get any input descriptions (if any exist)
                     [string]$idsc = ""
-                    [string]$getContent = ((Get-Content -Path "$script:scriptLocation\checks\$($listItem.SubItems[3].Text)" -TotalCount 50) -join "`n")
                     $regExD = [RegEx]::Match($getContent, "INPUT-DESCRIPTION:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
                     [string[]]$Inputs = ($regExD.Groups[1].Value.Trim()).Split("`n")
                     ForEach ($EachInput In $Inputs) { If ($EachInput -ne '') { $idsc += $EachInput.Trim() + '|' } }
@@ -1314,12 +1328,13 @@ Function Display-MainForm
             }
         }
 
-        $tab_Pages.SelectedIndex     = 2
-        $btn_t4_Save.Enabled         = $True
-        $lbl_t3_NoParameters.Visible = $False
-        $MainFORM.Cursor             = 'Default'
-        $btn_t3_Complete.Enabled     = $True
-        $script:ShowChangesMade      = $True
+        Update-NavButtons
+        $tim_CompleteTimer.Start()
+        $tab_Pages.SelectedIndex   = 2
+        $btn_t4_Save.Enabled       = $True
+        $lbl_t3_NoChecks.Visible   = $False
+        $script:ShowChangesMade    = $True
+        $MainFORM.Cursor           = 'Default'
     }
 
     # ###########################################
@@ -1328,6 +1343,9 @@ Function Display-MainForm
     {
         $btn_t3_NextTab.Enabled = $tab_t3_Pages.SelectedIndex -lt $tab_t3_Pages.TabCount - 1
         $btn_t3_PrevTab.Enabled = $tab_t3_Pages.SelectedIndex -gt 0
+
+        $lbl_t3_NoParameters.Visible = $False
+        If ($tab_t3_Pages.TabPages.Count -gt 0) { If ($tab_t3_Pages.SelectedTab.Controls[0].Items.Count -eq 0) { $lbl_t3_NoParameters.Visible = $True } }
     }
 
     $tab_t3_Pages_SelectedIndexChanged = {                    Update-NavButtons }
@@ -1647,6 +1665,12 @@ Function Display-MainForm
     $lbl_ChangesMade.Visible            = $False
     $MainFORM.Controls.Add($lbl_ChangesMade)
 
+    #
+    $tim_CompleteTimer               = New-Object 'System.Windows.Forms.Timer'
+    $tim_CompleteTimer.Stop()
+    $tim_CompleteTimer.Interval      = 1000    # 1 Second
+    $tim_CompleteTimer.Add_Tick($tim_CompleteTimer_Tick)
+
     # All 16x16 Icons
     $img_ListImages                     = New-Object 'System.Windows.Forms.ImageList'
     $img_ListImages.TransparentColor    = 'Transparent'
@@ -1896,13 +1920,24 @@ To start, click the 'Set Check Location' button below...
 #endregion
 #region TAB 3 - Enter Values For Checks
     #
+    $lbl_t3_NoChecks                    = New-Object 'System.Windows.Forms.Label'
+    $lbl_t3_NoChecks.Location           = '19, 218'
+    $lbl_t3_NoChecks.Size               = '724, 50'
+    $lbl_t3_NoChecks.Text               = "Enabled QA checks have not been comfirmed yet.`n`nPlease click 'Set Values >' on the previous tab."
+    $lbl_t3_NoChecks.TextAlign          = 'MiddleCenter'
+    $lbl_t3_NoChecks.BackColor          = 'Window'
+    $lbl_t3_NoChecks.Visible            = $True
+    $lbl_t3_NoChecks.BringToFront()
+    $tab_Page3.Controls.Add($lbl_t3_NoChecks)
+
+    #
     $lbl_t3_NoParameters                = New-Object 'System.Windows.Forms.Label'
-    $lbl_t3_NoParameters.Location       = '19, 218'
+    $lbl_t3_NoParameters.Location       = '19, 168'
     $lbl_t3_NoParameters.Size           = '724, 50'
-    $lbl_t3_NoParameters.Text           = "Enabled QA checks have not been comfirmed yet.`nPlease click 'Set Values >' on the previous tab."
+    $lbl_t3_NoParameters.Text           = 'There are no checks in this section that have customisable settings.'
     $lbl_t3_NoParameters.TextAlign      = 'MiddleCenter'
     $lbl_t3_NoParameters.BackColor      = 'Window'
-    $lbl_t3_NoParameters.Visible        = $True
+    $lbl_t3_NoParameters.Visible        = $False
     $lbl_t3_NoParameters.BringToFront()
     $tab_Page3.Controls.Add($lbl_t3_NoParameters)
 
@@ -2068,6 +2103,7 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
         [boolean] $script:ShowChangesMade     = $False    # Show/Hide message at bottom of tab 2
         [boolean] $script:UpdateSelectedCount = $False    # Speeds up processing of All/Inv/None buttons
         [string]  $script:saveFile            = ''
+        [int]     $TimerTick                  = 0
         [psobject]$script:settings            = New-Object -TypeName PSObject -Property @{
             'Timeout'        = '60';
             'Concurrent'     = '5';

@@ -1,4 +1,4 @@
-<#
+﻿<#
     DESCRIPTION: 
         Check the page file is located on the system drive and is a fixed size.  The default setting is 4096MB (4GB).
         If the page file is larger a document detailing the tuning process used must exist and should follow Microsoft best tuning practices (http://support.microsoft.com/kb/2021748).
@@ -47,10 +47,10 @@ Function c-drv-03-pagefile-size-location
 
     Try
     {
-        [string]$query1 = 'SELECT Name, InitialSize, MaximumSize FROM Win32_PageFileSetting'
-        [string]$query2 = 'SELECT AutomaticManagedPagefile FROM Win32_ComputerSystem'
-        [object]$check1 = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2                               | Select-Object Name, InitialSize, MaximumSize
-        [string]$check2 = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Cimv2 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty AutomaticManagedPagefile
+        [string]  $query1 = 'SELECT Name, InitialSize, MaximumSize FROM Win32_PageFileSetting'
+        [string]  $query2 = 'SELECT AutomaticManagedPagefile FROM Win32_ComputerSystem'
+        [object[]]$check1 = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2                               | Select-Object Name, InitialSize, MaximumSize
+        [string]  $check2 = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Cimv2 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty AutomaticManagedPagefile
     }
     Catch
     {

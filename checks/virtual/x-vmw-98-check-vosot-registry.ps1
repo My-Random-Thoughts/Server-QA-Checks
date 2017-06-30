@@ -1,6 +1,6 @@
 ﻿<#
     DESCRIPTION: 
-        Checks against a specified VMware OS Optimisation Template.  Services and scheduled task setting specific checks only.
+        Checks against a specified VMware OS Optimisation Template.  Registry setting specific checks only.
         !nNote: This is an experimental check
 
     REQUIRED-INPUTS:
@@ -31,7 +31,7 @@
         Check-VMware
 #>
 
-Function c-vmw-09-check-vosot-services-tasks
+Function c-vmw-98-check-vosot-registry
 {
     Param ( [string]$serverName, [string]$resultPath )
 
@@ -40,7 +40,7 @@ Function c-vmw-09-check-vosot-services-tasks
     $result        = newResult
     $result.server = $serverName
     $result.name   = $script:lang['Name']
-    $result.check  = 'c-vmw-09-check-vosot-services-tasks'
+    $result.check  = 'c-vmw-98-check-vosot-registry'
 
     #... CHECK STARTS HERE ...#
 
@@ -72,16 +72,10 @@ Function c-vmw-09-check-vosot-services-tasks
                 Else { ForEach ($osSubEntry In $osEntry.osEntry) { If ($osSubEntry.OSArchitecture -eq $osCheck.OSArchitecture) { If ($runOnOS -contains $osSubEntry.osId) { $runAgainst = $true } } } } }
             }
             If ($runAgainst -eq $false) { Throw 'The specified XML file is not suitable for this OS version/type' }
-            [string]$logFileName = "$serverName-vOSOT-Services-Tasks.log"
+            [string]$logFileName = "$serverName-vOSOT-Registry.log"
 
             If ((Test-Path -Path ('{0}OSOT'     -f $resultPath              )) -eq $false) { Try { New-Item    -Path ('{0}OSOT'     -f $resultPath              ) -ItemType Directory -Force | Out-Null } Catch {} }
             If ((Test-Path -Path ('{0}OSOT\{1}' -f $resultPath, $logFileName)) -eq $true)  { Try { Remove-Item -Path ('{0}OSOT\{1}' -f $resultPath, $logFileName)                     -Force | Out-Null } Catch {} }
-
-            # Pre-load services and scheduled tasks
-            [string]  $query    = "SELECT Name, Caption, StartMode FROM Win32_Service"
-            [object[]]$service  = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object Name, Caption, StartMode
-            [object]  $schedule = New-Object -ComObject('Schedule.Service'); $schedule.Connect($serverName)
-            [object[]]$tasks    = Get-Tasks($schedule.GetFolder('\'))
 
             # Start master loop
             [boolean]$return = $false
@@ -89,15 +83,10 @@ Function c-vmw-09-check-vosot-services-tasks
             {
                 Log-Output "$($($step.category).ToUpper().PadRight(12)): $($step.Name)"
                 $return = $false
-
-                If (($($step.action.type) -eq 'Service') -or ($($step.action.type) -eq 'SchTasks'))
+                If ($($step.action.type) -eq 'Registry')
                 {
-                    Switch ($($step.action.type))
-                    {
-                        'Service'      { $return = Check-Service  -Action ($step.action) -ServiceList $service }
-                        'SchTasks'     { $return = Check-SchTasks -Action ($step.action) -TaskList    $tasks   }
-                    }
-                    
+                    $return = Check-Registry -Action ($step.action)
+
                     Switch ($($step.category))
                     {
                         'Mandatory'   { $total_M++; If ($return -eq $true) { $count_M++ } }
@@ -133,63 +122,76 @@ Function c-vmw-09-check-vosot-services-tasks
 
 Function Log-Output ([string]$LogString)
 {
-    $LogString | Out-File -FilePath ('{0}OSOT\{1}-vOSOT-Services-Tasks.log' -f $resultPath, $serverName.ToUpper()) -Encoding ascii -Append
+    $LogString | Out-File -FilePath ('{0}OSOT\{1}-vOSOT-Registry.log' -f $resultPath, $serverName.ToUpper()) -Encoding ascii -Append
 }
 
-Function Get-Tasks
+Function Check-Registry
 {
-    Param ( [Object]$taskFolder )
-    $tasks = $taskFolder.GetTasks(0)
-    $tasks | ForEach-Object { $_ }
-    Try {
-        $taskFolders = $taskFolder.GetFolders(0)
-        $taskFolders | ForEach-Object { Get-Tasks $_ $true } }
-    Catch { }
-}
-
-Function Check-Service
-{
-    Param ([System.Xml.XmlElement]$Action, [object[]]$ServiceList)
+    Param ([System.Xml.XmlElement]$Action)
     Try
     {
-        [boolean]$found       = $false
         [boolean]$func_return = $false
-        $ServiceList | ForEach {
-            If (($_.Name -eq $($Action.params.serviceName)) -and ($($_.StartMode) -ne $($Action.params.startMode))) { $func_return = $false; $found = $true; Break }
-        }
+        If ($($Action.params.keyName).StartsWith('hku\') -eq $true) { Log-Output "   Skipped"; Return $true }
 
-        # Return TRUE if the service is not found
-        If ($found -eq $true)
+        [string]$baseKey = 'LocalMachine'
+        [string]$shortNm = 'HKLM'
+        [string]$regPath = $($Action.params.keyName).Replace('HKEY_LOCAL_MACHINE\', 'HKLM\').Replace('HKEY_CURRENT_USER\', 'HKCU\')
+        If ($regPath.StartsWith('HKCU\')) { $baseKey = 'CurrentUser'; $shortNm = 'HKCU' }
+        $regpath = $regPath.Replace('HKLM\', '').Replace('HKCU\', '')
+
+        $reg = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey($baseKey, $serverName)
+        Try { $regKey = $reg.OpenSubKey($regPath) } Catch { $regKey = $null }
+
+        Switch ($($Action.command))
         {
-            If ($func_return -eq $false) { Log-Output "   Service should be: $($Action.params.startMode)" }
-            Return $func_return
-        }
-        Else { Return $true }
-    }
-    Catch { Return $false }
-}
+            'LOAD'        { Log-Output "   Skipped"; $func_return = $true }
+            'UNLOAD'      { Log-Output "   Skipped"; $func_return = $true }
 
-Function Check-SchTasks
-{
-    Param ([System.Xml.XmlElement]$Action, [object[]]$TaskList)
-    Try
-    {
-        [boolean]$found       = $false
-        [boolean]$func_return = $false
-        $TaskList | ForEach {
-            If (($($_.Name) -eq $(Split-Path -Path $($Action.params.taskName) -Leaf)) -and ($(Split-Path -Path $($_.Path) -Parent) -eq "\$(Split-Path -Path $($Action.params.taskName))")) 
-            {
-                If ($($_.Enabled) -eq $True) { [string]$endis = 'ENABLED' } Else { [string]$endis = 'DISABLED' }
-                If ($endis -ne $($Action.params.status)) { $func_return = $false; $found = $true; Break }
+            'ADD'         {
+                # Check that KEY and VALUE exists and is the correct data value
+                [string]$keyVal = ''
+                If ($($Action.params.valueName) -eq '(Default)') { $Action.params.valueName = '' }    # Change '(Default)' to ''
+
+                If ($regKey) { $keyVal = $regKey.GetValue($($Action.params.valueName)) } Else { $func_return =  $false }
+                If ($keyVal) { If ($keyVal -ne $($Action.params.data))                        { $func_return =  $false } Else { $func_return = $true } }
+                Else { If ([string]::IsNullOrEmpty($($Action.params.data)) -eq $false)        { $func_return =  $false } Else { $func_return = $true } }
+
+                If ($func_return -eq $false)
+                {
+                    Log-Output "   Path     : '$shortNm\$regPath  -  $($Action.params.valueName)'"
+                    Log-Output "   Should be: '$($Action.params.data)', currently: '$keyVal'"
+                }
+            }
+
+            'DELETEKEY'   {
+                # Check that the KEY does not exists
+                If ($regKey) { $func_return =  $false } Else { $func_return = $true }
+                If ($func_return -eq $false)
+                {
+                    Log-Output "   Path     : '$shortNm\$regPath'"
+                    Log-Output "   Should be removed"
+                }
+            }
+
+            'DELETEVALUE' {
+                # Check that is value does not exist
+                [string]$keyVal = ''
+                If ($regKey) { $keyVal = $regKey.GetValue($($Action.params.valueName)) }
+                If ($keyVal) { $func_return =  $false } Else { $func_return = $true }
+                If ($func_return -eq $false)
+                {
+                    Log-Output "   Path     : '$shortNm\$regPath  -  $($Action.params.valueName)'"
+                    Log-Output "   Should be blank or removed"
+                }
             }
         }
-
-        If ($found -eq $true)
-        {
-            If ($func_return -eq $false) { Log-Output "   Scheduled task should be: '$($Action.params.status)'" }
-            Return $func_return
-        }
-        Else { Return $true }
     }
-    Catch { Return $false }
+    Catch { $func_return = $false }
+    Finally
+    {
+        Try { $regKey.Close() } Catch { }
+        Try { $reg.Close()    } Catch { }
+    }
+
+    Return $func_return
 }

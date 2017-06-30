@@ -74,7 +74,7 @@ Function c-sec-17-smb1-disabled
     {
         $result.result  = $script:lang['Fail']
         $result.message = 'Registry setting not found'
-        $result.data    = ''
+        $result.data    = 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters,#DWORD: SMBv1, Value: 0'
     }
 
     Return $result

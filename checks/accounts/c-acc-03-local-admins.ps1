@@ -1,4 +1,4 @@
-<#
+﻿<#
     DESCRIPTION: 
         Check the local administrators group to ensure no non-standard accounts exist.
         If there is a specific application requirement for local administration access then these need to be well documented.

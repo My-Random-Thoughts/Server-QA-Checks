@@ -5,7 +5,7 @@
         Values and meanings can be seen here - https://msdn.microsoft.com/en-us/library/cc232761.aspx
 
     REQUIRED-INPUTS:
-        ElevatePromptForAdminCredentials - "1,2,3,4,5" - List of settings to check for
+        ElevatePromptForAdminCredentials - "0,1,2,3,4,5" - List of settings to check for
 
     DEFAULT-VALUES:
         ElevatePromptForAdminCredentials = ('1', '3')
