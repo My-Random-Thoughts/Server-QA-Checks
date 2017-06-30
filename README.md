@@ -1,5 +1,18 @@
 # Basic Change Log
 
+2017/06/30
+- New checks
+    SYS-21 - Gold Image - Checks up to three registry keys for gold image detection
+    VMW-08 - Failover Clustering - Checks to see if clustering is installed on a VM
+    
+- Changed Checks
+    HVH-02 - No Other Server Roles - Added method for 2012+ servers
+    NET-06 - Network Agent - Added new dection method
+    NET-09 - Static Routes - Fixed detection method
+    NET-11 - DNS Settings - Fixed entire script.!
+    SYS-05 - System Event Log - Added new options to check log size and rotation type
+    SYS-06 - Application Event Log - Added new options to check log size and rotation type
+
 2017/06/27
 - Added functionality to allow checkbox and dropdown list options to have descriptions for each item.  An example of this is SEC-09 and SEC-15.
 - Changed the default setting of SYS-04, as it's now covered by SYS-19
