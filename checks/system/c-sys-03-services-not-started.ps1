@@ -45,7 +45,7 @@ Function c-sys-03-services-not-started
     {
         [string]$query = 'SELECT Name, DisplayName FROM Win32_Service WHERE StartMode="Auto" AND Started="False"'
         $script:appSettings['IgnoreTheseServices'] | ForEach { $query += ' AND NOT DisplayName LIKE "%{0}%"' -f $_ }
-        [array]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object Name, DisplayName
+        [array]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object DisplayName
     }
     Catch
     {

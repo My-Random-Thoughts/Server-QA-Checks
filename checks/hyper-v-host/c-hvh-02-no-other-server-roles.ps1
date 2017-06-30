@@ -65,16 +65,8 @@ Function c-hvh-02-no-other-server-roles
             }
 
             [System.Collections.ArrayList]$check2 = @()
-            $check | ForEach { $check2 += $_ }
-
-            ForEach ($ck In $check)
-            {
-                ForEach ($exc In $script:appSettings['IgnoreTheseRoleIDs'])
-                {
-                    If ($ck.ID -eq $exc) { $check2.Remove($ck) }
-                }
-            }
-
+            $check | ForEach { $check2.Add($_) | Out-Null }
+            ForEach ($ck In $check) { ForEach ($exc In $script:appSettings['IgnoreTheseRoleIDs']) { If ($ck.Id -eq $exc) { $check2.Remove($exc) } } }
         }
         Catch
         {

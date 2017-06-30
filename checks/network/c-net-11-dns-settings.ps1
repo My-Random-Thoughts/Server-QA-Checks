@@ -67,7 +67,7 @@ Function c-net-11-dns-settings
     {
         If ($dnsList.Count -ne ($script:appSettings['DNSServers'].Count))
         {
-            If ($script:appSettings['AllMustExist'] -eq 'TRUE')
+            If ($script:appSettings['AllMustExist'] -eq 'True')
             {
                 $result.result  = $script:lang['Fail']
                 $result.message = 'DNS Server count mismatch'
@@ -75,12 +75,12 @@ Function c-net-11-dns-settings
             }
             Else
             {
-                $script:appSettings['OrderSpecific'] = 'FALSE'
+                $script:appSettings['OrderSpecific'] = 'False'
             }
         }
 
         # Set OrderSpecific to FALSE if required
-        If (($script:appSettings['OrderSpecific']) -eq 'TRUE')
+        If (($script:appSettings['OrderSpecific']) -eq 'True')
         {
             # Check OrderSpecific list
             For ($i=0; $i -le ($dnsList.Count); $i++)

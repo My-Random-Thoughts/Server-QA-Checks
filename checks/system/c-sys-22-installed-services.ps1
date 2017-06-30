@@ -45,9 +45,9 @@ Function c-sys-22-installed-services
 
     Try
     {
-        [string]$query = 'SELECT DisplayName FROM Win32_Service WHERE DisplayName="dummyValue"'
+        [string]$query = 'SELECT DisplayName FROM Win32_Service WHERE StartMode="Auto" AND Started="True" AND (DisplayName="dummyValue"'
         $script:appSettings['SerivcesToCheck'] | ForEach { $query += ' OR DisplayName="{0}"' -f $_ }
-        [array]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object Name, DisplayName
+        [array]$check = Get-WmiObject -ComputerName $serverName -Query ($query + ')') -Namespace ROOT\Cimv2 | Select-Object DisplayName
     }
     Catch
     {
@@ -57,20 +57,40 @@ Function c-sys-22-installed-services
         Return $result
     }
 
-    If ($check.Count -gt 0)
+    [System.Collections.ArrayList]$missing = @{}
+    $script:appSettings['SerivcesToCheck'] | ForEach { $missing.Add($_) | Out-Null }
+    ForEach ($ck In $check) { ForEach ($exc In $script:appSettings['SerivcesToCheck']) { If ($ck.DisplayName -eq $exc) { $missing.Remove($exc) } } }
+
+    If ([string]::IsNullOrEmpty($missing) -eq $false)
     {
-        ForEach ($service In $check)
+        $result.result  = $script:lang['Fail']
+        $result.message = 'One or more services do not exist'
+        $missing | ForEach { $result.data += '{0},#' -f $_ }
+    }
+
+    If ($script:appSettings['AllMustExist'] -eq 'False')
+    {
+        If ($check.Count -gt 0)
         {
-            
-
-
+            $result.data    = ''
+            $result.result  = $script:lang['Pass']
+            $result.message = 'The following services were found running'
+            $check | ForEach { $result.data += '{0},#' -f $_.DisplayName }
         }
     }
 
     If ($result.message -eq '')
     {
-        $result.result  = $script:lang['Pass']
-        $result.message = 'All auto-start services are running'
+        If ($script:appSettings['SerivcesToCheck'].Count -gt 0)
+        {
+            $result.result  = $script:lang['Not-Applicable']
+            $result.message = 'Nothing to check'
+        }
+        Else
+        {
+            $result.result  = $script:lang['Pass']
+            $result.message = 'All services exist and are running'
+        }
         $result.data    = ''
     }
     
