@@ -75,8 +75,38 @@ Function c-net-06-network-agent
         }
         Else
         {
-            $result.result  = $script:lang['Fail']
-            $result.message = 'Network management software not found, install required'
+            # Fallback detection method
+            [string]$keyVal = ''
+            $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object Manufacturer
+            If ($wmiBIOS.Manufacturer -like 'HP*')
+            {
+                Try
+                {
+                    $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
+                    $regKey = $reg.OpenSubKey('SOFTWARE\Microsoft\Windows\CurrentVersion\Control Panel\CPLs')
+                    If ($regKey) { $keyVal = $regKey.GetValue('CPQTEAM') }
+                    Try { $regKey.Close() } Catch { }
+                    $reg.Close()
+                }
+                Catch { }
+            }
+            ElseIf ($wmiBIOS.Manufacturer -like 'Dell*')
+            {
+                # TODO (If required)
+            }
+            Else { $keyVal = '' }
+
+            If ($keyVal -eq '')
+            {
+                $result.result  = $script:lang['Fail']
+                $result.message = 'Network management software not found, install required'
+            }
+            Else
+            {
+                $result.result  = $script:lang['Pass']
+                $result.message = 'Software not Fallback method used'
+                $result.data    = $keyVal
+            }
         }
     }
     Else

@@ -9,12 +9,14 @@
         StaticRoute02 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
         StaticRoute03 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
         StaticRoute04 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
+        StaticRoute05 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
 
     DEFAULT-VALUES:
         StaticRoute01 = ('', '', '')
         StaticRoute02 = ('', '', '')
         StaticRoute03 = ('', '', '')
         StaticRoute04 = ('', '', '')
+        StaticRoute05 = ('', '', '')
 
     DEFAULT-STATE:
         Enabled
@@ -78,7 +80,7 @@ Function c-net-09-static-routes
     }
     Catch {}
 
-    If ([string]::IsNullOrEmpty($check1) -eq $true)
+    If (([string]::IsNullOrEmpty($check1) -eq $true) -and ([string]::IsNullOrEmpty($check2) -eq $true))
     {
         $result.result  = $script:lang['Fail']
         $result.message = 'No static routes present'
@@ -95,6 +97,7 @@ Function c-net-09-static-routes
         {
             $result.result  = $script:lang['Fail']
             $result.message = 'Static routes are present, they need removing'
+            $result.data    = 'Dest: {0}, Mask: {1}, Gateway: {2},#' -f $check2.Destination, $check2.Mask, $check2.NextHop
         }
         Else
         {
@@ -111,13 +114,18 @@ Function c-net-09-static-routes
             {
                 If ([string]::IsNullOrEmpty($routeEntry[0]) -eq $false)
                 {
-                    $pos = [array]::IndexOf($check1.Destination, $routeEntry[0])
-                    If ($pos -ge 0)
+                    [boolean]$found = $false
+                    ForEach ($item In $check2)
                     {
-                        If ($check1.Mask[$pos]    -ne $routeEntry[1]) { $result.data += '' + $routeEntry[0] + ' (Wrong Mask),#'    }
-                        If ($check1.NextHop[$pos] -ne $routeEntry[2]) { $result.data += '' + $routeEntry[0] + ' (Wrong Gateway),#' }
+                        If ($item.Destination -eq $routeEntry[0])
+                        {
+                            $found = $true
+                            If ($item.Mask    -ne $routeEntry[1]) { $result.data += '' + $routeEntry[0] + ' (Wrong Mask),#'    }
+                            If ($item.NextHop -ne $routeEntry[2]) { $result.data += '' + $routeEntry[0] + ' (Wrong Gateway),#' }
+                        }
                     }
-                    Else { $result.data += '' + $routeEntry[0] + ' (Missing),#' }
+
+                    If ($found -eq $false) { $result.data += '' + $routeEntry[0] + ' (Missing),#' }
                 }
             }
             $routeEntry = $null

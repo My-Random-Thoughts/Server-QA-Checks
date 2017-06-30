@@ -45,9 +45,25 @@ Function c-hvh-02-no-other-server-roles
     {
         Try
         {
-            # This will need to be change to use "Get-WindowsFeature" in 2012+
-            [string]$query = "Select Name, ID FROM Win32_ServerFeature WHERE ParentID = '0'"
-            [array] $check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2
+            [string]$queryOS = 'SELECT Caption FROM Win32_OperatingSystem'
+            [string]$checkOS = Get-WmiObject -ComputerName $serverName -Query $queryOS -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Caption
+
+            If ($check -like '*2008')        # 2008
+            {
+                [string]$query = "Select Name, ID FROM Win32_ServerFeature WHERE ParentID = '0'"
+                [array] $check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2
+            }
+            ElseIf ($check -like '*201*')    # 2012, 2016
+            {
+                [array]$check = (Get-WindowsFeature | Where-Object { ($_.InstallState -eq 'Installed') -and ($_.Depth -eq 1) } |
+                                                      Select-Object @{N='Id'; E={$_.AdditionalInfo.NumericId}}) |
+                                                      Select-Object -ExpandProperty Id
+            }
+            Else
+            {
+                Throw 'Operating system not supported'
+            }
+
             [System.Collections.ArrayList]$check2 = @()
             $check | ForEach { $check2 += $_ }
 
@@ -58,6 +74,7 @@ Function c-hvh-02-no-other-server-roles
                     If ($ck.ID -eq $exc) { $check2.Remove($ck) }
                 }
             }
+
         }
         Catch
         {

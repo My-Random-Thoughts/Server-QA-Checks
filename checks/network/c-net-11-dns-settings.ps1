@@ -50,7 +50,7 @@ Function c-net-11-dns-settings
     Try
     {
         [string]$query = 'SELECT DNSServerSearchOrder FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled="TRUE"'
-        [array] $check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty DNSServerSearchOrder
+        [array] $check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object DNSServerSearchOrder
     }
     Catch
     {
@@ -62,7 +62,7 @@ Function c-net-11-dns-settings
 
     If ($check.Count -gt 0)
     {
-        If (($check.Count) -ne ($script:appSettings['DNSServers'].Count))
+        If ($check[0].DNSServerSearchOrder.Count -ne ($script:appSettings['DNSServers'].Count))
         {
             If ($script:appSettings['AllMustExist'] -eq 'TRUE')
             {
@@ -80,26 +80,27 @@ Function c-net-11-dns-settings
         If (($script:appSettings['OrderSpecific']) -eq 'TRUE')
         {
             # Check OrderSpecific list
-            For ($i=0; $i -le ($check.Count); $i++)
+            For ($i=0; $i -le ($check[0].DNSServerSearchOrder.Count); $i++)
             {
-                If ($check[$i] -ne $script:appSettings['DNSServers'][$i]) { $result.message = 'DNS Server list is not in the required order'; Break }
+                If ($check[0].DNSServerSearchOrder[$i] -ne $script:appSettings['DNSServers'][$i]) { $result.message = 'DNS Server list is not in the required order'; Break }
             }
+
             If (($result.message) -ne '')
             {
                 $result.result = $script:lang['Fail']
-                $result.data   = "Configured: $($check -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
+                $result.data   = "Configured: $($check[0].DNSServerSearchOrder -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
             }
             Else
             {
                 $result.result  = $script:lang['Pass']
                 $result.message = 'All DNS servers configured and in the right order'
-                $result.data    = ($check -join ', ')
+                $result.data    = ($check[0].DNSServerSearchOrder -join ', ')
             }
         }
         Else
         {
             # Check any ordered list
-            ForEach ($itemC In $check)
+            ForEach ($itemC In $check[0].DNSServerSearchOrder)
             {
                 [boolean]$Found = $false
                 ForEach ($itemS In $script:appSettings['DNSServers']) { If ($itemC -eq $itemS) { $Found = $true; Break } }
@@ -107,7 +108,7 @@ Function c-net-11-dns-settings
                 {
                     $result.result  = $script:lang['Fail']
                     $result.message = 'Mismatched DNS servers'
-                    $result.data    = "Configured: $($check -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
+                    $result.data    = "Configured: $($check[0].DNSServerSearchOrder -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
                 }
             }
 
@@ -115,7 +116,7 @@ Function c-net-11-dns-settings
             {
                 $result.result  = $script:lang['Pass']
                 $result.message = 'All DNS servers configured'
-                $result.data    = ($check -join ', ')
+                $result.data    = ($check[0].DNSServerSearchOrder -join ', ')
             }
         }
     }

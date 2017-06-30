@@ -3,15 +3,24 @@
         Check Application Event Log and ensure no errors are present in the last x days.  If found, will return the latest y entries
 
     REQUIRED-INPUTS:
+        EventLogMaxSize       - Maximum size in MB of this event log (default is 16)
+        EventLogRetentionType - "Overwrite|Archive|Manual" - When the maximum log size is reached
         GetLatestEntriesAge   - Return all entries for this number of days|Integer
         GetLatestEntriesCount - Return this number of entries|Integer
 
     DEFAULT-VALUES:
+        EventLogMaxSize       = '16'
+        EventLogRetentionType = 'Overwrite'
         GetLatestEntriesAge   = '14'
         GetLatestEntriesCount = '15'
 
     DEFAULT-STATE:
         Enabled
+
+    INPUT-DESCRIPTION:
+        Overwrite: Overwrite as needed (oldest first)
+        Archive: Archive log when full
+        Manual: Do not overwrite (clear manually)
 
     RESULTS:
         PASS:
@@ -44,6 +53,19 @@ Function c-sys-06-application-event-log
 
     Try
     {
+        # Get size and retention
+        $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
+        $regKey = $reg.OpenSubKey("SYSTEM\CurrentControlSet\Services\EventLog\Application")
+        If ($regKey)
+        {
+            [int64] $keyValMS = $regKey.GetValue('MaxSize')               # Size in bytes
+            [string]$keyValR1 = $regKey.GetValue('Retention')             # Either '0' or '-1'
+            [string]$keyValR2 = $regKey.GetValue('AutoBackupLogFiles')    # Either '0' or '1'
+        }
+        Try { $regKey.Close() } Catch { }
+        $reg.Close()
+
+        # Get log entries
         If ($PSVersionTable.PSVersion.Major -ge 4)
         {
             [double]$timeOffSet = ($script:appSettings['GetLatestEntriesAge'] -as [int]) * 60 * 60 * 24 * 1000    # Convert 'days' into 'miliseconds'
@@ -63,20 +85,56 @@ Function c-sys-06-application-event-log
         Return $result
     }
 
+    $result.message = ''
+    $result.data    = ''
+
+    # Check max size
+    $keyValMS = ($keyValMS / (1024*1024))    # Convert B to MB
+    If ($keyValMS -ne $script:appSettings['EventLogMaxSize'])
+    {
+        $result.result   = $script:lang['Fail']
+        $result.message += 'Event log max size is not set correctly,#'
+        $result.data    += ('Current Max Size: {0},#' -f $keyValMS)
+    }
+
+    # Check retension type
+    Switch ($script:appSettings['EventLogRetentionType'])
+    {                 #       Retention                 AutoBackupLogFiles
+        'Overwrite' { [string]$checkValR1 =  '0';[string]$checkValR2 = '0'; Break }
+        'Archive'   { [string]$checkValR1 = '-1';[string]$checkValR2 = '1'; Break }
+        'Manual'    { [string]$checkValR1 = '-1';[string]$checkValR2 = '0'; Break }
+        Default     { Break }
+    }
+
+    If (($keyValR1 -ne $checkValR1) -or ($keyValR2 -ne $checkValR2))
+    {
+        [string]$currRetention = 'Unknown'
+        If ($keyValR1 -eq 0) { $currRetention = 'Overwrite' } Else { If ($keyValR2 -eq 0) { $currRetention = 'Manual' } Else { $currRetention = 'Archive' } }
+        $result.result   = $script:lang['Fail']
+        $result.message += 'Retention method is not set correctly,#'
+        $result.data    += ('Current method: {0},#' -f $currRetention)
+    }
+
+    # Check event logs
     If ($check.Length -gt 0)
     {
         If ((Test-Path -Path ('{0}EventLogs' -f $resultPath)) -eq $false) { Try { New-Item -Path ('{0}EventLogs' -f $resultPath) -ItemType Directory -Force | Out-Null } Catch {} }
         [string]$outFile = '{0}EventLogs\{1}-Error-Events-Application.csv' -f $resultPath, $serverName.ToUpper()
         $check | Export-Csv $outFile -NoTypeInformation
 
-        $result.result  = $script:lang['Warning']
-        $result.message = 'Errors were found in the application event log'
-        $result.data    = (Split-Path -Path $outFile -Leaf)
+        $result.message += 'Errors were found in the application event log'
+        $result.data    += (Split-Path -Path $outFile -Leaf)
+    }
+
+    # Pass or fail check
+    If ($result.message -ne '')
+    {
+        $result.result   = $script:lang['Fail']
     }
     Else
     {
-        $result.result  = $script:lang['Pass']        
-        $result.message = 'No errors found in application event log'
+        $result.result   = $script:lang['Pass']
+        $result.message += 'No errors found in application event log or its configuration'
     }
     
     Return $result
