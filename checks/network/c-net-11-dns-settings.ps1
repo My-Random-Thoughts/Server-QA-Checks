@@ -60,9 +60,12 @@ Function c-net-11-dns-settings
         Return $result
     }
 
-    If ($check.Count -gt 0)
+    [System.Collections.ArrayList]$dnsList = @{}
+    ForEach ($item In $check) { ForEach ($entry In $Item.DNSServerSearchOrder) { $dnsList.Add($entry) | Out-Null } }
+
+    If ($dnsList.Count -gt 0)
     {
-        If ($check[0].DNSServerSearchOrder.Count -ne ($script:appSettings['DNSServers'].Count))
+        If ($dnsList.Count -ne ($script:appSettings['DNSServers'].Count))
         {
             If ($script:appSettings['AllMustExist'] -eq 'TRUE')
             {
@@ -80,27 +83,27 @@ Function c-net-11-dns-settings
         If (($script:appSettings['OrderSpecific']) -eq 'TRUE')
         {
             # Check OrderSpecific list
-            For ($i=0; $i -le ($check[0].DNSServerSearchOrder.Count); $i++)
+            For ($i=0; $i -le ($dnsList.Count); $i++)
             {
-                If ($check[0].DNSServerSearchOrder[$i] -ne $script:appSettings['DNSServers'][$i]) { $result.message = 'DNS Server list is not in the required order'; Break }
+                If ($dnsList[$i] -ne $script:appSettings['DNSServers'][$i]) { $result.message = 'DNS Server list is not in the required order'; Break }
             }
 
             If (($result.message) -ne '')
             {
                 $result.result = $script:lang['Fail']
-                $result.data   = "Configured: $($check[0].DNSServerSearchOrder -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
+                $result.data   = "Configured: $($dnsList -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
             }
             Else
             {
                 $result.result  = $script:lang['Pass']
                 $result.message = 'All DNS servers configured and in the right order'
-                $result.data    = ($check[0].DNSServerSearchOrder -join ', ')
+                $result.data    = ($dnsList -join ', ')
             }
         }
         Else
         {
             # Check any ordered list
-            ForEach ($itemC In $check[0].DNSServerSearchOrder)
+            ForEach ($itemC In $dnsList)
             {
                 [boolean]$Found = $false
                 ForEach ($itemS In $script:appSettings['DNSServers']) { If ($itemC -eq $itemS) { $Found = $true; Break } }
@@ -108,7 +111,7 @@ Function c-net-11-dns-settings
                 {
                     $result.result  = $script:lang['Fail']
                     $result.message = 'Mismatched DNS servers'
-                    $result.data    = "Configured: $($check[0].DNSServerSearchOrder -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
+                    $result.data    = "Configured: $($dnsList -join ', '),#Looking For: $($script:appSettings['DNSServers'] -join ', ')"
                 }
             }
 
@@ -116,7 +119,7 @@ Function c-net-11-dns-settings
             {
                 $result.result  = $script:lang['Pass']
                 $result.message = 'All DNS servers configured'
-                $result.data    = ($check[0].DNSServerSearchOrder -join ', ')
+                $result.data    = ($dnsList -join ', ')
             }
         }
     }
