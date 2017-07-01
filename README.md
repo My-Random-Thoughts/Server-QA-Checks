@@ -2,6 +2,7 @@
 
 2017/06/30
 - New checks
+    SYS-08 - Custom Event Log - Similar to SYS-05/06, but allows you to enter a list of extra eventlogs to check
     SYS-21 - Gold Image - Checks up to three registry keys for gold image detection
     VMW-08 - Failover Clustering - Checks to see if clustering is installed on a VM
     
