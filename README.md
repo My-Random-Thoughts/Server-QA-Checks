@@ -1,7 +1,11 @@
 # Basic Change Log
 
-2017/06/30
+2017/07/01
 - New checks
+    COM-10 - Software Installed - Checks to see if a list of products are installed
+    COM-11 - Services Installed - Checks to see if a list of services are installed and running
+ 
+2017/06/30
     SYS-08 - Custom Event Log - Similar to SYS-05/06, but allows you to enter a list of extra eventlogs to check
     SYS-21 - Gold Image - Checks up to three registry keys for gold image detection
     VMW-08 - Failover Clustering - Checks to see if clustering is installed on a VM

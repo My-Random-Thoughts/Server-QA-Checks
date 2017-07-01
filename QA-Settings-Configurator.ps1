@@ -794,7 +794,7 @@ Function Display-MainForm
         $lbl_t4_ReportTitle.Height  = $txt_t4_ReportTitle.Height
 
         # Setup default views/messages
-        $lbl_t3_NoChecks.Visible    = $True
+        $lbl_t3_NoChecks.Visible        = $True
         $lst_t2_SelectChecks.CheckBoxes = $False
         $lst_t2_SelectChecks.Groups.Add('ErrorGroup','Please Note')
         Add-ListViewItem -ListView $lst_t2_SelectChecks -Items '' -SubItems ('','')                                   -ImageIndex -1 -Group 'ErrorGroup' -Enabled $True
@@ -1328,12 +1328,12 @@ Function Display-MainForm
             }
         }
 
-        Update-NavButtons
         $tim_CompleteTimer.Start()
         $tab_Pages.SelectedIndex   = 2
         $btn_t4_Save.Enabled       = $True
         $lbl_t3_NoChecks.Visible   = $False
         $script:ShowChangesMade    = $True
+        Update-NavButtons
         $MainFORM.Cursor           = 'Default'
     }
 
@@ -1343,9 +1343,6 @@ Function Display-MainForm
     {
         $btn_t3_NextTab.Enabled = $tab_t3_Pages.SelectedIndex -lt $tab_t3_Pages.TabCount - 1
         $btn_t3_PrevTab.Enabled = $tab_t3_Pages.SelectedIndex -gt 0
-
-        $lbl_t3_NoParameters.Visible = $False
-        If ($tab_t3_Pages.TabPages.Count -gt 0) { If ($tab_t3_Pages.SelectedTab.Controls[0].Items.Count -eq 0) { $lbl_t3_NoParameters.Visible = $True } }
     }
 
     $tab_t3_Pages_SelectedIndexChanged = {                    Update-NavButtons }
@@ -1923,23 +1920,12 @@ To start, click the 'Set Check Location' button below...
     $lbl_t3_NoChecks                    = New-Object 'System.Windows.Forms.Label'
     $lbl_t3_NoChecks.Location           = '19, 218'
     $lbl_t3_NoChecks.Size               = '724, 50'
-    $lbl_t3_NoChecks.Text               = "Enabled QA checks have not been comfirmed yet.`n`nPlease click 'Set Values >' on the previous tab."
+    $lbl_t3_NoChecks.Text               = "Enabled QA checks have not been comfirmed yet.`nPlease click 'Set Values >' on the previous tab."
     $lbl_t3_NoChecks.TextAlign          = 'MiddleCenter'
     $lbl_t3_NoChecks.BackColor          = 'Window'
     $lbl_t3_NoChecks.Visible            = $True
     $lbl_t3_NoChecks.BringToFront()
     $tab_Page3.Controls.Add($lbl_t3_NoChecks)
-
-    #
-    $lbl_t3_NoParameters                = New-Object 'System.Windows.Forms.Label'
-    $lbl_t3_NoParameters.Location       = '19, 168'
-    $lbl_t3_NoParameters.Size           = '724, 50'
-    $lbl_t3_NoParameters.Text           = 'There are no checks in this section that have customisable settings.'
-    $lbl_t3_NoParameters.TextAlign      = 'MiddleCenter'
-    $lbl_t3_NoParameters.BackColor      = 'Window'
-    $lbl_t3_NoParameters.Visible        = $False
-    $lbl_t3_NoParameters.BringToFront()
-    $tab_Page3.Controls.Add($lbl_t3_NoParameters)
 
     #
     $lbl_t3_ScriptSelection             = New-Object 'System.Windows.Forms.Label'

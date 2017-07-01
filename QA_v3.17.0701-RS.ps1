@@ -45,6 +45,7 @@ Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'
 ##############################################################################################################################################################################################
 # QA Check Script Blocks
 $cacc01 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -142,8 +143,10 @@ Function c-acc-01-local-users
 
     Return $result
 }
+c-acc-01-local-users -serverName $serverName -resultPath $resultPath
 }
 $cacc02 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -236,8 +239,10 @@ Function c-acc-02-local-account-names
     
     Return $result
 }
+c-acc-02-local-account-names -serverName $serverName -resultPath $resultPath
 }
 $cacc03 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -341,8 +346,10 @@ Function c-acc-03-local-admins
 
     Return $result
 }
+c-acc-03-local-admins -serverName $serverName -resultPath $resultPath
 }
 $cacc04 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -451,8 +458,10 @@ Function Check-DomainController
     Catch { Return $false }
     Return $false
 }
+c-acc-04-local-groups -serverName $serverName -resultPath $resultPath
 }
 $cacc05 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -536,8 +545,10 @@ Function c-acc-05-service-logon-accounts
     
     Return $result
 }
+c-acc-05-service-logon-accounts -serverName $serverName -resultPath $resultPath
 }
 $cacc06 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -627,8 +638,10 @@ Function c-acc-06-guest-account
 
     Return $result
 }
+c-acc-06-guest-account -serverName $serverName -resultPath $resultPath
 }
 $cacc07 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -749,8 +762,10 @@ Function c-acc-07-builtin-group-members-1
 
     Return $result
 }
+c-acc-07-builtin-group-members-1 -serverName $serverName -resultPath $resultPath
 }
 $cacc08 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -871,8 +886,10 @@ Function c-acc-08-builtin-group-members-2
 
     Return $result
 }
+c-acc-08-builtin-group-members-2 -serverName $serverName -resultPath $resultPath
 }
 $cacc09 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -993,8 +1010,10 @@ Function c-acc-09-builtin-group-members-3
 
     Return $result
 }
+c-acc-09-builtin-group-members-3 -serverName $serverName -resultPath $resultPath
 }
 $ccom01 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -1164,8 +1183,10 @@ Function Check-Software
     $reg.Close()
     Return $verCheck
 }
+c-com-01-mcafee-antivirus-installed -serverName $serverName -resultPath $resultPath
 }
 $ccom02 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -1348,8 +1369,10 @@ Function Check-Software
     $reg.Close()
     Return $verCheck
 }
+c-com-02-scom-monitoring-installed -serverName $serverName -resultPath $resultPath
 }
 $ccom03 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -1494,8 +1517,10 @@ Function Check-Port
             If ($failed -eq $true) { Return $false } Else { Return $true }
     } } Catch { Return $false }
 }
+c-com-03-sccm-installed -serverName $serverName -resultPath $resultPath
 }
 $ccom04 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -1703,8 +1728,10 @@ Function Check-Software
     $reg.Close()
     Return $verCheck
 }
+c-com-04-netbackup-agent-installed -serverName $serverName -resultPath $resultPath
 }
 $ccom05 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -1823,8 +1850,10 @@ Function c-com-05-last-patch-date
 
     Return $result
 }
+c-com-05-last-patch-date -serverName $serverName -resultPath $resultPath
 }
 $ccom06 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -1933,8 +1962,10 @@ Function Check-Port
             If ($failed -eq $true) { Return $false } Else { Return $true }
     } } Catch { Return $false }
 }
+c-com-06-wsus-server -serverName $serverName -resultPath $resultPath
 }
 $ccom07 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -2087,8 +2118,10 @@ Function Check-Port
             If ($failed -eq $true) { Return $false } Else { Return $true }
     } } Catch { Return $false }
 }
+c-com-07-sentinel-agent-installed -serverName $serverName -resultPath $resultPath
 }
 $ccom08 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -2246,8 +2279,10 @@ Function Check-Software
     $reg.Close()
     Return $verCheck
 }
+c-com-08-bladelogic-agent-installed -serverName $serverName -resultPath $resultPath
 }
 $ccom09 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -2441,8 +2476,10 @@ Function Check-Software
     $reg.Close()
     Return $verCheck
 }
+c-com-09-trend-antivirus-installed -serverName $serverName -resultPath $resultPath
 }
 $ccom10 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -2575,8 +2612,10 @@ Function Check-Software
     $reg.Close()
     Return $verCheck
 }
+c-com-10-software-installed -serverName $serverName -resultPath $resultPath
 }
 $ccom11 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -2688,8 +2727,10 @@ Function c-com-11-services-installed
     
     Return $result
 }
+c-com-11-services-installed -serverName $serverName -resultPath $resultPath
 }
 $cdrv01 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -2792,8 +2833,10 @@ Function c-drv-01-system-drive-size
 
     Return $result
 }
+c-drv-01-system-drive-size -serverName $serverName -resultPath $resultPath
 }
 $cdrv02 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -2900,8 +2943,10 @@ Function c-drv-02-min-drive-freespace
     }
     Return $result
 }
+c-drv-02-min-drive-freespace -serverName $serverName -resultPath $resultPath
 }
 $cdrv03 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -3022,8 +3067,10 @@ Function c-drv-03-pagefile-size-location
 
     Return $result
 }
+c-drv-03-pagefile-size-location -serverName $serverName -resultPath $resultPath
 }
 $cdrv04 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -3119,8 +3166,10 @@ Function c-drv-04-cd-dvd-drive
 
     Return $result
 }
+c-drv-04-cd-dvd-drive -serverName $serverName -resultPath $resultPath
 }
 $cdrv05 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -3209,8 +3258,10 @@ Function c-drv-05-shared-folders
     
     Return $result
 }
+c-drv-05-shared-folders -serverName $serverName -resultPath $resultPath
 }
 $cdrv06 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -3364,8 +3415,10 @@ Function Check-HyperV
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BaseBoard -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object Product
     If ($wmiBIOS.Product -eq 'Virtual Machine') { Return $true } Else { Return $false }
 }
+c-drv-06-san-storage -serverName $serverName -resultPath $resultPath
 }
 $cdrv07 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -3508,8 +3561,10 @@ Function Check-HyperV
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BaseBoard -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object Product
     If ($wmiBIOS.Product -eq 'Virtual Machine') { Return $true } Else { Return $false }
 }
+c-drv-07-disk-management-agent -serverName $serverName -resultPath $resultPath
 }
 $cdrv08 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -3609,8 +3664,10 @@ Function c-drv-08-drive-ntfs-format
     }
     Return $result
 }
+c-drv-08-drive-ntfs-format -serverName $serverName -resultPath $resultPath
 }
 $cdrv09 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -3708,8 +3765,10 @@ Function c-drv-09-partition-type
 
     Return $result
 }
+c-drv-09-partition-type -serverName $serverName -resultPath $resultPath
 }
 $chvh01 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -3808,8 +3867,10 @@ Function Check-NameSpace
         If ($wmio -eq '') { Return $false } Else { $wmio = '' } }
     Return $true
 }
+c-hvh-01-server-core -serverName $serverName -resultPath $resultPath
 }
 $chvh02 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -3930,8 +3991,10 @@ Function Check-NameSpace
         If ($wmio -eq '') { Return $false } Else { $wmio = '' } }
     Return $true
 }
+c-hvh-02-no-other-server-roles -serverName $serverName -resultPath $resultPath
 }
 $chvh03 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -4063,8 +4126,10 @@ Function Check-NameSpace
         If ($wmio -eq '') { Return $false } Else { $wmio = '' } }
     Return $true
 }
+c-hvh-03-vm-location -serverName $serverName -resultPath $resultPath
 }
 $chvh04 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -4186,8 +4251,10 @@ Function Check-NameSpace
         If ($wmio -eq '') { Return $false } Else { $wmio = '' } }
     Return $true
 }
+c-hvh-04-integration-services -serverName $serverName -resultPath $resultPath
 }
 $chvh05 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -4322,8 +4389,10 @@ Function Check-NameSpace
         If ($wmio -eq '') { Return $false } Else { $wmio = '' } }
     Return $true
 }
+c-hvh-05-jumbo-frames -serverName $serverName -resultPath $resultPath
 }
 $chvh06 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -4443,8 +4512,10 @@ Function Check-NameSpace
         If ($wmio -eq '') { Return $false } Else { $wmio = '' } }
     Return $true
 }
+c-hvh-06-generation-type -serverName $serverName -resultPath $resultPath
 }
 $cnet01 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -4620,8 +4691,10 @@ Function c-net-01-ipv6-status
     }
     Return $result
 }
+c-net-01-ipv6-status -serverName $serverName -resultPath $resultPath
 }
 $cnet02 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -4706,8 +4779,10 @@ Function c-net-02-unused-network-interfaces
 
     Return $result
 }
+c-net-02-unused-network-interfaces -serverName $serverName -resultPath $resultPath
 }
 $cnet03 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -4787,8 +4862,10 @@ Function c-net-03-network-adapter-labels
 
     Return $result
 }
+c-net-03-network-adapter-labels -serverName $serverName -resultPath $resultPath
 }
 $cnet04 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -4983,8 +5060,10 @@ Function c-net-04-binding-order
     
     Return $result
 }
+c-net-04-binding-order -serverName $serverName -resultPath $resultPath
 }
 $cnet05 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -5107,8 +5186,10 @@ Function c-net-05-network-speed-duplex
 
     Return $result
 }
+c-net-05-network-speed-duplex -serverName $serverName -resultPath $resultPath
 }
 $cnet06 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -5280,8 +5361,10 @@ Function Check-HyperV
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BaseBoard -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object Product
     If ($wmiBIOS.Product -eq 'Virtual Machine') { Return $true } Else { Return $false }
 }
+c-net-06-network-agent -serverName $serverName -resultPath $resultPath
 }
 $cnet07 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -5529,8 +5612,10 @@ Function Check-HyperV
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BaseBoard -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object Product
     If ($wmiBIOS.Product -eq 'Virtual Machine') { Return $true } Else { Return $false }
 }
+c-net-07-network-teaming -serverName $serverName -resultPath $resultPath
 }
 $cnet08 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -5618,8 +5703,10 @@ Function c-net-08-management-adapter
 
     Return $result
 }
+c-net-08-management-adapter -serverName $serverName -resultPath $resultPath
 }
 $cnet09 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -5783,8 +5870,10 @@ Function c-net-09-static-routes
 
     Return $result
 }
+c-net-09-static-routes -serverName $serverName -resultPath $resultPath
 }
 $cnet10 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -5894,8 +5983,10 @@ Function c-net-10-power-management
 
     Return $result
 }
+c-net-10-power-management -serverName $serverName -resultPath $resultPath
 }
 $cnet11 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -6044,8 +6135,10 @@ Function c-net-11-dns-settings
 
     Return $result
 }
+c-net-11-dns-settings -serverName $serverName -resultPath $resultPath
 }
 $cnet12 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -6140,8 +6233,10 @@ Function c-net-12-fileprint-services
 
     Return $result
 }
+c-net-12-fileprint-services -serverName $serverName -resultPath $resultPath
 }
 $creg01 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -6314,8 +6409,10 @@ Function Get-NtpTime {
 
     Return [Math]::Round($Offset/1000, 3)
 }
+c-reg-01-local-time -serverName $serverName -resultPath $resultPath
 }
 $creg02 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -6398,8 +6495,10 @@ Function c-reg-02-timezone
 
     Return $result
 }
+c-reg-02-timezone -serverName $serverName -resultPath $resultPath
 }
 $creg03 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -6494,8 +6593,10 @@ Function c-reg-03-location
     
     Return $result
 }
+c-reg-03-location -serverName $serverName -resultPath $resultPath
 }
 $creg04 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -6601,8 +6702,10 @@ Function c-reg-04-language
     
     Return $result
 }
+c-reg-04-language -serverName $serverName -resultPath $resultPath
 }
 $csec01 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -6717,8 +6820,10 @@ Function c-sec-01-schannel-p1-ciphers
 
     Return $result
 }
+c-sec-01-schannel-p1-ciphers -serverName $serverName -resultPath $resultPath
 }
 $csec02 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -6833,8 +6938,10 @@ Function c-sec-02-schannel-p2-hashes
 
     Return $result
 }
+c-sec-02-schannel-p2-hashes -serverName $serverName -resultPath $resultPath
 }
 $csec03 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -6939,8 +7046,10 @@ Function c-sec-03-schannel-p3-keyexchangealgorithms
 
     Return $result
 }
+c-sec-03-schannel-p3-keyexchangealgorithms -serverName $serverName -resultPath $resultPath
 }
 $csec04 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -7051,8 +7160,10 @@ Function c-sec-04-schannel-p4-protocols
 
     Return $result
 }
+c-sec-04-schannel-p4-protocols -serverName $serverName -resultPath $resultPath
 }
 $csec05 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -7146,8 +7257,10 @@ Function c-sec-05-schannel-p5-cipher-order
 
     Return $result
 }
+c-sec-05-schannel-p5-cipher-order -serverName $serverName -resultPath $resultPath
 }
 $csec06 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -7240,8 +7353,10 @@ Function c-sec-06-reject-enumerate-accounts
     
     Return $result
 }
+c-sec-06-reject-enumerate-accounts -serverName $serverName -resultPath $resultPath
 }
 $csec07 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -7334,8 +7449,10 @@ Function c-sec-07-reject-enumerate-shares
     
     Return $result
 }
+c-sec-07-reject-enumerate-shares -serverName $serverName -resultPath $resultPath
 }
 $csec08 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -7428,8 +7545,10 @@ Function c-sec-08-domain-credential-caching
     
     Return $result
 }
+c-sec-08-domain-credential-caching -serverName $serverName -resultPath $resultPath
 }
 $csec09 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -7545,8 +7664,10 @@ Function c-sec-09-request-admin-elevated
     
     Return $result
 }
+c-sec-09-request-admin-elevated -serverName $serverName -resultPath $resultPath
 }
 $csec10 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -7639,8 +7760,10 @@ Function c-sec-10-anonymous-pipe-share-access
     
     Return $result
 }
+c-sec-10-anonymous-pipe-share-access -serverName $serverName -resultPath $resultPath
 }
 $csec11 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -7759,8 +7882,10 @@ Function Check-NameSpace
         If ($wmio -eq '') { Return $false } Else { $wmio = '' } }
     Return $true
 }
+c-sec-11-iis-default-page -serverName $serverName -resultPath $resultPath
 }
 $csec12 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -7862,8 +7987,10 @@ Function c-sec-12-smb-signing-on
 
     Return $result
 }
+c-sec-12-smb-signing-on -serverName $serverName -resultPath $resultPath
 }
 $csec13 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -8028,8 +8155,10 @@ Function Check-NameSpace
         If ($wmio -eq '') { Return $false } Else { $wmio = '' } }
     Return $true
 }
+c-sec-13-rsa-authentication -serverName $serverName -resultPath $resultPath
 }
 $csec14 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -8155,8 +8284,10 @@ Function c-sec-14-firewall-rules
 
     Return $result
 }
+c-sec-14-firewall-rules -serverName $serverName -resultPath $resultPath
 }
 $csec15 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -8256,8 +8387,10 @@ Function c-sec-15-firewall-state
 
     Return $result
 }
+c-sec-15-firewall-state -serverName $serverName -resultPath $resultPath
 }
 $csec16 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -8385,8 +8518,10 @@ Function c-sec-16-open-ports
 
     Return $result
 }
+c-sec-16-open-ports -serverName $serverName -resultPath $resultPath
 }
 $csec17 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -8479,8 +8614,10 @@ Function c-sec-17-smb1-disabled
 
     Return $result
 }
+c-sec-17-smb1-disabled -serverName $serverName -resultPath $resultPath
 }
 $csys01 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -8590,8 +8727,10 @@ Function c-sys-01-pending-reboot
 
     Return $result
 }
+c-sys-01-pending-reboot -serverName $serverName -resultPath $resultPath
 }
 $csys02 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -8746,8 +8885,10 @@ Function Check-Port
             If ($failed -eq $true) { Return $false } Else { Return $true }
     } } Catch { Return $false }
 }
+c-sys-02-windows-license -serverName $serverName -resultPath $resultPath
 }
 $csys03 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -8850,8 +8991,10 @@ Function c-sys-03-services-not-started
     
     Return $result
 }
+c-sys-03-services-not-started -serverName $serverName -resultPath $resultPath
 }
 $csys04 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -8949,8 +9092,10 @@ Function c-sys-04-services-not-stopped
     
     Return $result
 }
+c-sys-04-services-not-stopped -serverName $serverName -resultPath $resultPath
 }
 $csys05 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -9107,8 +9252,10 @@ Function c-sys-05-system-event-log
     
     Return $result
 }
+c-sys-05-system-event-log -serverName $serverName -resultPath $resultPath
 }
 $csys06 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -9265,8 +9412,10 @@ Function c-sys-06-application-event-log
     
     Return $result
 }
+c-sys-06-application-event-log -serverName $serverName -resultPath $resultPath
 }
 $csys07 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -9350,8 +9499,10 @@ Function c-sys-07-devices-status
     
     Return $result
 }
+c-sys-07-devices-status -serverName $serverName -resultPath $resultPath
 }
 $csys08 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -9475,8 +9626,10 @@ Function c-sys-08-custom-event-log
 
     Return $result
 }
+c-sys-08-custom-event-log -serverName $serverName -resultPath $resultPath
 }
 $csys09 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -9597,8 +9750,10 @@ Function Get-Tasks
         $taskFolders | ForEach-Object { Get-Tasks $_ $true } }
     Catch { }
 }
+c-sys-09-scheduled-tasks -serverName $serverName -resultPath $resultPath
 }
 $csys10 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -9722,8 +9877,10 @@ Function c-sys-10-print-spooler
 
     Return $result
 }
+c-sys-10-print-spooler -serverName $serverName -resultPath $resultPath
 }
 $csys11 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -9814,8 +9971,10 @@ Function c-sys-11-autorun-disabled
 
     Return $result
 }
+c-sys-11-autorun-disabled -serverName $serverName -resultPath $resultPath
 }
 $csys12 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -9936,8 +10095,10 @@ Function c-sys-12-snmp-configuration
 
     Return $result
 }
+c-sys-12-snmp-configuration -serverName $serverName -resultPath $resultPath
 }
 $csys13 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -10020,8 +10181,10 @@ Function c-sys-13-domain-member
 
     Return $result
 }
+c-sys-13-domain-member -serverName $serverName -resultPath $resultPath
 }
 $csys14 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -10117,8 +10280,10 @@ Function Check-NameSpace
         If ($wmio -eq '') { Return $false } Else { $wmio = '' } }
     Return $true
 }
+c-sys-14-power-plan -serverName $serverName -resultPath $resultPath
 }
 $csys15 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -10206,8 +10371,10 @@ Function c-sys-15-hibernation
 
     Return $result
 }
+c-sys-15-hibernation -serverName $serverName -resultPath $resultPath
 }
 $csys16 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -10313,8 +10480,10 @@ Function Check-NameSpace
         If ($wmio -eq '') { Return $false } Else { $wmio = '' } }
     Return $true
 }
+c-sys-16-remote-desktop -serverName $serverName -resultPath $resultPath
 }
 $csys17 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -10431,8 +10600,10 @@ Function Check-NameSpace
         If ($wmio -eq '') { Return $false } Else { $wmio = '' } }
     Return $true
 }
+c-sys-17-terminal-services-licenced -serverName $serverName -resultPath $resultPath
 }
 $csys18 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -10539,8 +10710,10 @@ Function c-sys-18-check-current-ou
         Return $result
     }
 }
+c-sys-18-check-current-ou -serverName $serverName -resultPath $resultPath
 }
 $csys19 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -10674,8 +10847,10 @@ Function isHPServer
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object Manufacturer
     If ($wmiBIOS.Manufacturer -like 'HP*') { Return $true } Else { Return $false }
 }
+c-sys-19-hp-smh-version -serverName $serverName -resultPath $resultPath
 }
 $csys20 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -10809,8 +10984,10 @@ Function isDELLServer
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object Manufacturer
     If ($wmiBIOS.Manufacturer -like 'Dell*') { Return $true } Else { Return $false }
 }
+c-sys-20-dell-oma-version -serverName $serverName -resultPath $resultPath
 }
 $csys21 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -10975,8 +11152,10 @@ Function c-sys-21-gold-image
 
     Return $result
 }
+c-sys-21-gold-image -serverName $serverName -resultPath $resultPath
 }
 $cvmw01 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -11137,8 +11316,10 @@ Function Check-VMware
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object SerialNumber
     If ($wmiBIOS.SerialNumber -like '*VMware*') { Return $true } Else { Return $false }        
 }
+c-vmw-01-tools-version -serverName $serverName -resultPath $resultPath
 }
 $cvmw02 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -11242,8 +11423,10 @@ Function Check-VMware
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object SerialNumber
     If ($wmiBIOS.SerialNumber -like '*VMware*') { Return $true } Else { Return $false }        
 }
+c-vmw-02-time-sync -serverName $serverName -resultPath $resultPath
 }
 $cvmw03 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -11346,8 +11529,10 @@ Function Check-VMware
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object SerialNumber
     If ($wmiBIOS.SerialNumber -like '*VMware*') { Return $true } Else { Return $false }        
 }
+c-vmw-03-nic-type -serverName $serverName -resultPath $resultPath
 }
 $cvmw04 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -11455,8 +11640,10 @@ Function Check-VMware
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object SerialNumber
     If ($wmiBIOS.SerialNumber -like '*VMware*') { Return $true } Else { Return $false }        
 }
+c-vmw-04-lsi-sas-controller -serverName $serverName -resultPath $resultPath
 }
 $cvmw05 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -11565,8 +11752,10 @@ Function Check-VMware
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object SerialNumber
     If ($wmiBIOS.SerialNumber -like '*VMware*') { Return $true } Else { Return $false }        
 }
+c-vmw-05-scsi-drive-count -serverName $serverName -resultPath $resultPath
 }
 $cvmw06 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -11672,8 +11861,10 @@ Function Check-VMware
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object SerialNumber
     If ($wmiBIOS.SerialNumber -like '*VMware*') { Return $true } Else { Return $false }        
 }
+c-vmw-06-total-vm-size -serverName $serverName -resultPath $resultPath
 }
 $cvmw07 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -11771,8 +11962,10 @@ Function Check-VMware
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object SerialNumber
     If ($wmiBIOS.SerialNumber -like '*VMware*') { Return $true } Else { Return $false }        
 }
+c-vmw-07-cd-dvd-floppy-mounted -serverName $serverName -resultPath $resultPath
 }
 $cvmw08 = {
+Param ($serverName,$resultPath)
 Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
 $script:lang        = @{}
 $script:appSettings = @{}
@@ -11888,6 +12081,7 @@ Function Check-VMware
     $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object SerialNumber
     If ($wmiBIOS.SerialNumber -like '*VMware*') { Return $true } Else { Return $false }        
 }
+c-vmw-08-failover-clustering -serverName $serverName -resultPath $resultPath
 }
 ##############################################################################################################################################################################################
 $script:qahelp['acc01']='<xml><description>Check all local users to ensure that no non-standard accounts exist.  Unless the server is not in a domain, there should be no additional user accounts.Example standard accounts include "ASPNET", "__VMware"</description><requiredinputs>IgnoreTheseUsers - List of know user or groups accounts to ignore!n</requiredinputs><pass>No additional local accounts exist!n</pass><fail>One or more local accounts exist!n</fail><applies>All Servers!n</applies></xml>'
@@ -12200,32 +12394,46 @@ Function Start-QAProcess
             # Use the Check-Port function to make sure that the RPC port is listening
             If (($debug -eq $true) -or ((Check-Port -ServerName $server -Port 135) -eq $true))
             {
-                If ($verbose -eq $true) { Write-Host $script:lang['Verbose-Info'] -ForegroundColor Yellow -NoNewline }
-                Else {  For ([int]$i = 0; $i -lt $count; $i++) { Write-Host $B -ForegroundColor DarkGray -NoNewline }
-                    Write-Host ''
-                    Write-Host '   ' -ForegroundColor DarkGray -NoNewline
+                # Create runspace pool
+                $RSCollection = New-Object System.Collections.ArrayList
+                $RunspacePool = [RunspaceFactory]::CreateRunspacePool(1, $script:ccTasks, [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault(), $Host)
+                $PowerShell   = [System.Management.Automation.PowerShell]::Create()
+                $PowerShell.RunspacePool = $RunspacePool
+                $RunspacePool.Open()
+
+                ForEach ($check In $script:qaChecks)
+                {
+                    $PowerShell = [System.Management.Automation.PowerShell]::Create()
+                    $PowerShell.RunspacePool = $RunspacePool
+
+                    [scriptblock]$CheckName = Invoke-Expression "`$$($check.Substring(0,8).Replace('-', ''))"
+                    $PowerShell.AddScript($CheckName).AddParameters(@{serverName = $server; resultPath = $script:qaOutput}) | Out-Null
+
+                    $Handle = $PowerShell.BeginInvoke()
+                    $TempRS = '' | Select PowerShell, Handle, StartTime, CheckTitle
+                    $TempRS.PowerShell = $PowerShell
+                    $TempRS.Handle     = $Handle
+                    $TempRS.StartTime  = (Get-Date)
+                    $TempRS.CheckTitle = $check
+                    $RSCollection.Add($TempRS) | Out-Null
+
+                    If ($verbose -eq $false) { Write-Host $B -ForegroundColor DarkGray -NoNewline }
                 }
 
-                # RPC Connected, loop through the checks and start a job
-                [array]    $jobs         = $script:qaChecks
-                [int]      $jobIndex     = 0         # Which job is up for running
-                [hashtable]$workItems    = @{ }      # Items being worked on
-                [hashtable]$jobtimer     = @{ }      # Timers for jobs
-                [boolean]  $workComplete = $false    # Is the script done with what it needs to do?
+                If ($verbose -eq $true) { Write-Host $script:lang['Verbose-Info'] -ForegroundColor Yellow }
+                Else { Write-Host ''; Write-Host '   ' -NoNewline }
 
-                While (-not $workComplete)
+                # Start monitoring the threads
+                Do
                 {
-                    # Process any finished jobs.
-                    ForEach ($key In @() + $workItems.Keys)
+                    [boolean]$StillWorking = $false
+                    ForEach ($Runspace in $RSCollection)
                     {
-                        # Time in seconds current job has been running for
-                        [int]$elapsed = $jobtimer.Get_Item($workItems[$key].Name).Elapsed.TotalSeconds
-
-                        # Process succesful jobs
-                        If ($workItems[$key].State -eq 'Completed')
+                        If ($Runspace.Handle.isCompleted)
                         {
-                            # $key is done.
-                            [PSObject]$result = Receive-Job $workItems[$key]
+                            $result = ($Runspace.PowerShell.EndInvoke($RunSpace.Handle))
+                            $Runspace.PowerShell.Dispose()
+
                             If ($result -ne $null)
                             {
                                 # add to results
@@ -12233,7 +12441,8 @@ Function Start-QAProcess
                                 $serverresults  += $result
 
                                 # provide some pretty output on the console
-                                Switch ($result.result)
+                                If ($verbose -eq $true) { Write-Host '   '$($Result).check.ToString().PadRight($script:screenwidth - 9, '.')': ' -ForegroundColor Gray -NoNewline }
+                                Switch ($($result).result)
                                 {
                                     $script:lang['Pass']           { Write-Host $pBlock -ForegroundColor Green  -NoNewline; Break }
                                     $script:lang['Warning']        { Write-Host $pBlock -ForegroundColor Yellow -NoNewline; Break }
@@ -12241,23 +12450,22 @@ Function Start-QAProcess
                                     $script:lang['Manual']         { Write-Host $pBlock -ForegroundColor Cyan   -NoNewline; Break }
                                     $script:lang['Not-Applicable'] { Write-Host $pBlock -ForegroundColor Gray   -NoNewline; Break }
                                     $script:lang['Error']          { If ($result.data -like '*Access is denied*') {
-                                                                         If ($workComplete -eq $false) {
-                                                                             $result.message = $script:lang['AD-Message']    # ACCESS DENIED
-                                                                             $script:failurecount++
-                                                                             Write-Host ("$M " + $script:lang['AD-Write-Host']) -ForegroundColor Magenta -NoNewline
-                                                                             $workComplete = $true } }
-                                                                     Else { If ($workComplete -eq $false) { Write-Host $F -ForegroundColor Magenta -NoNewline } }
+                                                                         $result.message = $script:lang['AD-Message']    # ACCESS DENIED
+                                                                         $script:failurecount++
+                                                                         Write-Host ("$M " + $script:lang['AD-Write-Host']) -ForegroundColor Magenta -NoNewline }
+                                                                     Else { Write-Host $F -ForegroundColor Magenta -NoNewline; Break }
                                                                    }
                                     Default                        { Write-Host $F -ForegroundColor DarkGray -NoNewline; Break }
                                 }
+                                If ($verbose -eq $true) { Write-Host '' }
                             }
                             Else
                             {
                                 # Job returned no data
                                 $result          = newResult
                                 $result.server   = $server
-                                $result.name     = $workItems[$key].Name
-                                $result.check    = $workItems[$key].Name
+                                $result.name     = $($Runspace.CheckTitle)
+                                $result.check    = $($Runspace.CheckTitle).Substring(0, 8)
                                 $result.result   = 'Error'
                                 $result.message  = $script:lang['ND-Message']    # NO DATA
                                 $result.data     = $script:lang['ND-Message']
@@ -12265,78 +12473,51 @@ Function Start-QAProcess
                                 $serverresults  += $result
                                 Write-Host $F -ForegroundColor Magenta -NoNewline
                             }
-                            $workItems.Remove($key)
-                        
-                        # Job failed or server disconnected
+
+                            $Runspace.Handle     = $null
+                            $Runspace.StartTime  = $null
+                            $Runspace.PowerShell = $null
+                            $Runspace.CheckTitle = $null
                         }
-                        ElseIf (($workItems[$key].State -eq 'Failed') -or ($workItems[$key].State -eq 'Disconnected'))
+                        ElseIf (($($Runspace.StartTime).AddSeconds($script:checkTimeout)) -lt (Get-Date))
                         {
+                            $Runspace.PowerShell.Stop()
+                            $Runspace.PowerShell.Dispose()
+
                             $result          = newResult
                             $result.server   = $server
-                            $result.name     = $workItems[$key].Name
-                            $result.check    = $workItems[$key].Name
+                            $result.name     = $($Runspace.CheckTitle)
+                            $result.check    = $($Runspace.CheckTitle).Substring(0, 8)
                             $result.result   = 'Error'
-                            $result.message  = $script:lang['FD-Message']    # FAILED / DISCONNECTED
-                            $result.data     = $script:lang['FD-Message']
+                            $result.message  = $script:lang['TO-Message']    # TIMEOUT
+                            $result.data     = $script:lang['TO-Message']
                             $script:results += $result
                             $serverresults  += $result
-                            Write-Host ("$M " + $script:lang['FD-Write-Host']) -ForegroundColor Magenta -NoNewline
-                            $workItems.Remove($key)
-                            $script:failurecount++
-                            $workComplete = $true
-                        }
+                            Write-Host $F -ForegroundColor Magenta -NoNewline
 
-                        # Check for timed out jobs and kill them
-                        If ($workItems[$key])
+                            $Runspace.Handle     = $null
+                            $Runspace.StartTime  = $null
+                            $Runspace.PowerShell = $null
+                            $Runspace.CheckTitle = $null
+                        }
+                        ElseIf ($Runspace.Handle -ne $null)
                         {
-                            If ($workItems[$key].State -eq 'Running' -and ($elapsed -ge $script:checkTimeout))
-                            {
-                                $result          = newResult
-                                $result.server   = $server
-                                $result.name     = $workItems[$key].Name
-                                $result.check    = $workItems[$key].Name
-                                $result.result   = 'Error'
-                                $result.message  = $script:lang['TO-Message']    # TIMEOUT
-                                $result.data     = $script:lang['TO-Message']
-                                $script:results += $result
-                                $serverresults  += $result
-                                Try { Stop-Job -Job $workItems[$key]; Remove-Job -Job $workItems[$key] } Catch { }
-                                Write-Host $F -ForegroundColor Magenta -NoNewline
-                                $workItems.Remove($key)
-                            }
+                            $Runspace.StartTime = (Get-Date)    # Reset start time on checks not yet running
+                            $StillWorking = $true
                         }
                     }
 
-                    # Start new jobs if there are open slots.
-                    While (($workItems.Count -lt $script:ccTasks) -and ($jobIndex -lt $jobs.Length))
-                    {
-                        [string]$job             = ($jobs[$jobIndex].Substring(0, 8).Replace('-',''))  # c-xyz-01-gold-build --> cxyz01
-                        [int]   $jobOn           =  $jobIndex + 1                                      # f-xyz-01-gold-build --> fxyz01
-                        [int]   $numJobs         =  $jobs.Count
-                        [string]$funcName        =  $jobs[$jobIndex]
-                        [object]$initScript      =  Invoke-Expression "`$$job"
+                    If ($StillWorking) { Start-Sleep -Milliseconds 100 }
 
-                        If ($verbose -eq $true)
-                        {
-                            Write-Host ''
-                            Write-Host '   '$jobs[$jobIndex].ToString().PadRight($script:screenwidth - 9, '.')': ' -ForegroundColor Gray -NoNewline
-                        }
-
-                        # Run the required job...
-                        $workItems[$job] = Start-Job -InitializationScript $initScript -ArgumentList $funcName, $server, $script:qaOutput `
-                                                     -ScriptBlock { Invoke-Expression  -Command "$args[0] $args[1] $args[2]" } -Name $funcName
-
-                        $stopWatch = [System.Diagnostics.StopWatch]::StartNew()
-                        $jobtimer.Add($funcName, $stopWatch)
-                        $jobIndex += 1
-                    }
-
-                    # If all jobs have been processed we are done - next server.
-                    If ($jobIndex -eq $jobs.Length -and $workItems.Count -eq 0) { $workComplete = $true }
-                
-                    # Wait between status checks
-                    Start-Sleep -Milliseconds $waitTime
+                    # Clean out unused runspace jobs
+                    $rsClone = $RSCollection.Clone()
+                    $rsClone | Where { $_.Handle -eq $Null } | ForEach { $RSCollection.Remove($_) }
                 }
+                While ($StillWorking)
+
+                $RSCollection.Clear()
+                $RSCollection = $null
+                # RunspacePool Complete
             }
             Else
             {
@@ -12767,7 +12948,7 @@ Function Write-Header
     $q=("$TL$H$H$H$H$H$H$H$H$H$H$H$TR    ",'','','',        "$V           $V    ",'','','',        "$V  ","$F$T$F $F$T$F","  $V    ",'',
         "$V  ","$F$B$F $F$T$F","  $V    ",'',        "$V  "," $T     ","  $V    ",'',        "$V  ",' CHECK ',"  $V","  $F$F",
         "$V  ",'       ',"  $V"," $F$F ",        "$V  ",'      ','',"$F$F$B $F$F  ",        "$BL$H$H$H$H$H$H$H$H",'',''," $T$F$F$T ")
-    $s=('QA Script Engine','Written by Mike @ My Random Thoughts','support@myrandomthoughts.co.uk','','','',$Message,$version,$underline)
+    $s=('QA Script Engine','Written by Mike @ My Random Thoughts','support@myrandomthoughts.co.uk','','Runspaces - Proof Of Concept','',$Message,$version,$underline)
     [System.ConsoleColor[]]$c=('White','Gray','Gray','Red','Cyan','Red','Green','Yellow','Yellow');Write-Host ''
     For ($i=0;$i-lt$q.Length;$i+=4) { Write-Colr '  ',$q[$i],$q[$i+1],$q[$i+2],$q[$i+3],$s[$i/4].PadLeft($Width-19) -Colour Yellow,White,Cyan,White,Green,$c[$i/4] }
     Write-Host ''

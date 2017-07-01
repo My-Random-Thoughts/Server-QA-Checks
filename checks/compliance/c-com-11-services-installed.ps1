@@ -30,7 +30,7 @@
         None
 #>
 
-Function c-sys-22-installed-services
+Function c-com-11-services-installed
 {
     Param ( [string]$serverName, [string]$resultPath )
 
@@ -39,7 +39,7 @@ Function c-sys-22-installed-services
     $result        = newResult
     $result.server = $serverName
     $result.name   = $script:lang['Name']
-    $result.check  = 'c-sys-22-installed-services'
+    $result.check  = 'c-com-11-services-installed'
 
     #... CHECK STARTS HERE ...#
 
