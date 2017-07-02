@@ -1889,8 +1889,8 @@ To start, click the 'Set Check Location' button below...
 
     #
     $btn_t2_SelectReset                 = New-Object 'System.Windows.Forms.Button'
-    $btn_t2_SelectReset.Location        = '518, 542'
-    $btn_t2_SelectReset.Size            = ' 75,  25'
+    $btn_t2_SelectReset.Location        = '468, 542'
+    $btn_t2_SelectReset.Size            = ' 50,  25'
     $btn_t2_SelectReset.Text            = 'Reset'
     $btn_t2_SelectReset.Enabled         = $False
     $btn_t2_SelectReset.Add_Click({ btn_t2_SelectButtons -SourceButton 'SelectReset' })

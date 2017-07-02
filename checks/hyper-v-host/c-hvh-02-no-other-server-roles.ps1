@@ -48,20 +48,23 @@ Function c-hvh-02-no-other-server-roles
             [string]$queryOS = 'SELECT Caption FROM Win32_OperatingSystem'
             [string]$checkOS = Get-WmiObject -ComputerName $serverName -Query $queryOS -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Caption
 
-            If ($check -like '*2008')        # 2008
+            If ($checkOS -like '*2008')        # 2008
             {
-                [string]$query = "Select Name, ID FROM Win32_ServerFeature WHERE ParentID = '0'"
+                [string]$query = "SELECT Name, ID FROM Win32_ServerFeature WHERE ParentID = '0'"
                 [array] $check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2
             }
-            ElseIf ($check -like '*201*')    # 2012, 2016
+            ElseIf ($checkOS -like '*201*')    # 2012, 2016
             {
-                [array]$check = (Get-WindowsFeature | Where-Object { ($_.InstallState -eq 'Installed') -and ($_.Depth -eq 1) } |
+                [array]$check = (Get-WindowsFeature | Where-Object { ($_.Depth -eq 1) -and ($_.InstallState -eq 'Installed') } |
                                                       Select-Object @{N='Id'; E={$_.AdditionalInfo.NumericId}}) |
                                                       Select-Object -ExpandProperty Id
             }
             Else
             {
-                Throw 'Operating system not supported'
+                $result.result  = $script:lang['Not-Applicable']
+                $result.message = 'Operating system not supported'
+                $result.data    = $checkOS
+                Return $result
             }
 
             [System.Collections.ArrayList]$check2 = @()
