@@ -56,7 +56,7 @@ Function c-vmw-08-failover-clustering
             }
             ElseIf ($checkOS -like '*201*')    # 2012, 2016
             {
-                [string]$check = (Get-WindowsFeature -Name 'Failover-Clustering').InstallState    # Returns: 'Available' or 'Installed'
+                [string]$check = (Get-WindowsFeature -ComputerName $serverName -Name 'Failover-Clustering').InstallState    # Returns: 'Available' or 'Installed'
             }
             Else
             {

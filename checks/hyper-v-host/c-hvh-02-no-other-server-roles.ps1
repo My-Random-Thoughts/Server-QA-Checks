@@ -55,9 +55,9 @@ Function c-hvh-02-no-other-server-roles
             }
             ElseIf ($checkOS -like '*201*')    # 2012, 2016
             {
-                [array]$check = (Get-WindowsFeature | Where-Object { ($_.Depth -eq 1) -and ($_.InstallState -eq 'Installed') } |
-                                                      Select-Object @{N='Id'; E={$_.AdditionalInfo.NumericId}}) |
-                                                      Select-Object -ExpandProperty Id
+                [array] $check = (Get-WindowsFeature -ComputerName $serverName | Where-Object { ($_.Depth -eq 1) -and ($_.InstallState -eq 'Installed') } |
+                                                                                 Select-Object @{N='Id'; E={$_.AdditionalInfo.NumericId}}) |
+                                                                                 Select-Object -ExpandProperty Id
             }
             Else
             {
