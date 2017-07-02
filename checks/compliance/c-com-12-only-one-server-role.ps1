@@ -13,12 +13,13 @@
 
     RESULTS:
         PASS:
-            No extra server roles or features exist
+            One extra server role or feature installed
         WARNING:
         FAIL:
-            One or more extra server roles or features exist
+            One or more extra server roles or features installed
         MANUAL:
         NA:
+            No extra server roles or features installed
 
     APPLIES:
         All Servers
@@ -47,11 +48,13 @@ Function c-com-12-only-one-server-role
 
         If ($checkOS -like '*2008')        # 2008
         {
+            # Returns only installed ites
             [string]$query = "SELECT Name, ID FROM Win32_ServerFeature WHERE ParentID = '0'"
             [array] $installedRoles = (Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2)
         }
         ElseIf ($checkOS -like '*201*')    # 2012, 2016
         {
+            # These are installed by default on all 2012+ servers
             [string]$ignoreList     = '|.NET Framework 4.5 Features|.NET Framework 4.6 Features|File and Storage Services|
                                        |SMB 1.0/CIFS File Sharing Support|User Interfaces and Infrastructure|
                                        |Windows Defender Features|Windows PowerShell|WoW64 Support|'
@@ -77,12 +80,18 @@ Function c-com-12-only-one-server-role
     If (([string]::IsNullOrEmpty($installedRoles) -eq $true) -or ($installedRoles.Count -eq 0))
     {
         $result.result  = $script:lang['Pass']
-        $result.message = 'No extra server roles or features exist'
+        $result.message = 'No extra server roles or features installed'
+    }
+    ElseIf ($installedRoles.Count -eq 1)
+    {
+        $result.result  = $script:lang['Pass']
+        $result.message = 'One extra server role or feature installed'
+        $installedRoles | ForEach { $result.data += '{0},#' -f $_.DisplayName }
     }
     Else
     {
         $result.result  = $script:lang['Fail']
-        $result.message = 'One or more extra server roles or features exist'
+        $result.message = 'One or more extra server roles or features installed'
         $installedRoles | ForEach { $result.data += '{0},#' -f $_.DisplayName }
     }
 
