@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Ensure the system is set to request administrative credentials before granting an application elevated privileges. 
         Default setting is either "(1):Prompt for credentials on the secure desktop" or "(3):Prompt for credentials"
@@ -14,19 +14,19 @@
         Enabled
 
     INPUT-DESCRIPTION:
-        0: No elevated prompt
-        1: Prompt for password on a secure desktop
-        2: Show Permit/Deny on a secure desktop
-        3: Prompt for password on a normal desktop
-        4: Show Permit/Deny on a normal desktop
-        5: Permit/Deny for non-Windows binaries on a secure desktop
+        0: Elevate without prompting
+        1: Prompt for credentials on the secure desktop
+        2: Prompt for consent on the secure desktop
+        3: Prompt for credentials
+        4: Prompt for consent
+        5: Prompt for consent for non-Windows binaries
 
     RESULTS:
         PASS:
-            Prompt for credentials is enabled
+            System is configured correctly
         WARNING:
         FAIL:
-            System is not set to "Prompt for credentials" when launching an application with elevated privileges
+            System is not configured correctly
             Registry setting not found
         MANUAL:
         NA:
@@ -72,24 +72,23 @@ Function c-sec-09-request-admin-elevated
         If ($script:appSettings['ElevatePromptForAdminCredentials'] -contains $keyVal)
         {
             $result.result  = $script:lang['Pass']
-            $result.message = 'Prompt for credentials is enabled'
-            $result.data    = ''
+            $result.message = 'System is configured correctly'
         }
         Else
         {
-            $result.data = 'Current setting: '
-            Switch ($keyVal)
-            {
-                0 { $result.data += 'Elevate without prompting'                    }
-                1 { $result.data += 'Prompt for credentials on the secure desktop' }    # Default Setting
-                2 { $result.data += 'Prompt for consent on the secure desktop'     }
-                3 { $result.data += 'Prompt for credentials'                       }    # Default Setting
-                4 { $result.data += 'Prompt for consent'                           }
-                5 { $result.data += 'Prompt for consent for non-Windows binaries'  }
-            }
-        
             $result.result  = $script:lang['Fail']
-            $result.message = 'System is not set to "Prompt for credentials" when launching an application with elevated privileges'
+            $result.message = 'System is not configured correctly'
+        }
+
+        $result.data = 'Current setting: '
+        Switch ($keyVal)
+        {
+            0 { $result.data += 'Elevate without prompting'                    }
+            1 { $result.data += 'Prompt for credentials on the secure desktop' }    # Default Setting
+            2 { $result.data += 'Prompt for consent on the secure desktop'     }
+            3 { $result.data += 'Prompt for credentials'                       }    # Default Setting
+            4 { $result.data += 'Prompt for consent'                           }
+            5 { $result.data += 'Prompt for consent for non-Windows binaries'  }
         }
     }
     Else
