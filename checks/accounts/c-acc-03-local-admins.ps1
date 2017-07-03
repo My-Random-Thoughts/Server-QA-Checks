@@ -56,7 +56,7 @@ Function c-acc-03-local-admins
         [System.Collections.ArrayList]$members = @()
         $object2 | ForEach { 
             [string]$item = (($_.PartComponent).Split('"')[3])
-            If (-not $script:appSettings['IgnoreTheseUsers'].Contains($item)) { $members += $item }
+            If ($script:appSettings['IgnoreTheseUsers'] -notcontains $item) { $members += $item }
         }
     }
     Catch
