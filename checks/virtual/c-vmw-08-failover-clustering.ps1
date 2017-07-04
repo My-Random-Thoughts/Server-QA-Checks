@@ -49,7 +49,7 @@ Function c-vmw-08-failover-clustering
             [string]$queryOS = 'SELECT Caption FROM Win32_OperatingSystem'
             [string]$checkOS = Get-WmiObject -ComputerName $serverName -Query $queryOS -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Caption
 
-            If ($checkOS -like '*2008')        # 2008
+            If ($checkOS -like '*2008*')       # 2008
             {
                 [string]$query = "SELECT Name FROM Win32_ServerFeature WHERE Name='Failover Clustering'"
                 [string]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Name
