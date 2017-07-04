@@ -1,5 +1,8 @@
 # Basic Change Log
 
+2017/07/04
+- Update to the GUI configurator.  Never miss an update again with this update the settings screen will always show all the settings.  Any that may be missing from your INI file will be given the default script settings.  When saved, the INI file will have all the correct entries.
+
 2017/07/01
 - New checks
 - COM-10 - Software Installed - Checks to see if a list of products are installed
