@@ -176,7 +176,8 @@ Function Show-InputForm
         [parameter(Mandatory=$false)][string]  $Validation = 'None',
         [parameter(Mandatory=$false)][string[]]$InputList,
         [parameter(Mandatory=$false)][string[]]$CurrentValue,
-        [parameter(Mandatory=$false)][string  ]$InputDescription = ''
+        [parameter(Mandatory=$false)][string  ]$InputDescription = '',
+        [parameter(Mandatory=$false)][int     ]$MaxNumberInputBoxes
     )
 
     # [ValidateSet('Simple', 'Check', 'Option', 'List', 'Large')]
@@ -194,6 +195,7 @@ Function Show-InputForm
     {
         [int]$BoxNumber = 0
         ForEach ($Control In $frm_Input.Controls) { If (($Control -is [System.Windows.Forms.TextBox]) -or ($Control -is [System.Windows.Forms.CheckBox])) { $BoxNumber++ } }
+        If ($BoxNumber -eq $MaxNumberInputBoxes) { $AddButton.Enabled = $false; Return }
 
         If ($Type -eq 'TEXT')
         {
@@ -917,9 +919,12 @@ Function Display-MainForm
             }
 
             'LIST' {
+                # Very specific hack to limit the number of input boxes for the NET-09 Static Routes check.
+                If ($($selectedItem.Group.Header).EndsWith('(NET09)')) { $MaxNumberInputBoxes = 3 } Else { $MaxNumberInputBoxes = 30 }
+
                 [string[]]$currentVal  = $($selectedItem.SubItems[1].Text).Split(';')
                           $currentVal  = ($currentVal.Trim().Replace("'",'').Replace('(','').Replace(')',''))
-                [string[]]$returnValue = (Show-InputForm -Type 'List'   -Title $($selectedItem.Group.Header) -Description "$($selectedItem.SubItems[0].Text)`n$($selectedItem.SubItems[3].Text)" -CurrentValue $currentVal -Validation $($selectedItem.SubItems[4].Text))
+                [string[]]$returnValue = (Show-InputForm -Type 'List'   -Title $($selectedItem.Group.Header) -Description "$($selectedItem.SubItems[0].Text)`n$($selectedItem.SubItems[3].Text)" -CurrentValue $currentVal -Validation $($selectedItem.SubItems[4].Text) -MaxNumberInputBoxes $MaxNumberInputBoxes)
                 If ($returnValue -ne '!!-CANCELLED-!!') { $SourceControl.SelectedItems[0].SubItems[1].Text = ("('{0}')" -f $($returnValue -join ';').Replace(';', "'; '")) }
                 Break
             }
