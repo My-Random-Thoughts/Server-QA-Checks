@@ -124,6 +124,41 @@ Function Load-IniFile ( [string]$Inputfile )
     }
     Return $ini
 }
+
+Function Get-DefaultINISettings
+{
+    [hashtable]$defaultINI = @{}
+    [object[]] $folders    = (Get-ChildItem -Path "$script:scriptLocation\checks" | Where-Object { $_.PsIsContainer -eq $True } | Select-Object -ExpandProperty Name | Sort-Object Name )
+
+    ForEach ($folder In ($folders | Sort-Object Name))
+    {
+        [object[]]$scripts = (Get-ChildItem -Path "$script:scriptLocation\checks\$folder" -Filter 'c-*.ps1' | Select-Object -ExpandProperty Name | Sort-Object Name )
+        If ([string]::IsNullOrEmpty($scripts) -eq $False)
+        {
+            ForEach ($script In ($scripts | Sort-Object Name))
+            {
+                [string]$getContent = ((Get-Content -Path "$script:scriptLocation\checks\$folder\$script" -TotalCount 50) -join "`n")
+                [string]$checkCode  = ($script.Substring(2, 6).Replace('-',''))    # Get check code: "c-acc-01-local-user.ps1"  -->  "acc01"
+
+                # Get default state (ENABLED / SKIPPED)
+                $regExE = [RegEx]::Match($getContent, "DEFAULT-STATE:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
+                If ($regExE.Groups[1].Value.Trim() -ne 'Enabled') { $checkCode += '-skip' }
+
+                # Add check
+                $defaultINI[$checkCode] = @{}
+
+                # Get default values
+                $regExV = [RegEx]::Match($getContent, "DEFAULT-VALUES:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
+                [string[]]$Values = ($regExV.Groups[1].Value.Trim()).Split("`n")
+                If (([string]::IsNullOrEmpty($Values) -eq $false) -and ($Values -ne 'None'))
+                {
+                    ForEach ($EachValue In $Values) { $defaultINI[$checkCode][(($EachValue -split ' = ')[0]).Trim()] = (($EachValue -split ' = ')[1]).Trim() }
+                }
+            }
+        }
+    }
+    Return $defaultINI
+}
 #endregion
 ###################################################################################################
 ##                                                                                               ##
@@ -808,6 +843,7 @@ Function Display-MainForm
 
     $Form_Cleanup_FormClosed = {
         $tab_Pages.Remove_SelectedIndexChanged($tab_Pages_SelectedIndexChanged)
+        $btn_RestoreINI.Remove_Click($btn_RestoreINI_Click)
         $btn_t1_Search.Remove_Click($btn_t1_Search_Click)
         $btn_t1_Import.Remove_Click($btn_t1_Import_Click)
         $btn_t2_SetValues.Remove_Click($btn_t2_SetValues_Click)
@@ -843,7 +879,7 @@ Function Display-MainForm
     }
 
     $tab_Pages_SelectedIndexChanged = {
-        If ($tab_Pages.SelectedIndex -eq 0) {  $btn_RestoreINI.Visible = $True                   } Else {  $btn_RestoreINI.Visible = $False }    # Show/Hide 'Restore INI' button
+        If ($tab_Pages.SelectedIndex -eq 0) {  $btn_RestoreINI.Visible = $True                   } Else {  $btn_RestoreINI.Visible = $False }    # Show/Hide 'INI Tools' button
         If ($tab_Pages.SelectedIndex -eq 1) { $lbl_ChangesMade.Visible = $script:ShowChangesMade } Else { $lbl_ChangesMade.Visible = $False }    # Show/Hide 'Selection Changes' Label
     }
 
@@ -962,7 +998,7 @@ Function Display-MainForm
             Load-ComboBox -ComboBox $cmo_t1_Language -Items ('Unknown') -SelectedItem 'Unknown' -Clear
             $iniLoadOK = $False
         }
-
+        
         $btn_t1_Search.Enabled       = $True
         $btn_t1_Import.Enabled       = $iniLoadOK
         $cmo_t1_Language.Enabled     = $iniLoadOK
@@ -977,7 +1013,6 @@ Function Display-MainForm
         $btn_t1_Import.Enabled          = $False
         $cmo_t1_Language.Enabled        = $False
         $cmo_t1_SettingsFile.Enabled    = $False
-
         $lbl_t1_ScanningScripts.Text    = 'Scanning check folders...'
         $lbl_t1_ScanningScripts.Visible = $True
         $lbl_t1_ScanningScripts.Refresh(); [System.Windows.Forms.Application]::DoEvents()
@@ -1126,7 +1161,7 @@ Function Display-MainForm
             }
         }
 
-        $tab_Pages.SelectedIndex               = 1         # Change to the next tab
+        $tab_Pages.SelectedIndex               = 1
         $btn_t1_Search.Enabled                 = $True
         $btn_t1_Import.Enabled                 = $True
         $cmo_t1_Language.Enabled               = $True
@@ -1199,8 +1234,9 @@ Function Display-MainForm
 
         $MainFORM.Cursor = 'WaitCursor'
         $btn_t3_Complete.Enabled = $False
-        [System.Collections.Hashtable]$settingsINI   = (Load-IniFile -Inputfile "$script:scriptLocation\settings\$($cmo_t1_SettingsFile.Text).ini")
-        Try { [string]                $SkippedChecks = ($SettingsINI.Keys | Where-Object { $_.EndsWith('-skip') }) } Catch { }
+        [hashtable]$defaultINI       = (Get-DefaultINISettings)
+        [hashtable]$settingsINI      = (Load-IniFile -Inputfile "$script:scriptLocation\settings\$($cmo_t1_SettingsFile.Text).ini")
+        Try { [string]$SkippedChecks = ($SettingsINI.Keys | Where-Object { $_.EndsWith('-skip') }) } Catch { }
 
         # Add each of the checks' settings to the correct tab page
         ForEach ($folder In $lst_t2_SelectChecks.Groups)
@@ -1224,22 +1260,20 @@ Function Display-MainForm
 
                 # Create each item
                 $iniKeys = New-Object 'System.Collections.Hashtable'
+
+                # Load up the default settings first
+                If ($defaultINI.Contains($("$($listItem.Text)-skip"))) { $iniKeys = ($defaultINI.$("$($listItem.Text)-skip")) }
+                Else                                                   { $iniKeys = ($defaultINI.$(   $listItem.Text)       ) }
+
                 Try
                 {
-                    If ($SkippedChecks.Contains($("$($listItem.Text)-skip"))) { $iniKeys = ($settingsINI.$("$($listItem.Text)-skip")) }
-                    Else                                                      { $iniKeys = ($settingsINI.$(   $listItem.Text)       ) }
+                    # Overwrite with the custom settings
+                    $tmpKeys = New-Object 'System.Collections.Hashtable'
+                    If ($SkippedChecks.Contains($("$($listItem.Text)-skip"))) { $tmpKeys = ($settingsINI.$("$($listItem.Text)-skip")) }
+                    Else                                                      { $tmpKeys = ($settingsINI.$(   $listItem.Text)       ) }
+                    ForEach ($val In $tmpKeys.Keys) { If ($iniKeys.ContainsKey($val)) { $iniKeys[$val] = $tmpKeys[$val] } }
                 }
-                Catch
-                {
-                    # Missing INI Section for this check, read from the check script itself
-                    # Using '$getContent' from above
-                    $regExV = [RegEx]::Match($getContent, "DEFAULT-VALUES:((?:.|\s)+?)(?:(?:[A-Z\- ]+:\n)|(?:#>))")
-                    [string[]]$Values = ($regExV.Groups[1].Value.Trim()).Split("`n")
-                    If (([string]::IsNullOrEmpty($Values) -eq $false) -and ($Values -ne 'None'))
-                    {
-                        ForEach ($EachValue In $Values) { $iniKeys.Add((($EachValue -split ' = ')[0]).Trim(), (($EachValue -split ' = ')[1]).Trim()) }
-                    }
-                }
+                Catch {}
 
                 ForEach ($item In (($iniKeys.Keys) | Sort-Object))
                 {
@@ -1607,7 +1641,7 @@ Function Display-MainForm
     $tab_Page1.TabIndex                 = 0
     $tab_Page1.BackColor                = 'Control'
     $tab_Page1.Text                     = 'Introduction'
-    $tab_Pages.Controls.Add($tab_Page1)    # Introduction
+    $tab_Pages.Controls.Add($tab_Page1)
     $tab_Page1.SuspendLayout()
 
     #
@@ -1615,7 +1649,7 @@ Function Display-MainForm
     $tab_Page2.TabIndex                 = 1
     $tab_Page2.BackColor                = 'Control'
     $tab_Page2.Text                     = 'Select Required Checks'
-    $tab_Pages.Controls.Add($tab_Page2)    # Select Required Checks
+    $tab_Pages.Controls.Add($tab_Page2)
     $tab_Page2.SuspendLayout()
 
     #
@@ -1623,7 +1657,7 @@ Function Display-MainForm
     $tab_Page3.TabIndex                 = 2
     $tab_Page3.BackColor                = 'Control'
     $tab_Page3.Text                     = 'QA Check Values'
-    $tab_Pages.Controls.Add($tab_Page3)    # Specific QA Values
+    $tab_Pages.Controls.Add($tab_Page3)
     $tab_Page3.SuspendLayout()
 
     #
@@ -1631,14 +1665,14 @@ Function Display-MainForm
     $tab_Page4.TabIndex                 = 3
     $tab_Page4.BackColor                = 'Control'
     $tab_Page4.Text                     = 'Generate QA'
-    $tab_Pages.Controls.Add($tab_Page4)    # Generate QA
+    $tab_Pages.Controls.Add($tab_Page4)
     $tab_Page4.SuspendLayout()
 
     #
     $btn_RestoreINI                     = New-Object 'System.Windows.Forms.Button'
     $btn_RestoreINI.Location            = ' 12, 635'
-    $btn_RestoreINI.Size                = '150,  25'
-    $btn_RestoreINI.TabIndex            = 99
+    $btn_RestoreINI.Size                = '125,  25'
+    $btn_RestoreINI.TabIndex            = 100
     $btn_RestoreINI.Text                = 'Restore Settings File'
     $btn_RestoreINI.Add_Click($btn_RestoreINI_Click)
     $MainFORM.Controls.Add($btn_RestoreINI)
@@ -1647,7 +1681,7 @@ Function Display-MainForm
     $btn_Exit                           = New-Object 'System.Windows.Forms.Button'
     $btn_Exit.Location                  = '707, 635'
     $btn_Exit.Size                      = '75, 25'
-    $btn_Exit.TabIndex                  = 98
+    $btn_Exit.TabIndex                  = 97
     $btn_Exit.Text                      = 'Exit'
     $btn_Exit.DialogResult              = [System.Windows.Forms.DialogResult]::Cancel    # Use this instead of a 'Click' event
     $MainFORM.CancelButton              = $btn_Exit
@@ -2086,6 +2120,7 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
     Return $MainFORM.ShowDialog()
 }
 ###################################################################################################
+#region Variables
         [boolean] $script:ShowChangesMade     = $False    # Show/Hide message at bottom of tab 2
         [boolean] $script:UpdateSelectedCount = $False    # Speeds up processing of All/Inv/None buttons
         [string]  $script:saveFile            = ''
@@ -2097,6 +2132,7 @@ Once done, you can then click 'Generate QA Script' to create the compiled QA scr
         }
 Try   { [string]  $script:ExecutionFolder     = (Split-Path -Path ((Get-Variable MyInvocation -ValueOnly -ErrorAction SilentlyContinue).MyCommand.Path) -ErrorAction SilentlyContinue) }
 Catch { [string]  $script:ExecutionFolder     = '' }
+#endregion
 ###################################################################################################
 Display-MainForm | Out-Null
 Write-Host '  Goodbye.!'
