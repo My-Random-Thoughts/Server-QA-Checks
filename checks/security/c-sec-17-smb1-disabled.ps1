@@ -44,9 +44,19 @@ Function c-sec-17-smb1-disabled
     Try
     {
         $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
+
         $regKey = $reg.OpenSubKey('SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters')
-        If ($regKey) { $keyVal = $regKey.GetValue('SMB1') }
+        If ($regKey) { [string]$keyVal1 = $regKey.GetValue('SMB1') }                 #: 0
         Try { $regKey.Close() } Catch { }
+
+        $regKey = $reg.OpenSubKey('SYSTEM\CurrentControlSet\Services\LanmanWorkstation')
+        If ($regKey) { [string[]]$keyVal2 = $regKey.GetValue('DependOnService') }    #: Bowser, MRxSmb20, NSI
+        Try { $regKey.Close() } Catch { }
+
+        $regKey = $reg.OpenSubKey('SYSTEM\CurrentControlSet\services\mrxsmb10')
+        If ($regKey) { [string]$keyVal3 = $regKey.GetValue('Start') }                #: 4
+        Try { $regKey.Close() } Catch { }
+
         $reg.Close()
     }
     Catch
@@ -57,24 +67,24 @@ Function c-sec-17-smb1-disabled
         Return $result
     }
 
-    If ([string]::IsNullOrEmpty($keyVal) -eq $false)
+    [int]$validCount = 0
+    If (([string]::IsNullOrEmpty($keyVal1) -eq $false) -and ($keyVal1  -eq '0')) { $validCount++ } Else { $result.data += '\Services\LanmanServer\Parameters,#' }
+    If ([string]::IsNullOrEmpty($keyVal2) -eq $false)
     {
-        If ($keyVal -eq '0')
-        {
-            $result.result  = $script:lang['Pass']
-            $result.message = 'SMBv1 is disabled'
-        }
-        Else
-        {
-            $result.result  = $script:lang['Fail']
-            $result.message = 'SMBv1 is enabled'
-        }
+        [string]$keyval2b = [string]::Join(',', $keyVal2)
+        If ($keyVal2b -eq 'Bowser,MRxSmb20,NSI') { $validCount++ } Else { $result.data += '\Services\LanmanWorkstation,#' }
+    }
+    If (([string]::IsNullOrEmpty($keyVal3) -eq $false) -and ($keyVal3  -eq '4')) { $validCount++ } Else { $result.data += '\services\mrxsmb10,#' }
+
+    If ($validCount -eq 3)
+    {
+        $result.result  = $script:lang['Pass']
+        $result.message = 'SMBv1 is disabled'
     }
     Else
     {
         $result.result  = $script:lang['Fail']
-        $result.message = 'Registry setting not found'
-        $result.data    = 'HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters,#DWORD: SMBv1, Value: 0'
+        $result.message = 'SMBv1 is enabled'
     }
 
     Return $result
