@@ -1,10 +1,16 @@
 # Basic Change Log
 
+2017/07/05
+- New Checks
+- DRV-10 - Check for any attached Floppy or CD/DVD images
+- NET-13 - Check all adapters for NetBIOS Over TCP/IP settings
+- SYS-22 - Check that all RAM is visable and usable to the OS
+
 2017/07/04
 - Update to the GUI configurator.  Never miss an update again with this update the settings screen will always show all the settings.  Any that may be missing from your INI file will be given the default script settings.  When saved, the INI file will have all the correct entries.
 
 2017/07/01
-- New checks
+- New Checks
 - COM-10 - Software Installed - Checks to see if a list of products are installed
 - COM-11 - Services Installed - Checks to see if a list of services are installed and running
  
