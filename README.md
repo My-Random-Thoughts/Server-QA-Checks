@@ -2,7 +2,6 @@
 
 2017/07/05
 - New Checks
-- DRV-10 - Check for any attached Floppy or CD/DVD images
 - NET-13 - Check all adapters for NetBIOS Over TCP/IP settings
 - SYS-22 - Check that all RAM is visable and usable to the OS
 
