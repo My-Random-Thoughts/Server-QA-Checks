@@ -57,10 +57,11 @@ Function c-sec-16-open-ports
             $TCPProperties = [System.Net.NetworkInformation.IPGlobalProperties]::GetIPGlobalProperties()
             [System.Net.IPEndPoint[]]$Connections = $TCPProperties.GetActiveTcpListeners() | Sort-Object -Property Port
 
+            [string[]]$dynPorts = $null
             [int]$portStart = -1; [int]$portCount = -1
-            [string[]]$dynPorts = Invoke-Command -ScriptBlock { &"netsh.exe" int ipv4 show dynamicportrange tcp } -ErrorAction SilentlyContinue
+            Try { $dynPorts = Invoke-Command -ScriptBlock { &"netsh.exe" int ipv4 show dynamicportrange tcp } -ErrorAction SilentlyContinue } Catch {}
 
-            If ($dynPorts.Count -gt 0)
+            If (([string]::IsNullOrEmpty($dynPorts) -gt $false) -and ($dynPorts.Count -gt 0))
             {
                 $portStart = ($dynPorts[3].Split(':')[1])
                 $portCount = ($dynPorts[4].Split(':')[1])
