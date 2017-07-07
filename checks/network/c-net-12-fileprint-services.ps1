@@ -44,7 +44,7 @@ Function c-net-12-fileprint-services
     {
         [string]$query = 'SELECT NetConnectionID, GUID FROM Win32_NetworkAdapter WHERE (NetConnectionStatus="2" OR NetConnectionStatus="7")'
         $script:appSettings['IgnoreTheseAdapters'] | ForEach { $query += ' AND (NOT NetConnectionID LIKE "%{0}%")' -f $_ }
-        [array] $check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object NetConnectionID, GUID
+        [array] $check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object NetConnectionID, GUID
 
         $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
         $regKey = $reg.OpenSubKey('System\CurrentControlSet\Services\LanmanServer\Linkage')
