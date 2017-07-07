@@ -69,7 +69,7 @@ Function c-net-01-ipv6-status
     {
         # Get list of all adapters...
         [string]$query    = 'SELECT NetConnectionID, GUID FROM Win32_NetworkAdapter WHERE NetEnabled = "TRUE"'
-        [object]$object   = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object NetConnectionID, GUID
+        [object]$object   = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object NetConnectionID, GUID
         [object]$adapters = $object | Where-Object { [string]::IsNullOrEmpty($_.NetConnectionID) -eq $false } | Sort-Object NetConnectionID
 
         # ...and IPv6 enabled adapters...
