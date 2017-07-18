@@ -46,6 +46,9 @@ More details can be found on the project wiki: https://github.com/My-Random-Thou
 
 # Basic Change Log
 
+2017/07/18
+- New report layout and style.  I have created a new report style that I think looks much better than the old one.  Example reports are located in the root on this project.  Let me know what you think.  This report will hopefully become the new normal by the end of August 2017.
+
 2017/07/05
 - New Checks
 - NET-13 - Check all adapters for NetBIOS Over TCP/IP settings
