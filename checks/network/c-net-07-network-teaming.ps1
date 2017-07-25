@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check network interfaces for known teaming names, manually check they are configured correctly.  Fail if no teams found or if server is a virtual.  Checked configuration is:
         Teaming Mode: "Static Independent";  Load Balancing Mode: "Address Hash";  Standby Adapter: (set).
@@ -64,7 +64,7 @@ Function c-net-07-network-teaming
             [string]$query1 = 'SELECT Name, LoadBalancingAlgorithm, TeamingMode FROM MSFT_NetLbfoTeam'
             [array] $check1 = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\StandardCimv2 | Select-Object Name, LoadBalancingAlgorithm, TeamingMode | Sort-Object Name
 
-            If ([string]::IsNullOrEmpty($check1) -eq $false)
+            If ($check1.Count -ne 0)
             {
                 [string]$query2 = 'SELECT Name, Team, AdministrativeMode, FailureReason, OperationalMode FROM MSFT_NetLbfoTeamMember'
                 [array] $check2 = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\StandardCimv2 | Select-Object Name, Team, AdministrativeMode, FailureReason, OperationalMode | Sort-Object Name
@@ -115,7 +115,7 @@ Function c-net-07-network-teaming
     }
     ElseIf ($check -like '*201*')    # 2012, 2016
     {
-        If ($check1 -eq 'NOTEAMS')
+        If ($check1[0] -eq 'NOTEAMS')
         {
             If (((Check-VMware $serverName) -eq $true) -or ((Check-HyperV $serverName) -eq $true))
             {
@@ -167,12 +167,12 @@ Function c-net-07-network-teaming
                     {
                         [string]$vlan = $check3[$check3.Team.IndexOf($team.name)].VlanID
                         If ($vlan -eq '') { $vlan = 'none' }
-                        $result.data += '{0} (vlan: {1}): ' -f $team.name, $vlan
+                        $result.data += '{0} (vlan: {1}): NICs: {2}, ' -f $team.name, $vlan, $team.adapters.Count
 
                         Switch ($team.tm)
                         {
                             '0' { $result.data += 'Static Teaming, '    ; $pass = $false }
-                            '1' { $result.data += 'Static Independent, '                 }    # Default Config
+                            '1' { $result.data += 'Switch Independent, '                 }    # Default Config
                             '2' { $result.data += 'LACP, '              ; $pass = $false }
                         }
 
@@ -183,20 +183,23 @@ Function c-net-07-network-teaming
                             '5' { $result.data += 'Dynamic, '           ; $pass = $false }
                         }
 
+                        If ($team.adapters.Count -ne 2) { $pass = $false }
+
                         If ($team.standby -eq '')
                         {
-                            $result.data += 'No standby NIC.#';
+                            $result.data += 'No standby NIC,#';
                             $pass = $false
                         }
                         Else
                         {
-                            $result.data += $team.standby + '.#'
+                            $result.data += 'Standby: ' + $team.standby + ',#'
                         }
                     }
 
                     If ($pass -eq $true)
                     {
-                        $result.result  = $script:lang['Pass']
+                        $result.result   = $script:lang['Pass']
+                        $result.message += ', Team configuration is set correctly'
                     }
                     Else
                     {
