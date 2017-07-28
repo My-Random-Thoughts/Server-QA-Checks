@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check that McAfee anti-virus is installed and virus definitions are up to date.
 
@@ -67,7 +67,7 @@ Function c-com-01-mcafee-antivirus-installed
         If ($verCheck -ge $verNeed)
         {
             $result.result  = $script:lang['Pass']
-            $result.message = 'McAfee product  found, '
+            $result.message = 'McAfee product found, '
             $result.data    = 'Version {0}, ' -f $verCheck
         }
         Else
@@ -77,13 +77,17 @@ Function c-com-01-mcafee-antivirus-installed
             $result.data    = 'Version {0} found. Expected version: {1},#' -f $verCheck, $script:appSettings['ProductVersion']
         }
 
-        # Check DAT Update date
+        # Check DAT Update date, and Access Protection is installed and enabled
         Try
         {
             [datetime]$dtVal = '01/01/1901'
             $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
             $regKey = $reg.OpenSubKey('Software\Wow6432Node\McAfee\AVEngine')
             If ($regKey) { $dtVal = $regKey.GetValue('AVDatDate') }
+
+            $regKey = $reg.OpenSubKey('Software\Wow6432Node\McAfee\SystemCore\VSCore\On Access Scanner\BehaviourBlocking')
+            If ($regKey) { [int]$apVal1 = $regKey.GetValue('APEnabled'); [int]$apVal2 = $regKey.GetValue('APInstalled') }
+
             Try {$regKey.Close() } Catch {}
             $reg.Close()
         }
@@ -101,20 +105,33 @@ Function c-com-01-mcafee-antivirus-installed
             If ($days -le $script:appSettings['MaximumDATAgeAllowed'])
             {
                 $result.result   = $script:lang['Pass']
-                $result.message += 'DATs are OK'
-                $result.data    += 'DATs {0} day(s) old' -f $days.ToString()
+                $result.message += 'DATs are OK,#'
+                $result.data    += 'DATs {0} day(s) old,#' -f $days.ToString()
             }
             Else
             {
                 $result.result   = $script:lang['Fail']
-                $result.message += 'DATs are not up-to-date'
-                $result.data    += 'DATs {0} day(s) old' -f $days.ToString()
+                $result.message += 'DATs are not up-to-date,#'
+                $result.data    += 'DATs {0} day(s) old,#' -f $days.ToString()
             }
         }
         Else
         {
             $result.result   = $script:lang['Fail']
-            $result.message += 'No DAT version found'
+            $result.message += 'No DAT version found,#'
+        }
+
+        If (($apVal1 -eq 1) -and ($apVal2 -eq 1))
+        {
+            $result.message += 'Access Protection is installed and running'
+        }
+        Else
+        {
+            $result.result   = $script:lang['Fail']
+            $result.message += 'Access Protection is not installed or enabled'
+            If     ($apVal2 -ne 1) { $result.data += 'Access Protection not installed' }
+            ElseIf ($apVal1 -ne 1) { $result.data += 'Access Protection not enabled'   }
+            Else                   { $result.data += '' }
         }
     }
     Else
