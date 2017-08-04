@@ -1492,8 +1492,8 @@ Function Display-MainForm
         Invoke-Expression -Command "PowerShell -NoProfile -NonInteractive -Command {& '$script:ExecutionFolder\Compiler.ps1'   -Settings $(Split-Path -Path $script:saveFile -Leaf) -Silent }"
 
         # Build Runspace QA Script
-        $lbl_t4_Generate.Text = 'Generating Runspace QA Script (proof of concept)'
-        Invoke-Expression -Command "PowerShell -NoProfile -NonInteractive -Command {& '$script:ExecutionFolder\CompilerRS.ps1' -Settings $(Split-Path -Path $script:saveFile -Leaf) -Silent }"
+        $lbl_t4_Generate.Text = 'Generating Runspace QA Script (new report format)'
+        Invoke-Expression -Command "PowerShell -NoProfile -NonInteractive -Command {& '$script:ExecutionFolder\CompilerR2.ps1' -Settings $(Split-Path -Path $script:saveFile -Leaf) -Silent }"
 
         $lbl_t4_Generate.Text = ''
         [System.Windows.Forms.MessageBox]::Show($MainFORM, "Custom QA Script generated.", ' Server QA Settings Configurator', 'OK', 'Information')
