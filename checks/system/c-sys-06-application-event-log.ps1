@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check Application Event Log and ensure no errors are present in the last x days.  If found, will return the latest y entries
 
@@ -60,7 +60,9 @@ Function c-sys-06-application-event-log
         {
             [int64] $keyValMS = $regKey.GetValue('MaxSize')               # Size in bytes
             [string]$keyValR1 = $regKey.GetValue('Retention')             # Either '0' or '-1'
-            [string]$keyValR2 = $regKey.GetValue('AutoBackupLogFiles')    # Either '0' or '1'
+            [string]$keyValR2 = $regKey.GetValue('AutoBackupLogFiles')    # Either '0' or  '1'
+            If ([string]::IsNullOrEmpty($keyValR1) -eq $True) { $keyValR1 = '0' }
+            If ([string]::IsNullOrEmpty($keyValR2) -eq $True) { $keyValR2 = '0' }
         }
         Try { $regKey.Close() } Catch { }
         $reg.Close()
@@ -99,10 +101,10 @@ Function c-sys-06-application-event-log
 
     # Check retension type
     Switch ($script:appSettings['EventLogRetentionType'])
-    {                 #       Retention                 AutoBackupLogFiles
-        'Overwrite' { [string]$checkValR1 =  '0';[string]$checkValR2 = '0'; Break }
-        'Archive'   { [string]$checkValR1 = '-1';[string]$checkValR2 = '1'; Break }
-        'Manual'    { [string]$checkValR1 = '-1';[string]$checkValR2 = '0'; Break }
+    {                 #       Retention                   AutoBackupLogFiles
+        'Overwrite' { [string]$checkValR1 =  '0'; [string]$checkValR2 = '0'; Break }
+        'Archive'   { [string]$checkValR1 = '-1'; [string]$checkValR2 = '1'; Break }
+        'Manual'    { [string]$checkValR1 = '-1'; [string]$checkValR2 = '0'; Break }
         Default     { Break }
     }
 
