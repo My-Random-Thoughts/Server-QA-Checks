@@ -913,7 +913,7 @@ Function Display-MainForm
                 [string[]]$currentVal  =   $($selectedItem.SubItems[1].Text).Split(';')
                           $currentVal  = ($currentVal.Trim().Replace("'",'').Replace('(','').Replace(')',''))
                 [string[]]$selections  = (($($selectedItem.SubItems[2].Text).Split('-')[1]).Split(','))
-                [string[]]$returnValue = (Show-InputForm -Type 'Check'  -Title $($selectedItem.Group.Header) -Description "$($selectedItem.SubItems[0].Text)`n$($selectedItem.SubItems[3].Text)" -CurrentValue $currentVal -InputList $selections -InputDescription $($selectedItem.SubItems[5].Text))
+                [string[]]$returnValue = (Show-InputForm -Type 'Check'  -Title $($selectedItem.Group.Header) -Description "$($selectedItem.SubItems[0].Text)`n$($selectedItem.SubItems[3].Text)" -CurrentValue $currentVal -InputList $selections -InputDescription $($selectedItem.SubItems[5].Text) -MaxNumberInputBoxes 30)
                 If ($returnValue -ne '!!-CANCELLED-!!') { $SourceControl.SelectedItems[0].SubItems[1].Text = ("('{0}')" -f $($returnValue -join ';').Replace(';', "'; '")) }
                 Break
             }
