@@ -46,6 +46,22 @@ More details can be found on the project wiki: https://github.com/My-Random-Thou
 
 # Basic Change Log
 
+2017/08/12
+- Lots of minor changes to files
+- Larger changes to:
+
+-- COM-12 - Added more default exclusions
+
+-- DRV-05 - Now shows the location of any shared folders
+
+-- NET-06 - Added check for 2012+ servers not needing native drivers
+
+-- SYS-07 - Now showing any disabled devices
+
+-- SYS-09 - Changed task author to show RunAs account
+
+- Changed NET-09 to have a switch option of "AllMustExist".  This will allow you to have a range or static routes where only one or two may apply to a particular server.  Will still fail if none of them match.  Please add to your settings INI files the following line under the `[NET09]` section: `AllMustExist = 'False'`
+
 2017/07/18
 - New report layout and style.  I have created a new report style that I think looks much better than the old one.  Example reports are located in the root on this project.  Let me know what you think.  This report will hopefully become the new normal by the end of August 2017.  You can start using it by compiling your scripts with the `CompilerR2.ps1` script.
 
@@ -89,3 +105,4 @@ Older
 - New check: SEC-19 - Check HP SMH Version
 - New check: SEC-20 - Check Dell OMA Version
 - DRV-09 - New option to ignore unknown drive types
+
