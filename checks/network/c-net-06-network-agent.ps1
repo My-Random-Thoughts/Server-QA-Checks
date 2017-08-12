@@ -45,67 +45,78 @@ Function c-net-06-network-agent
 
     If (((Check-VMware $serverName) -eq $false) -and ((Check-HyperV $serverName) -eq $false))
     {
-        Try
-        {
-            [boolean]$found = $false
-            $script:appSettings['ProductNames'] | ForEach {
-                [string]$verCheck = Check-Software -serverName $serverName -displayName $_
-                If ($verCheck -eq '-1') { Throw 'Error opening registry key' }
-                If ([string]::IsNullOrEmpty($verCheck) -eq $false)
-                {
-                    $found            = $true
-                    [string]$prodName = $_
-                    [string]$prodVer  = $verCheck
-                }
-            }
-        }
-        Catch
-        {
-            $result.result  = $script:lang['Error']
-            $result.message = $script:lang['Script-Error']
-            $result.data    = $_.Exception.Message
-            Return $result
-        }
+        [string]$query = 'SELECT Caption FROM Win32_OperatingSystem'
+        [string]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Caption
 
-        If ($found -eq $true)
+        If ($check -like '*201*')
         {
-            $result.result  = $script:lang['Pass']
-            $result.message = '{0} found'   -f $prodName
-            $result.data    = 'Version {0}' -f $prodVer
+            $result.result  = $script:lang['Not-Applicable']
+            $result.message = 'Windows 2012 and above use native network teaming and should not need 3rd party agents'
         }
         Else
         {
-            # Fallback detection method
-            [string]$keyVal = ''
-            $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object Manufacturer
-            If ($wmiBIOS.Manufacturer -like 'HP*')
+            Try
             {
-                Try
-                {
-                    $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
-                    $regKey = $reg.OpenSubKey('SOFTWARE\Microsoft\Windows\CurrentVersion\Control Panel\CPLs')
-                    If ($regKey) { $keyVal = $regKey.GetValue('CPQTEAM') }
-                    Try { $regKey.Close() } Catch { }
-                    $reg.Close()
+                [boolean]$found = $false
+                $script:appSettings['ProductNames'] | ForEach {
+                    [string]$verCheck = Check-Software -serverName $serverName -displayName $_
+                    If ($verCheck -eq '-1') { Throw 'Error opening registry key' }
+                    If ([string]::IsNullOrEmpty($verCheck) -eq $false)
+                    {
+                        $found            = $true
+                        [string]$prodName = $_
+                        [string]$prodVer  = $verCheck
+                    }
                 }
-                Catch { }
             }
-            ElseIf ($wmiBIOS.Manufacturer -like 'Dell*')
+            Catch
             {
-                # TODO (If required)
+                $result.result  = $script:lang['Error']
+                $result.message = $script:lang['Script-Error']
+                $result.data    = $_.Exception.Message
+                Return $result
             }
-            Else { $keyVal = '' }
 
-            If ($keyVal -eq '')
+            If ($found -eq $true)
             {
-                $result.result  = $script:lang['Fail']
-                $result.message = 'Network management software not found, install required'
+                $result.result  = $script:lang['Pass']
+                $result.message = '{0} found'   -f $prodName
+                $result.data    = 'Version {0}' -f $prodVer
             }
             Else
             {
-                $result.result  = $script:lang['Pass']
-                $result.message = 'Software not Fallback method used'
-                $result.data    = $keyVal
+                # Fallback detection method
+                [string]$keyVal = ''
+                $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object Manufacturer
+                If ($wmiBIOS.Manufacturer -like 'HP*')
+                {
+                    Try
+                    {
+                        $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
+                        $regKey = $reg.OpenSubKey('SOFTWARE\Microsoft\Windows\CurrentVersion\Control Panel\CPLs')
+                        If ($regKey) { $keyVal = $regKey.GetValue('CPQTEAM') }
+                        Try { $regKey.Close() } Catch { }
+                        $reg.Close()
+                    }
+                    Catch { }
+                }
+                ElseIf ($wmiBIOS.Manufacturer -like 'Dell*')
+                {
+                    # TODO (If required)
+                }
+                Else { $keyVal = '' }
+
+                If ($keyVal -eq '')
+                {
+                    $result.result  = $script:lang['Fail']
+                    $result.message = 'Network management software not found, install required'
+                }
+                Else
+                {
+                    $result.result  = $script:lang['Pass']
+                    $result.message = 'Software not Fallback method used'
+                    $result.data    = $keyVal
+                }
             }
         }
     }

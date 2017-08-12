@@ -43,7 +43,7 @@ Function Check-CommandLine
         Exit 
     } }
 
-    # Resize window to be 132 wide and keep the height.
+    # Resize window to be 120 wide and keep the height.
     # Also change the buffer size to be huge
     $gh = Get-Host
     $ws = $gh.UI.RawUI.WindowSize
@@ -91,13 +91,11 @@ Function Start-QAProcess
     Write-Host ($('  {0}' -f $script:lang['Scan-Head_2']) -f $script:checkTimeout   ) -ForegroundColor White
 
     # Progress bar legend
-    [string]$lP = $script:lang['Passed']; [string]$lW = $script:lang['Warning']       ; [string]$lF = $script:lang['Failed']
-    [string]$lM = $script:lang['Manual']; [string]$lN = $script:lang['Not-Applicable']; [string]$lE = $script:lang['Error']
-    Write-Host ('')
-    Write-Host ("     $M $lP") -NoNewline -ForegroundColor Green; Write-Host ("     $M $lW") -NoNewline -ForegroundColor Yellow
-    Write-Host ("     $M $lF") -NoNewline -ForegroundColor Red  ; Write-Host ("     $M $lM") -NoNewline -ForegroundColor Cyan
-    Write-Host ("     $M $lN") -NoNewline -ForegroundColor Gray ; Write-Host ("     $M $lE")            -ForegroundColor Magenta
-    Write-Host (DivLine -Width $script:screenwidth)                                                     -ForegroundColor Yellow
+    Write-Host  " "
+    Write-Host ("   $M $($script:lang['Passed'])")         -NoNewline -ForegroundColor Green; Write-Host ("   $M $($script:lang['Warning'])") -NoNewline -ForegroundColor Yellow
+    Write-Host ("   $M $($script:lang['Failed'])")         -NoNewline -ForegroundColor Red  ; Write-Host ("   $M $($script:lang['Manual'])")  -NoNewline -ForegroundColor Cyan
+    Write-Host ("   $M $($script:lang['Not-Applicable'])") -NoNewline -ForegroundColor Gray ; Write-Host ("   $M $($script:lang['Error'])")              -ForegroundColor Magenta
+    Write-Host (DivLine -Width $script:screenwidth)                   -ForegroundColor Yellow
 
     [string]$ServerCounts = ''
     [string]$DebugMessage = ''
@@ -135,7 +133,8 @@ Function Start-QAProcess
             If (($debug -eq $true) -or ((Check-Port -ServerName $server -Port 135) -eq $true))
             {
                 If ($verbose -eq $true) { Write-Host $script:lang['Verbose-Info'] -ForegroundColor Yellow -NoNewline }
-                Else {  For ([int]$i = 0; $i -lt $count; $i++) { Write-Host $B -ForegroundColor DarkGray -NoNewline }
+                Else {
+                    For ([int]$i = 0; $i -lt $count; $i++) { Write-Host $B -ForegroundColor DarkGray -NoNewline }
                     Write-Host ''
                     Write-Host '   ' -ForegroundColor DarkGray -NoNewline
                 }
@@ -354,13 +353,12 @@ Function Show-Results
     Write-Host ('  {0}{1}' -f ($script:lang['TotalCount_1']), (($script:lang['TotalCount_2']).PadLeft($w - (($script:lang['TotalCount_2']).Length)))) -ForegroundColor White
     Write-Host ('    {0}: {1}{2}:{3}' -f ($script:lang['Checked']).PadLeft($leftPad), $x.PadLeft(3), ($script:lang['Passed']        ).PadLeft($w - $rightPad - $leftPad - 7), ($resultsplit.p).PadLeft(4)) -ForegroundColor Green
     Write-Host ('    {0}: {1}{2}:{3}' -f ($script:lang['Skipped']).PadLeft($leftPad), $y.PadLeft(3), ($script:lang['Warning']       ).PadLeft($w - $rightPad - $leftPad - 7), ($resultsplit.w).PadLeft(4)) -ForegroundColor Yellow
-    Write-Host (        '    {0}:{1}' -f                                                             ($script:lang['Failed']        ).PadLeft($w - $rightPad            - 2), ($resultsplit.f).PadLeft(4)) -ForegroundColor Red
-    Write-Host (        '    {0}:{1}' -f                                                             ($script:lang['Manual']        ).PadLeft($w - $rightPad            - 2), ($resultsplit.m).PadLeft(4)) -ForegroundColor Cyan
-    Write-Host (        '    {0}:{1}' -f                                                             ($script:lang['Not-Applicable']).PadLeft($w - $rightPad            - 2), ($resultsplit.n).PadLeft(4)) -ForegroundColor Gray
-    Write-Host (        '    {0}:{1}' -f                                                             ($script:lang['Error']         ).PadLeft($w - $rightPad            - 2), ($resultsplit.e).PadLeft(4)) -ForegroundColor Magenta
+    Write-Host (            '{0}:{1}' -f                                                             ($script:lang['Failed']        ).PadLeft($w - $rightPad            + 2), ($resultsplit.f).PadLeft(4)) -ForegroundColor Red
+    Write-Host (            '{0}:{1}' -f                                                             ($script:lang['Manual']        ).PadLeft($w - $rightPad            + 2), ($resultsplit.m).PadLeft(4)) -ForegroundColor Cyan
+    Write-Host (            '{0}:{1}' -f                                                             ($script:lang['Not-Applicable']).PadLeft($w - $rightPad            + 2), ($resultsplit.n).PadLeft(4)) -ForegroundColor Gray
+    Write-Host (            '{0}:{1}' -f                                                             ($script:lang['Error']         ).PadLeft($w - $rightPad            + 2), ($resultsplit.e).PadLeft(4)) -ForegroundColor Magenta
 
     Write-Host (DivLine -Width $script:screenwidth) -ForegroundColor Yellow
-    Remove-Variable x, y, w, resultsplit -ErrorAction SilentlyContinue
 }
 
 Function Export-Results
@@ -417,8 +415,8 @@ Function Export-Results
 
     If ($SkipHTMLHelp -eq $true) { $Head = $Head.Replace('cursor: help;', 'cursor: default;') }
 
-    [string]$dt1 = (Get-Date -Format 'yyyy/MM/dd HH:mm')
-    [string]$dt2 = $dt1.Replace('/','.').Replace(' ','-').Replace(':','.')    # 'yyyy/MM/dd HH:mm'  -->  'yyyy.MM.dd-HH.mm'
+    [string]$dt1 = (Get-Date -Format 'yyyy/MM/dd HH:mm')                      # Used for script header information
+    [string]$dt2 = $dt1.Replace('/','.').Replace(' ','-').Replace(':','.')    # Used for saving as part of filename : 'yyyy/MM/dd HH:mm'  -->  'yyyy.MM.dd-HH.mm'
     [string]$un  = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name.ToLower()
 
     [string]$server = $ResultsInput[0].server
@@ -473,7 +471,7 @@ Function Export-Results
         [string]$path   =  $script:qaOutput + 'QA_Results.csv'
         [array] $outCSV =  @()
         [array] $cnvCSV = ($ResultsInput | Select-Object server, name, check, datetime, result, message, data | Sort-Object check, server | ConvertTo-Csv -NoTypeInformation)
-        If ($CurrentServerNumber -gt 1) { $cnvCSV  = ($cnvCSV | Select-Object -Skip 1) }    # Remove header info
+        If ($CurrentServerNumber -gt 1) { $cnvCSV  = ($cnvCSV | Select-Object -Skip 1) }    # Remove header info for all but first server
         $cnvCSV | ForEach-Object { $outCSV += $_.Replace(',#',', ') }
         $outCSV | Out-File -FilePath $path -Encoding utf8 -Force -Append
     }
@@ -483,9 +481,9 @@ Function Export-Results
     {
         [string]$path = $script:qaOutput + 'QA_Results.xml'
         If ($CurrentServerNumber -eq 1) { '<?xml version="1.0" encoding="utf-8" ?><QAResultsFile></QAResultsFile>' | Out-File -FilePath $path -Encoding utf8 -Force }
+
         [string]$inXML  = (Get-Content -Path $path)
         [xml]   $cnvXML = ($ResultsInput | Select-Object server, name, check, datetime, result, message, data | Sort-Object check, server | ConvertTo-XML -NoTypeInformation)
-
         $inXML = $inXML -replace '</QAResultsFile>', "$($cnvXML.Objects.InnerXml)</QAResultsFile>"
         $inXML = $inXML.Replace(',#',', ')
         $inXML | Out-File -FilePath $path -Encoding utf8 -Force
@@ -614,8 +612,9 @@ Function Set-CellColour
                         If ($Row -eq $true) { $line = $line.Replace('<td>', '<td class="e">') }    # There was an error with this server
                         Else
                         {
-                            # Insert HTML hover help
                             [string]$note = '' + $value + '</td>'
+
+                            # Insert HTML hover help (if required)
                             If (-not $SkipHTMLHelp)
                             {
                                 [string]$help = Add-HoverHelp -inputLine $line -check $check
@@ -676,17 +675,17 @@ Function Check-Port
     } } Catch { Return $false }
 }
 
-[string]$F  = ([char]9608).ToString()
-[string]$T  = ([char]9600).ToString()
-[string]$B  = ([char]9604).ToString()
-[string]$M  = ([char]9632).ToString()
-[string]$L  = ([char]9472).ToString()
+[string]$F  = ([char]9608).ToString()    # (Block) Full
+[string]$T  = ([char]9600).ToString()    # (Block) Top
+[string]$B  = ([char]9604).ToString()    # (Block) Bottom
+[string]$M  = ([char]9632).ToString()    # (Block) Middle
+[string]$L  = ([char]9472).ToString()    # Horizontal Line (Single)
 
-[string]$TL = ([char]9556).ToString()
-[string]$TR = ([char]9559).ToString()
-[string]$BL = ([char]9562).ToString()
-[string]$V  = ([char]9553).ToString()
-[string]$H  = ([char]9552).ToString()
+[string]$TL = ([char]9556).ToString()    # Top Left Corner (Double)
+[string]$TR = ([char]9559).ToString()    # Top Right Corner (Double)
+[string]$BL = ([char]9562).ToString()    # Bottom Left Corner (Double)
+[string]$V  = ([char]9553).ToString()    # Veritcal Line (Double)
+[string]$H  = ([char]9552).ToString()    # Horizontal Line (Double)
 
 Function Write-Colr
 {

@@ -1,4 +1,4 @@
-<#
+﻿<#
     DESCRIPTION: 
         Ensure the system is set to request administrative credentials before granting an application elevated privileges. 
         Default setting is either "(1):Prompt for credentials on the secure desktop" or "(3):Prompt for credentials"

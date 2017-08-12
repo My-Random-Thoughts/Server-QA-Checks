@@ -13,8 +13,9 @@
 
     RESULTS:
         PASS:
-            No device errors found
+            No disabled devices or device errors found
         WARNING:
+            Disabled devices found
         FAIL:
             Device errors found
         MANUAL:
@@ -43,9 +44,9 @@ Function c-sys-07-devices-status
     Try
     {
         # Excludes Working (0) and Disabled (22)
-        [string]$query = 'SELECT Name, ConfigManagerErrorCode FROM Win32_PnPEntity WHERE NOT ConfigManagerErrorCode = 0 AND NOT ConfigManagerErrorCode = 22'
+        [string]$query = 'SELECT Name, ConfigManagerErrorCode FROM Win32_PnPEntity WHERE NOT ConfigManagerErrorCode=0'
         $script:appSettings['IgnoreTheseDeviceNames'] | ForEach { $query += ' AND NOT Name = "{0}"' -f $_ }
-        [array]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Name
+        [array]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object Name, ConfigManagerErrorCode
     }
     Catch
     {
@@ -55,16 +56,21 @@ Function c-sys-07-devices-status
         Return $result
     }
 
+    [boolean]$onlyDisabled = $true
+    $check | Sort-Object -Property Name | ForEach {
+        If ($_.ConfigManagerErrorCode -ne 22) { $result.data += ('{0} (Error),#'    -f $_.Name); $onlyDisabled = $false }
+        Else                                  { $result.data += ('{0} (Disabled),#' -f $_.Name)                         }
+    }
+
     If ($check.Count -gt 0)
     {
-        $result.result  = $script:lang['Fail']
         $result.message = 'Device errors found'
-        $check | ForEach { $result.data += '{0},#' -f $_ }
+        If ($onlyDisabled -eq $true) { $result.result  = $script:lang['Warning'] } Else { $result.result  = $script:lang['Fail'] }
     }
     Else
     {
         $result.result  = $script:lang['Pass']
-        $result.message = 'No device errors found'
+        $result.message = 'No disabled devices or device errors found'
     }
     
     Return $result

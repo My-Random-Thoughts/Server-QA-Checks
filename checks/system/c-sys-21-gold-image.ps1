@@ -4,11 +4,11 @@
         Up to three registry keys and values can be checked.  Note: All keys must be in HKEY_LOCAL_MACHINE only
 
     REQUIRED-INPUTS:
-        Registry1Key   - "LARGE" -Full path and name of a registry value to check.  "HKEY_LOCAL_MACHINE\" is automatically added.
+        Registry1Key   - "LARGE" - Full path and name of a registry value to check.  "HKEY_LOCAL_MACHINE\" is automatically added.
         Registry1Value - Minimum value or string required for the registry value.  Enter "Report Only" to just show the value.
-        Registry2Key   - "LARGE" -Full path and name of a registry value to check.  "HKEY_LOCAL_MACHINE\" is automatically added.
+        Registry2Key   - "LARGE" - Full path and name of a registry value to check.  "HKEY_LOCAL_MACHINE\" is automatically added.
         Registry2Value - Minimum value or string required for the registry value.  Enter "Report Only" to just show the value.
-        Registry3Key   - "LARGE" -Full path and name of a registry value to check.  "HKEY_LOCAL_MACHINE\" is automatically added.
+        Registry3Key   - "LARGE" - Full path and name of a registry value to check.  "HKEY_LOCAL_MACHINE\" is automatically added.
         Registry3Value - Minimum value or string required for the registry value.  Enter "Report Only" to just show the value.
 
     DEFAULT-VALUES:

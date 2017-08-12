@@ -1,4 +1,4 @@
-<#
+﻿<#
     DESCRIPTION: 
         Check System Event Log and ensure no errors are present in the last x days.  If found, will return the latest y entries
 

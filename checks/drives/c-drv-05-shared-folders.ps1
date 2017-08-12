@@ -41,16 +41,15 @@ Function c-drv-05-shared-folders
     #... CHECK STARTS HERE ...#
 
     Try
-    {   #                                                              Admin Shares         IPC Share
-        [string]$query = "SELECT Name FROM Win32_Share WHERE NOT(Type='2147483648' OR Type='2147483651') AND NOT Name=''"
+    {   #                                                                    Admin Shares         IPC Share
+        [string]$query = "SELECT Name, Path FROM Win32_Share WHERE NOT(Type='2147483648' OR Type='2147483651') AND NOT Name=''"
         If ($script:appSettings['IgnoreTheseShares'].Count -gt 0)
         {
-            For ($i = 0; $i -lt $script:appSettings['IgnoreTheseShares'].Count; $i++)
-            {
+            For ($i = 0; $i -lt $script:appSettings['IgnoreTheseShares'].Count; $i++) {
                 $query += " AND NOT Name='" + $script:appSettings['IgnoreTheseShares'][$i] + "'"
             }
         }
-        [array]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Name
+        [array]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object Name, Path
     }
     Catch
     {
@@ -64,7 +63,7 @@ Function c-drv-05-shared-folders
     {
         $result.result  = $script:lang['Warning']
         $result.message = 'Shared folders found, check against documentation'
-        $check | ForEach { $result.data += '{0},#' -f $_ }
+        $check | ForEach { $result.data += 'Name: {0}, Path: {1},#' -f $_.Name, $_.Path }
     }
     Else
     {

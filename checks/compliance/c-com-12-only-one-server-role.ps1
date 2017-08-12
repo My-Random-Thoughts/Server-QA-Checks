@@ -46,7 +46,7 @@ Function c-com-12-only-one-server-role
         [string]$queryOS = 'SELECT Caption FROM Win32_OperatingSystem'
         [string]$checkOS = Get-WmiObject -ComputerName $serverName -Query $queryOS -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Caption
 
-        If ($checkOS -like '*2008*')       # 2008
+        If ($checkOS -like '*2008*')        # 2008
         {
             # Returns only installed ites
             [string]$query = "SELECT Name, ID FROM Win32_ServerFeature WHERE ParentID = '0'"
@@ -55,9 +55,9 @@ Function c-com-12-only-one-server-role
         ElseIf ($checkOS -like '*201*')    # 2012, 2016
         {
             # These are installed by default on all 2012+ servers
-            [string]$ignoreList     = '|.NET Framework 4.5 Features|.NET Framework 4.6 Features|File and Storage Services|
-                                       |SMB 1.0/CIFS File Sharing Support|User Interfaces and Infrastructure|
-                                       |Windows Defender Features|Windows PowerShell|WoW64 Support|'
+            [string]$ignoreList     = '|.NET Framework 3.5 Features|.NET Framework 4.5 Features|.NET Framework 4.6 Features|.NET Framework 4.7 Features|
+                                       |File and Storage Services|Multipath I/O|Remote Server Administration Tools|SMB 1.0/CIFS File Sharing Support|
+                                       |User Interfaces and Infrastructure|Windows Defender Features|Windows PowerShell|WoW64 Support|Telnet Client|'
             [array] $installedRoles = Get-WindowsFeature -ComputerName $serverName | Where-Object { ($_.Depth -eq 1) -and ($_.InstallState -eq 'Installed') -and 
                                                                                                     ($ignoreList.Contains("|$($_.DisplayName)|") -eq $false) } | Select-Object DisplayName
         }

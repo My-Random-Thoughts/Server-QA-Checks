@@ -63,19 +63,19 @@ Function c-acc-01-local-users
         If ($check.Count -gt 0)
         {
             $result.result  = $script:lang['Fail']
-            $result.message = $script:lang['A']
+            $result.message = 'One or more local accounts exist'
             $check | ForEach { $result.data += '{0},#' -f $_ }
         }
         Else
         {
             $result.result  = $script:lang['Pass']
-            $result.message = $script:lang['B']
+            $result.message = 'No additional local accounts'
         }
     }
     Else
     {
         $result.result  = $script:lang['Warning']
-        $result.message = $script:lang['C']
+        $result.message = 'This is a workgroup server, is this correct.?'
     }
 
     Return $result

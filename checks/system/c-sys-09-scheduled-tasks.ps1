@@ -75,8 +75,14 @@ Function c-sys-09-scheduled-tasks
         [string]$author = $xml.Task.RegistrationInfo.Author
         If (($Author -notlike '*Microsoft*') -and ($Author -notlike '*SystemRoot*'))
         {
+            $ns = New-Object 'System.Xml.XmlNamespaceManager'($xml.NameTable); $ns.AddNamespace("ns", $xml.DocumentElement.NamespaceURI)
+            [string]$runAs = $xml.SelectSingleNode('//ns:Principal[@id="Author"]', $ns).UserID
+
+            If ([string]::IsNullOrEmpty($runAs) -eq $true) { $runAs = $author   }
+            If ([string]::IsNullOrEmpty($runAs) -eq $true) { $runAs = 'Unknown' }
+
             If (($_.Name).Contains('-S-1-5-21-')) { [string]$NewName = $($_.Name).Split('-')[0] } Else { [string]$NewName = $_.Name }
-            If ($script:appSettings['IgnoreTheseScheduledTasks'] -notcontains $NewName) { [string]$tasksOut += '{0} ({1}),#' -f $_.Name, $author }
+            [string]$tasksOut += '{0} ({1}),#' -f $_.Name, $runAs
         }
     }
 

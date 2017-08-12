@@ -1,4 +1,4 @@
-<#
+﻿<#
     DESCRIPTION: 
         Check network interfaces for known teaming names, manually check they are configured correctly.  Fail if no teams found or if server is a virtual.  Checked configuration is:
         Teaming Mode: "Static Independent";  Load Balancing Mode: "Address Hash";  Standby Adapter: (set).

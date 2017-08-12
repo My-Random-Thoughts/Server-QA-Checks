@@ -371,7 +371,7 @@ Function Show-InputForm
             'Integer' { $ValidateResult = ($StringToCheck -match '^(-)?[\d]+$');            Break }              # Integer numbers only
             'Decimal' { $ValidateResult = ($StringToCheck -match '^(-)?[\d]+\.[\d]+$');     Break }              # Decimal numbers only
             'Symbol'  { $ValidateResult = ($StringToCheck -match '^[^A-Za-z0-9]+$');        Break }              # Any symbol (not numbers or letters)
-            'File'    {                                                                                # Valid file or folder name
+            'File'    {                                                                                          # Valid file or folder name
                 $StringToCheck  = $StringToCheck.TrimEnd('\')
                 $ValidateResult = ($StringToCheck -match "^(?:[a-zA-Z]\:|\\\\[\w\.]+\\[\w.$]+)\\(?:[\w]+\\)*\w([\w.])+$")
                 Break
@@ -1492,7 +1492,7 @@ Function Display-MainForm
         Invoke-Expression -Command "PowerShell -NoProfile -NonInteractive -Command {& '$script:ExecutionFolder\Compiler.ps1'   -Settings $(Split-Path -Path $script:saveFile -Leaf) -Silent }"
 
         # Build Runspace QA Script
-        $lbl_t4_Generate.Text = 'Generating Runspace QA Script (new report format)'
+        $lbl_t4_Generate.Text = 'Generating Runspace QA Script (New Report Format)'
         Invoke-Expression -Command "PowerShell -NoProfile -NonInteractive -Command {& '$script:ExecutionFolder\CompilerR2.ps1' -Settings $(Split-Path -Path $script:saveFile -Leaf) -Silent }"
 
         $lbl_t4_Generate.Text = ''

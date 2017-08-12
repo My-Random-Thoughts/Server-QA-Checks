@@ -54,7 +54,7 @@ Function c-drv-09-partition-type
         Return $result
     }
 
-    If ($check.Count -gt 0)
+    If (([string]::IsNullOrEmpty($check) -eq $false) -and ($check.Count -gt 0))
     {
         [int]$gptA = 0; [int]$gptB = 0; [int]$gptC = 0; [array]$data = @()
         ForEach ($part In $check)

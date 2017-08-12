@@ -48,7 +48,7 @@ Function c-hvh-02-no-other-server-roles
             [string]$queryOS = 'SELECT Caption FROM Win32_OperatingSystem'
             [string]$checkOS = Get-WmiObject -ComputerName $serverName -Query $queryOS -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Caption
 
-            If ($checkOS -like '*2008*')       # 2008
+            If ($checkOS -like '*2008*')        # 2008
             {
                 [string]$query = "SELECT Name, ID FROM Win32_ServerFeature WHERE ParentID = '0'"
                 [array] $check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2

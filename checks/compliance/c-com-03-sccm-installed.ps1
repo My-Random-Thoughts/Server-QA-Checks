@@ -97,7 +97,7 @@ Function c-com-03-sccm-installed
             {
                 $result.result  = $script:lang['Fail']
                 $result.message = 'SCCM agent found'
-                $resilt.data    = 'Port {0} not open to {1}' -f $valPort, $valName.ToLower()
+                $result.data    = 'Port {0} not open to {1}' -f $valPort, $valName.ToLower()
             }
         }
         Else

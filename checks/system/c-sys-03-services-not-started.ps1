@@ -7,7 +7,7 @@
         IgnoreTheseServices - List of known services that can ignored when set to automatic and not started
 
     DEFAULT-VALUES:
-        IgnoreTheseServices = ('NetBackup Bare Metal Restore Boot Server', 'NetBackup SAN Client Fibre Transport Service', 'Microsoft .NET Framework NGEN', 'Software Protection', 'Volume Shadow Copy')
+        IgnoreTheseServices = ('NetBackup Bare Metal Restore Boot Server', 'NetBackup SAN Client Fibre Transport Service', 'Microsoft .NET Framework NGEN', 'Software Protection', 'Volume Shadow Copy', 'Remote Registry')
 
     DEFAULT-STATE:
         Enabled

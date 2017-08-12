@@ -1,4 +1,4 @@
-<#
+﻿<#
     DESCRIPTION: 
         Check that McAfee anti-virus is installed and virus definitions are up to date.
 
