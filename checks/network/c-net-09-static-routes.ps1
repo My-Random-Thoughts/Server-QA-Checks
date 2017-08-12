@@ -5,6 +5,7 @@
         You must edit the settings file manually for more than the currently configured.
 
     REQUIRED-INPUTS:
+        AllMustExist  - "True|False" - Should all static route entries exist for a Pass.?
         StaticRoute01 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
         StaticRoute02 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
         StaticRoute03 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
@@ -12,6 +13,7 @@
         StaticRoute05 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
 
     DEFAULT-VALUES:
+        AllMustExist  = 'False'
         StaticRoute01 = ('', '', '')
         StaticRoute02 = ('', '', '')
         StaticRoute03 = ('', '', '')
@@ -23,10 +25,11 @@
 
     RESULTS:
         PASS:
-            All static routes are present
+            Required static routes are present
         WARNING:
         FAIL:
             One or more static routes are missing or incorrect
+            All entered static routes are missing
         MANUAL:
         NA:
             No static routes to check
@@ -53,11 +56,8 @@ Function c-net-09-static-routes
 
     Try
     {
-        [string]$query1 = 'SELECT Destination, Mask, NextHop FROM Win32_IP4RouteTable'
-        [object]$check1 = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2 | Select-Object Destination, Mask, NextHop
-        
-        [string]$query2 = 'SELECT Destination, Mask, NextHop FROM Win32_IP4PersistedRouteTable'
-        [object]$check2 = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Cimv2 | Select-Object Destination, Mask, NextHop
+        [string]$query = 'SELECT Destination, Mask, NextHop FROM Win32_IP4PersistedRouteTable'
+        [object]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object Destination, Mask, NextHop
     }
     Catch
     {
@@ -80,7 +80,7 @@ Function c-net-09-static-routes
     }
     Catch {}
 
-    If (([string]::IsNullOrEmpty($check1) -eq $true) -and ([string]::IsNullOrEmpty($check2) -eq $true))
+    If ([string]::IsNullOrEmpty($check) -eq $true)
     {
         $result.result  = $script:lang['Fail']
         $result.message = 'No static routes present'
@@ -93,11 +93,11 @@ Function c-net-09-static-routes
     }
     ElseIf ($noneEntry -eq 'None')
     {
-        If ([string]::IsNullOrEmpty($check2) -eq $false)
+        If ([string]::IsNullOrEmpty($check) -eq $false)
         {
             $result.result  = $script:lang['Fail']
             $result.message = 'Static routes are present, they need removing'
-            $result.data    = 'Dest: {0}, Mask: {1}, Gateway: {2},#' -f $check2.Destination, $check2.Mask, $check2.NextHop
+            $result.data    = 'Dest: {0}, Mask: {1}, Gateway: {2},#' -f $check.Destination, $check.Mask, $check.NextHop
         }
         Else
         {
@@ -107,6 +107,9 @@ Function c-net-09-static-routes
     }
     Else
     {
+        [int]   $entryCount    = 0
+        [int]   $ignoreCount   = 0
+        [string]$ignoreEntries = ''
         For ($i = 1; $i -le 99; $i++)
         {
             [string[]]$routeEntry = $script:appSettings["StaticRoute$(($i -as [string]).PadLeft(2, '0'))"]
@@ -114,8 +117,9 @@ Function c-net-09-static-routes
             {
                 If ([string]::IsNullOrEmpty($routeEntry[0]) -eq $false)
                 {
+                    $entryCount++
                     [boolean]$found = $false
-                    ForEach ($item In $check2)
+                    ForEach ($item In $check)
                     {
                         If ($item.Destination -eq $routeEntry[0])
                         {
@@ -125,21 +129,31 @@ Function c-net-09-static-routes
                         }
                     }
 
-                    If ($found -eq $false) { $result.data += '' + $routeEntry[0] + ' (Missing),#' }
+                    If ($found -eq $false)
+                    {
+                        If ($script:appSettings['AllMustExist'] -eq 'True') { $result.data += "$($routeEntry[0]) (Missing),#" }
+                        Else {                              $ignoreCount++; $ignoreEntries += "$($routeEntry[0]) (Missing),#" }
+                    }
                 }
             }
             $routeEntry = $null
         }
 
+        If ($ignoreCount -eq $entryCount)
+        {
+            $result.message = 'All entered static routes are missing'
+            $result.data    = $ignoreEntries
+        }
+
         If ($result.data -eq '')
         {
             $result.result  = $script:lang['Pass']
-            $result.message = 'All static routes are present'
+            $result.message = 'Required static routes are present'
         }
         Else
         {
             $result.result  = $script:lang['Fail']
-            $result.message = 'One or more static routes are missing or incorrect'
+            If ([string]::IsNullOrEmpty($result.message) -eq $true) { $result.message = 'One or more static routes are missing or incorrect' }
         }
     }
 
