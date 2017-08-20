@@ -78,7 +78,6 @@ Function c-drv-09-partition-type
     {
         $result.result  = $script:lang['Pass']
         $result.message = 'All drive types are BASIC, with partition styles of MBR'
-        $result.data    = $_.Exception.Message
     }
 
     Return $result
