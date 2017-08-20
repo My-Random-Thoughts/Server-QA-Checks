@@ -84,7 +84,7 @@ Function c-hvh-05-jumbo-frames
                 {
                     [boolean]$ignore = $false
                     [string] $nic    = $connection.GetRelated('Win32_NetworkAdapter') | Select-Object -ExpandProperty NetConnectionID
-                    $script:appSettings['IgnoreTheseAdapters'] | ForEach { If ($nic -like "*$_*") { $ignore = $true } }
+                    $script:appSettings['IgnoreTheseAdapters'] | ForEach { If (([string]::IsNullOrEmpty($_) -eq $false) -and ($nic -like "*$_*")) { $ignore = $true } }
                     If ($ignore -eq $false)
                     {
                         $result.result   = $script:lang['Fail']
