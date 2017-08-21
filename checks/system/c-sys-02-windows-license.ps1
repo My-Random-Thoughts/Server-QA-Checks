@@ -44,16 +44,16 @@ Function c-sys-02-windows-license
 
     Try
     {
-        If ((Get-WmiObject -ComputerName $serverName -Namespace ROOT\Cimv2 -List 'SoftwareLicensingProduct').Name -eq 'SoftwareLicensingProduct')
+        If ((Get-WmiObject -ComputerName $serverName -Namespace ROOT\Cimv2 -List 'SoftwareLicensingProduct' -ErrorAction Stop).Name -eq 'SoftwareLicensingProduct')
         {
             [string]$query1 = 'SELECT LicenseStatus FROM SoftwareLicensingProduct WHERE ApplicationID="55c92734-d682-4d71-983e-d6ec3f16059f" AND NOT LicenseStatus = "0"'
-            [array] $check1 = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty LicenseStatus
+            [array] $check1 = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object -ExpandProperty LicenseStatus
         }
 
         If ((Get-WmiObject -ComputerName $serverName -Namespace ROOT\Cimv2 -List 'SoftwareLicensingService').Name -eq 'SoftwareLicensingService')
         {
             [string]$query2 = "SELECT KeyManagementServiceMachine, DiscoveredKeyManagementServiceMachineName FROM SoftwareLicensingService"
-            [object]$check2 = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Cimv2 | Select KeyManagementServiceMachine, DiscoveredKeyManagementServiceMachineName
+            [object]$check2 = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Cimv2 -ErrorAction Stop | Select KeyManagementServiceMachine, DiscoveredKeyManagementServiceMachineName
         }
     }
     Catch
