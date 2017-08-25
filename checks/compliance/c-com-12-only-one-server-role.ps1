@@ -1,12 +1,12 @@
-﻿<#
+<#
     DESCRIPTION: 
-        Check that only one server role or feature is installed
+        Check that only one server role or feature is installed.  Several roles are ignored by default.
 
     REQUIRED-INPUTS:
-        None
+        IgnoreTheseRoles - List of additional roles to ignore (Use the Name, not the DisplayName)
 
     DEFAULT-VALUES:
-        None
+        IgnoreTheseRoles = ('')
 
     DEFAULT-STATE:
         Enabled
@@ -46,20 +46,18 @@ Function c-com-12-only-one-server-role
         [string]$queryOS = 'SELECT Caption FROM Win32_OperatingSystem'
         [string]$checkOS = Get-WmiObject -ComputerName $serverName -Query $queryOS -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Caption
 
-        If ($checkOS -like '*2008*')        # 2008
+        If ($checkOS -like '*server*')
         {
-            # Returns only installed ites
-            [string]$query = "SELECT Name, ID FROM Win32_ServerFeature WHERE ParentID = '0'"
-            [array] $installedRoles = (Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2)
-        }
-        ElseIf ($checkOS -like '*201*')    # 2012, 2016
-        {
-            # These are installed by default on all 2012+ servers
-            [string]$ignoreList     = '|.NET Framework 3.5 Features|.NET Framework 4.5 Features|.NET Framework 4.6 Features|.NET Framework 4.7 Features|
-                                       |File and Storage Services|Multipath I/O|Remote Server Administration Tools|SMB 1.0/CIFS File Sharing Support|
-                                       |User Interfaces and Infrastructure|Windows Defender Features|Windows PowerShell|WoW64 Support|Telnet Client|'
-            [array] $installedRoles = Get-WindowsFeature -ComputerName $serverName | Where-Object { ($_.Depth -eq 1) -and ($_.InstallState -eq 'Installed') -and 
-                                                                                                    ($ignoreList.Contains("|$($_.DisplayName)|") -eq $false) } | Select-Object DisplayName
+            Import-Module -Name 'ServerManager'                                                                   # Windows 2008                 Windows 2012+
+            [System.Collections.ArrayList]$gWinFe  = @(Get-WindowsFeature | Where-Object { ($_.Depth -eq 1) -and (($_.Installed -eq $true) -or ($_.InstallState -eq 'Installed')) } -ErrorAction Stop | Select-Object 'Name', 'DisplayName')
+            [System.Collections.ArrayList]$installedRoles = $gWinFe.Clone()
+
+            # These are installed by default on all 2008 R2 and above servers and can be ignored
+            [System.Collections.ArrayList]$ignoreList =  ('NET-Framework-Features', 'NET-Framework', 'NET-Framework-45-Features', 'FileAndStorage-Services', 'Multipath-IO', 'RSAT', 'FS-SMB1',
+                                                          'Telnet-Client', 'User-Interfaces-Infra', 'PowerShellRoot', 'PowerShell-ISE', 'Windows-Defender-Features', 'WoW64-Support')
+
+            $ignoreList                             | ForEach { [string]$LookingFor = $_; $gWinFe | ForEach { If ($_.Name -eq $LookingFor) { [void]$installedRoles.Remove($_) } } }
+            $script:appSettings['IgnoreTheseRoles'] | ForEach { [string]$LookingFor = $_; $gWinFe | ForEach { If ($_.Name -eq $LookingFor) { [void]$installedRoles.Remove($_) } } }
         }
         Else
         {
