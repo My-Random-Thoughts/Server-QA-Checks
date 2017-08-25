@@ -42,8 +42,13 @@ Function c-acc-02-local-account-names
 
     Try
     {
-        [string]$query = 'SELECT Name FROM Win32_UserAccount WHERE LocalAccount="True"'
-        [array] $check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Name
+        [string]$query1 = 'SELECT Name FROM Win32_UserAccount WHERE LocalAccount="True" AND SID LIKE "%-500"'    # Local Admin account SID always ends in '-500'
+        [string]$query2 = 'SELECT Name FROM Win32_UserAccount WHERE LocalAccount="True" AND SID LIKE "%-501"'    # Local Guest account SID always ends in '-501'
+        [object]$admin  = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Name
+        [object]$guest  = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Name
+
+        [string]$query3 = 'SELECT Name FROM Win32_UserAccount WHERE LocalAccount="True"'
+        [array] $check  = Get-WmiObject -ComputerName $serverName -Query $query3 -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Name
     }
     Catch
     {
@@ -75,6 +80,7 @@ Function c-acc-02-local-account-names
         $result.result  = $script:lang['Pass']
         $result.message = 'Local accounts have been renamed'
     }
-    
+
+    $result.data = ('Administrator Account: {0},#Guest Account: {1}' -f $admin, $guest)
     Return $result
 }
