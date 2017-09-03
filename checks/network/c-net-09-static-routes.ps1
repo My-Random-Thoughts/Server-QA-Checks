@@ -6,12 +6,13 @@
 
     REQUIRED-INPUTS:
         AllMustExist  - "True|False" - Should all static route entries exist for a Pass.?
-        StaticRoute01 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
-        StaticRoute02 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
-        StaticRoute03 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
-        StaticRoute04 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
-        StaticRoute05 - List of IPs for a single static route to check.  Order is: Source, Mask, Gateway|IPv4
-
+        StaticRoute01 - List of IPs for a single static route to check.  Order is: Destination, Mask, Gateway|IPv4
+        StaticRoute02 - List of IPs for a single static route to check.  Order is: Destination, Mask, Gateway|IPv4
+        StaticRoute03 - List of IPs for a single static route to check.  Order is: Destination, Mask, Gateway|IPv4
+        StaticRoute04 - List of IPs for a single static route to check.  Order is: Destination, Mask, Gateway|IPv4
+        StaticRoute05 - List of IPs for a single static route to check.  Order is: Destination, Mask, Gateway|IPv4
+        DestinationMustNotExist - Destination IP that must not exist in the route table|IPv4
+        
     DEFAULT-VALUES:
         AllMustExist  = 'False'
         StaticRoute01 = ('', '', '')
@@ -19,6 +20,7 @@
         StaticRoute03 = ('', '', '')
         StaticRoute04 = ('', '', '')
         StaticRoute05 = ('', '', '')
+        DestinationMustNotExist = ''
 
     DEFAULT-STATE:
         Enabled
@@ -79,6 +81,20 @@ Function c-net-09-static-routes
         If (($script:appSettings['StaticRoute01'][0]) -eq 'None') { $noneEntry = $true }
     }
     Catch {}
+
+    If ([string]::IsNullOrEmpty($DestinationMustNotExist) -eq $false)
+    {
+        ForEach ($item In $check)
+        {
+            If ($item.Destination -eq $DestinationMustNotExist)
+            {
+                $result.result  = $script:lang['Fail']
+                $result.message = 'Static route exists that must not'
+                $result.data    = $DestinationMustNotExist
+                Return $result
+            }
+        }
+    }
 
     If ([string]::IsNullOrEmpty($check) -eq $true)
     {
