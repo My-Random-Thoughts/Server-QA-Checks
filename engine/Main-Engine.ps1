@@ -1,4 +1,52 @@
-﻿Function Show-HelpScreen
+﻿# INTERNAL CHECK TO GET SERVER DETAILS (OS, CPU, RAM) FOR TOP OF HTML REPORT
+$c00000 = {
+    Function newResult { Return ( New-Object -TypeName PSObject -Property @{'server'=''; 'name'=''; 'check'=''; 'datetime'=(Get-Date -Format 'yyyy-MM-dd HH:mm'); 'result'='Unknown'; 'message'=''; 'data'='';} ) }
+    Function c-000-00-server-details
+    {
+    Param ( [string]$serverName, [string]$resultPath )
+
+    $serverName     = $serverName.Replace('[0]', '')
+    $resultPath     = $resultPath.Replace('[0]', '')
+    $result         = newResult
+    $result.server  = $serverName
+    $result.name    = 'Server Details'
+    $result.check   = 'c-000-00-server-details'
+    $result.message = 'Hardware details of the scanned server:'
+    $result.result  = 'N/A'
+
+        Try
+        {
+            [string]  $OS  =   (Get-WmiObject -ComputerName $serverName -Class 'Win32_OperatingSystem' -Property 'Caption'  | Select-Object -ExpandProperty 'Caption' )
+            [string[]]$CPU =  @(Get-WmiObject -ComputerName $serverName -Class 'Win32_Processor'       -Property 'Name'     | Select-Object -ExpandProperty 'Name'    )
+            [string]  $RAM = (((Get-WmiObject -ComputerName $serverName -Class 'Win32_PhysicalMemory'  -Property 'Capacity' | Select-Object -ExpandProperty 'Capacity' | Measure-Object -Sum).Sum) / 1GB).ToString('0.0')
+
+            If     ((Check-VMware -ServerName $serverName) -eq $true) { [string]$TYP = 'VMware Guest'  }
+            ElseIf ((Check-HyperV -ServerName $serverName) -eq $true) { [string]$TYP = 'Hyper-V Guest' }
+            Else                            { [string]$TYP = 'Physcial'      }
+
+            $CPU[0] = [regex]::Replace($CPU[0], '(\(TM\))|(\(R\))', '')    # Remove all the trademark crap as it a bit pointless for this display
+            $result.data = "$OS ($TYP),#$($CPU.Count)x $($CPU[0]),#$($RAM)GB"
+        }
+        Catch {}
+        Return $result
+    }
+    Function Check-VMware
+    {
+        Param ([string]$ServerName)
+        $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BIOS -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object SerialNumber
+        If ($wmiBIOS.SerialNumber -like '*VMware*') { Return $true } Else { Return $false }        
+    }
+    Function Check-HyperV
+    {
+        Param ([string]$ServerName)
+        $wmiBIOS = Get-WmiObject -ComputerName $ServerName -Class Win32_BaseBoard -Namespace ROOT\Cimv2 -ErrorAction Stop | Select-Object Product
+        If ($wmiBIOS.Product -eq 'Virtual Machine') { Return $true } Else { Return $false }
+    }
+}
+
+###################################################################################################
+
+Function Show-HelpScreen
 {
     Clear-Host
     Write-Header -Message $($script:lang['Help_01']) -Width $script:screenwidth
@@ -716,7 +764,8 @@ Function DivLine { Param ([int]$Width); Return ' '.PadRight($Width + 1, $L) }
 [int]      $script:failurecount   =   0    #
 [array]    $script:results        = @()    #
 [array]    $script:servers        = @()    #
-[hashtable]$script:sections       = @{'acc' = $script:lang['Accounts'];       #
+[hashtable]$script:sections       = @{'000' = 'System Details'
+                                      'acc' = $script:lang['Accounts'];       #
                                       'com' = $script:lang['Compliance'];      # 
                                       'drv' = $script:lang['Drives'];          # List of sections, matched
                                       'hvh' = $script:lang['HyperV-Host'];     # with the check short name

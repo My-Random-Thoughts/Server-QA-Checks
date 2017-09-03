@@ -1,4 +1,4 @@
-<#
+﻿<#
     DESCRIPTION: 
         Check that only one server role or feature is installed.  Several roles are ignored by default.
 

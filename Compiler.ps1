@@ -168,7 +168,7 @@ Out-File -FilePath $outPath -InputObject ($shared)                              
 Out-File -FilePath $outPath -InputObject ('')                                                                          -Encoding utf8 -Append; Write-Host2 $T -NoNewline -ForegroundColor Cyan
 
 # Get a list of all the checks, adding them into an array
-[string]$cList = '[array]$script:qaChecks = ('
+[string]$cList = "[array]`$script:qaChecks = ('c-000-00-server-details',"
 [string]$cLine = ''
 ForEach ($qa In $qaChecks)
 {
