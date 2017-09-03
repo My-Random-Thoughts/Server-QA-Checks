@@ -46,6 +46,12 @@ More details can be found on the project wiki: https://github.com/My-Random-Thou
 
 # Basic Change Log
 
+2017/09/03
+- NET-09 - Added option to check if a specific destination IP does not exist "DestinationMustNotExist".
+- SEC-15 - Added current firewall state to report output
+- ENGINE = Added an internal check that gets system information about the currently scanned server (OS, CPU, RAM) and adds it to the reports
+
+
 2017/08/12
 - Lots of minor changes to files
 - Larger changes to:
