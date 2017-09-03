@@ -67,12 +67,13 @@ Function c-sec-15-firewall-state
     $result.data = ''
     If ($regDP -ne $script:appSettings['DomainProfile']  ) { $result.data += (  'Domain profile is {0}, but should be {1},#' -f $regDP, $script:appSettings['DomainProfile']  ) }
     If ($regSP -ne $script:appSettings['StandardProfile']) { $result.data += ('Standard profile is {0}, but should be {1},#' -f $regSP, $script:appSettings['StandardProfile']) }
-    If ($regPP -ne $script:appSettings['PublicProfile']  ) { $result.data += (  'Public profile is {0}, but should be {1},#' -f $regPP, $script:appSettings['PublicProfile']  ) }
+    If ($regPP -ne $script:appSettings['PublicProfile']  ) { $result.data += (  'Public profile is {0}, but should be {1}'   -f $regPP, $script:appSettings['PublicProfile']  ) }
 
     If ($result.data -eq '')
     {
-        $result.result  = $script:lang['Pass']
-        $result.message = 'Windows firewall is set correctly'
+        $result.result  =   $script:lang['Pass']
+        $result.message =   'Windows firewall is set correctly'
+        $result.data    = (('Domain profile: {0},#Standard profile: {1},#Public profile: {2}' -f $regDP, $regSP, $regPP).Replace('0', 'Disabled').Replace('1', 'Enabled'))
     }
     Else
     {
