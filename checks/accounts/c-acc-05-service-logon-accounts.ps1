@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Checks all services to ensure no user accounts are assigned.
         If specific application service accounts are required then they should be domain level accounts (not local) and restricted from interactice access by policy.
@@ -44,7 +44,7 @@ Function c-acc-05-service-logon-accounts
     Try
     {
         [string]$query = 'SELECT DisplayName, StartName FROM Win32_Service WHERE NOT DisplayName=""'
-        $script:appSettings['IgnoreTheseUsers'] | ForEach { $query += ' AND NOT StartName = "{0}"' -f $_ }
+        $script:appSettings['IgnoreTheseUsers'] | ForEach { $query += ' AND NOT StartName LIKE "{0}%"' -f $_ }
         [object]$check = Get-WmiObject -ComputerName $serverName -Query $query -Namespace ROOT\Cimv2 | Select-Object DisplayName, StartName
     }
     Catch
