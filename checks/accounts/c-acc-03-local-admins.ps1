@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check the local administrators group to ensure no non-standard accounts exist.
         If there is a specific application requirement for local administration access then these need to be well documented.
@@ -54,9 +54,10 @@ Function c-acc-03-local-admins
         [object]$object2 = Get-WmiObject -ComputerName $serverName -Query $query2 -Namespace ROOT\Cimv2
 
         [System.Collections.ArrayList]$members = @()
+        $object2 | ForEach { [void]$members.Add((($_.PartComponent).Split('"')[3])) }
         $object2 | ForEach { 
             [string]$item = (($_.PartComponent).Split('"')[3])
-            If ($script:appSettings['IgnoreTheseUsers'] -notcontains $item) { $members += $item }
+            $script:appSettings['IgnoreTheseUsers'] | ForEach { If ($item -like "$_*") { $members.Remove($item) } }
         }
     }
     Catch
