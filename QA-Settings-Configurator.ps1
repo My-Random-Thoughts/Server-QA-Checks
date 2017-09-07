@@ -1276,7 +1276,7 @@ Function Display-MainForm
                     $tmpKeys = New-Object 'System.Collections.Hashtable'
                     If ($SkippedChecks.Contains($("$($listItem.Text)-skip"))) { $tmpKeys = ($settingsINI.$("$($listItem.Text)-skip")) }
                     Else                                                      { $tmpKeys = ($settingsINI.$(   $listItem.Text)       ) }
-                    ForEach ($val In $tmpKeys.Keys) { If ($iniKeys.ContainsKey($val)) { $iniKeys[$val] = $tmpKeys[$val] } }
+		    ForEach ($val In $tmpKeys.Keys) { $iniKeys[$val] = $tmpKeys[$val] }
                 }
                 Catch {}
 
