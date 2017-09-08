@@ -1292,7 +1292,11 @@ Function Display-MainForm
                             [xml]$xmlDesc = New-Object 'System.Xml.XmlDataDocument'
                             $xmlDesc.LoadXml($script:qahelp[$($listItem.Text)])
                             If ($xmlDesc.xml.RequiredInputs) { [string[]]$DescList = $(($xmlDesc.xml.RequiredInputs) -split '!n') }
-                            ForEach ($DL In $DescList) { If (($DL.Trim()).StartsWith($item.Trim())) { $desc = ($DL.Trim()); Break } }
+                            ForEach ($DL In $DescList) {
+                                If (($DL.Trim()).StartsWith($item.Trim())) { $desc = ($DL.Trim()); Break }
+                                # Very specific hack to change the message text for the NET-09 Static Routes check
+                                If ($listItem.Name -eq 'NET09') { If ($item.Trim().StartsWith('StaticRoute') -eq $True) { $desc = ($DescList[1].Replace('StaticRoute01 - ','')) } }
+                            }
                         } Catch { }
                     }
                     Else
