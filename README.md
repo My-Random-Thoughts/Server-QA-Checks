@@ -1,5 +1,10 @@
-### Change Log At The End
+# VERSION 4 HAS BEEN RELEASED
+https://github.com/My-Random-Thoughts/QA-Checks-v4
 
+This new version brings a whole host of changes, read the change list here - https://github.com/My-Random-Thoughts/QA-Checks-v4/blob/master/Changes_From_v3.md
+
+---
+### Change Log At The End
 # Server QA Checks
 
 The QA Checks came about as a need to verify the build and configuration of any servers in several different environments.
