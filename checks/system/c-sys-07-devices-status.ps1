@@ -57,7 +57,7 @@ Function c-sys-07-devices-status
     }
 
     [boolean]$onlyDisabled = $true
-    $check | Sort-Object -Property Name | ForEach {
+    $check | Sort-Object -Property Name -Unique | ForEach {
         If ($_.ConfigManagerErrorCode -ne 22) { $result.data += ('{0} (Error),#'    -f $_.Name); $onlyDisabled = $false }
         Else                                  { $result.data += ('{0} (Disabled),#' -f $_.Name)                         }
     }
