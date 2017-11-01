@@ -1,4 +1,4 @@
-﻿<#
+<#
     DESCRIPTION: 
         Check that only one server role or feature is installed.  Several roles are ignored by default.
 
@@ -25,7 +25,7 @@
         All Servers
 
     REQUIRED-FUNCTIONS:
-        None
+        Check-DomainController
 #>
 
 Function c-com-12-only-one-server-role
@@ -43,26 +43,36 @@ Function c-com-12-only-one-server-role
 
     Try
     {
-        [string]$queryOS = 'SELECT Caption FROM Win32_OperatingSystem'
-        [string]$checkOS = Get-WmiObject -ComputerName $serverName -Query $queryOS -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Caption
-
-        If ($checkOS -like '*server*')
+        If ((Check-DomainController $serverName) -eq $false)
         {
-            Import-Module -Name 'ServerManager'                                                                   # Windows 2008                 Windows 2012+
-            [System.Collections.ArrayList]$gWinFe  = @(Get-WindowsFeature | Where-Object { ($_.Depth -eq 1) -and (($_.Installed -eq $true) -or ($_.InstallState -eq 'Installed')) } -ErrorAction Stop | Select-Object 'Name', 'DisplayName')
-            [System.Collections.ArrayList]$installedRoles = $gWinFe.Clone()
+            [string]$queryOS = 'SELECT Caption FROM Win32_OperatingSystem'
+            [string]$checkOS = Get-WmiObject -ComputerName $serverName -Query $queryOS -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty Caption
 
-            # These are installed by default on all 2008 R2 and above servers and can be ignored
-            [System.Collections.ArrayList]$ignoreList =  ('NET-Framework-Features', 'NET-Framework', 'NET-Framework-45-Features', 'FileAndStorage-Services', 'Multipath-IO', 'RSAT', 'FS-SMB1',
-                                                          'Telnet-Client', 'User-Interfaces-Infra', 'PowerShellRoot', 'PowerShell-ISE', 'Windows-Defender-Features', 'WoW64-Support')
+            If ($checkOS -like '*server*')
+            {
+                Import-Module -Name 'ServerManager'                                                                   # Windows 2008                 Windows 2012+
+                [System.Collections.ArrayList]$gWinFe  = @(Get-WindowsFeature | Where-Object { ($_.Depth -eq 1) -and (($_.Installed -eq $true) -or ($_.InstallState -eq 'Installed')) } -ErrorAction Stop | Select-Object 'Name', 'DisplayName')
+                [System.Collections.ArrayList]$installedRoles = $gWinFe.Clone()
 
-            $ignoreList                             | ForEach { [string]$LookingFor = $_; $gWinFe | ForEach { If ($_.Name -eq $LookingFor) { [void]$installedRoles.Remove($_) } } }
-            $script:appSettings['IgnoreTheseRoles'] | ForEach { [string]$LookingFor = $_; $gWinFe | ForEach { If ($_.Name -eq $LookingFor) { [void]$installedRoles.Remove($_) } } }
+                # These are installed by default on all 2008 R2 and above servers and can be ignored
+                [System.Collections.ArrayList]$ignoreList =  ('NET-Framework-Features', 'NET-Framework', 'NET-Framework-45-Features', 'FileAndStorage-Services', 'Multipath-IO', 'RSAT', 'FS-SMB1',
+                                                              'Telnet-Client', 'User-Interfaces-Infra', 'PowerShellRoot', 'PowerShell-ISE', 'Windows-Defender-Features', 'WoW64-Support')
+
+                $ignoreList                             | ForEach { [string]$LookingFor = $_; $gWinFe | ForEach { If ($_.Name -eq $LookingFor) { [void]$installedRoles.Remove($_) } } }
+                $script:appSettings['IgnoreTheseRoles'] | ForEach { [string]$LookingFor = $_; $gWinFe | ForEach { If ($_.Name -eq $LookingFor) { [void]$installedRoles.Remove($_) } } }
+            }
+            Else
+            {
+                $result.result  = $script:lang['Not-Applicable']
+                $result.message = 'Operating system not supported'
+                $result.data    = $checkOS
+                Return $result
+            }
         }
         Else
         {
             $result.result  = $script:lang['Not-Applicable']
-            $result.message = 'Operating system not supported'
+            $result.message = 'Domain controllers are excempt from this check'
             $result.data    = $checkOS
             Return $result
         }
