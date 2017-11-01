@@ -7,7 +7,7 @@
         IgnoreThesePorts - List of port numbers to ignore|Integer
 
     DEFAULT-VALUES:
-        IgnoreThesePorts = ('5985', '5986', '8192')
+        IgnoreThesePorts = ('3389', '5985', '5986', '8192')
 
     DEFAULT-STATE:
         Enabled
