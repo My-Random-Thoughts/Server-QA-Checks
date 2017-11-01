@@ -56,7 +56,7 @@ Function c-net-07-network-teaming
         If ($check -like '*200*')    # 2003, 2008
         {
             [string]$query1 = 'SELECT ProductName, NetConnectionID FROM Win32_NetworkAdapter WHERE ProductName = "dummyValue"'
-            $script:appSettings['NetworkTeamNames'] | ForEach { $query1 += ' AND ProductName = "{0}"' -f $script:appSettings['NetworkTeamNames'] }
+            $script:appSettings['NetworkTeamNames'] | ForEach { $query1 += ' AND ProductName LIKE "{0}%"' -f $script:appSettings['NetworkTeamNames'] }
             [array]$check1 = Get-WmiObject -ComputerName $serverName -Query $query1 -Namespace ROOT\Cimv2 | Select-Object -ExpandProperty NetConnectionID
         }
         ElseIf ($check -like '*201*')    # 2012, 2016
