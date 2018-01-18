@@ -51,10 +51,13 @@ More details can be found on the project wiki: https://github.com/My-Random-Thou
 
 # Basic Change Log
 
+2018/01/18
+- SEC-18 - Added new check for the Spectre issue
+
 2017/09/03
 - NET-09 - Added option to check if a specific destination IP does not exist "DestinationMustNotExist".
 - SEC-15 - Added current firewall state to report output
-- ENGINE = Added an internal check that gets system information about the currently scanned server (OS, CPU, RAM) and adds it to the reports
+- ENGINE - Added an internal check that gets system information about the currently scanned server (OS, CPU, RAM) and adds it to the reports
 
 
 2017/08/12
