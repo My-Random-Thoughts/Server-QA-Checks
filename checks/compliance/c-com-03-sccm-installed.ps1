@@ -58,7 +58,8 @@ Function c-com-03-sccm-installed
     Try
     {
         $reg    = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey('LocalMachine', $serverName)
-        $regKey = $reg.OpenSubKey('Software\Microsoft\CCM')
+        $regKey = $reg.OpenSubKey('Software\Wow6432Node\Microsoft\CCM')
+        If ((-not $regKey) -or ($regKey.SubKeyCount -lt 5)) { $regKey = $reg.OpenSubKey('Software\Microsoft\CCM') }
         If ($regKey) {
             [string]               $valPort = $regKey.GetValue('Port')           # SCCM 2007
             [string]               $valName = $regKey.GetValue('NetworkName')    # SCCM 2007
@@ -67,8 +68,8 @@ Function c-com-03-sccm-installed
 
             # Fall back check for hostname check
             If ($valName -eq '') {
-                $regKey  = $reg.OpenSubKey('Software\Microsoft\CCM\FSP')
-                If ($regKey) { $valName = $regKey.GetValue('HostName') }
+                $regKey1  = $reg.OpenSubKey($($regKey.Name.Replace('HKEY_LOCAL_MACHINE\','')) + '\FSP')
+                If ($regKey1) { $valName = $regKey1.GetValue('HostName') }
             }
         }
         Try {$regKey.Close() } Catch {}
